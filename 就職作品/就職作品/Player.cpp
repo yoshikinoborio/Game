@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Game.h"
 #include "Player.h"
 
 Player::Player()
@@ -20,38 +21,48 @@ Player::~Player()
 void Player::Initialize(LPDIRECT3DDEVICE9 pd3dDevice)
 {
 	m_model3d.Initialize(pd3dDevice,"image\\unitychan.X");
+	//カメラのインスタンスの取得
+	m_camera = game->GetCamera();
 }
 
 //更新
 void Player::Update()
 {
-	if (GetAsyncKeyState('W'))
-	{
-		m_position.z += 0.1f;
-	}
+	//カメラの方向にプレイヤーを進める処理
+	//左スティックからのカメラ行列における入力を保持
+	D3DXVECTOR3 moveDirCameraLocal;
+	moveDirCameraLocal.y = 0.0f;
+	moveDirCameraLocal.x = g_pad.GetLStickXF();
+	moveDirCameraLocal.z = g_pad.GetLStickYF();
+	D3DXMATRIX& ViewInv = m_camera->GetViewMatrixInv();//カメラの逆行列を取得
+	//カメラ空間から見た奥方向のベクトルを取得。
+	D3DXVECTOR3 cameraZ;
+	cameraZ.x = ViewInv.m[2][0];
+	cameraZ.y = 0.0f;		//Y軸いらない。
+	cameraZ.z = ViewInv.m[2][2];
+	D3DXVec3Normalize(&cameraZ, &cameraZ);	//Y軸を打ち消しているので正規化する。
+	//カメラから見た横方向のベクトルを取得。
+	D3DXVECTOR3 cameraX;
+	cameraX.x = ViewInv.m[0][0];
+	cameraX.y = 0.0f;		//Y軸はいらない。
+	cameraX.z = ViewInv.m[0][2];
+	D3DXVec3Normalize(&cameraX, &cameraX);	//Y軸を打ち消しているので正規化する。
 
-	if (GetAsyncKeyState('S'))
-	{
-		m_position.z -= 0.1f;
-	}
+	D3DXVECTOR3 moveDir;
+	moveDir.x = cameraX.x * moveDirCameraLocal.x + cameraZ.x * moveDirCameraLocal.z;
+	moveDir.y = 0.0f;	//Y軸はいらない。
+	moveDir.z = cameraX.z * moveDirCameraLocal.x + cameraZ.z * moveDirCameraLocal.z;
 
-	if (GetAsyncKeyState('A'))
-	{
-		m_position.x -= 0.1f;
-	}
+	m_position += moveDir;
 
-	if (GetAsyncKeyState('D'))
-	{
-		m_position.x += 0.1f;
-	}
-
+	//ゲーム終了
 	if (GetAsyncKeyState(VK_ESCAPE))
 	{
 		PostQuitMessage(0);
 	}
 
 	//ワールド行列の更新。
-	D3DXMatrixTranslation(&m_world, m_position.x,m_position.y, m_position.z);
+	D3DXMatrixTranslation(&m_world, m_position.x, m_position.y, m_position.z);
 }
 
 // 描画。

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "Camera.h"
-#include "Player.h"
 
 Camera::Camera()
 {
@@ -44,18 +43,37 @@ void Camera::Initialize()
 //カメラの更新
 void Camera::Update()
 {
-
+	//右スティックからの入力を取得
 	m_rStick_x = g_pad.GetRStickXF();
 	m_rStick_y = g_pad.GetRStickYF();
 
-	if (GetAsyncKeyState(VK_UP))
-	{
-		m_eyePt.y += 1.0f;
-	}
+	//カメラがプレイヤーに追従する処理
+	D3DXVECTOR3 V = m_player->GetPlayerPos();
+	V.y += 1.0f;
+	m_lookatPt = V;	//注視点をプレイヤーの少し上に設定
+	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる
 
-	if (GetAsyncKeyState(VK_DOWN))
-	{
-		m_eyePt.y -= 1.0f;
+	//右スティックを使った縦のカメラ移動
+	if (fabsf(m_rStick_y) > 0.0f) {
+		D3DXVECTOR3 Cross;
+		D3DXVec3Cross(&Cross, &m_upVec, &m_toEyeptVector);//上方向と横方向に直行するベクトルを求める
+		D3DXQuaternionRotationAxis(&m_zAxis, &Cross, 0.1f*m_rStick_y);//上で求めたベクトルを回転軸にしてクォータニオンを回転
+		D3DXMatrixRotationQuaternion(&m_rot, &m_zAxis);//クォータニオンから回転行列を作成
+		D3DXVec3Transform(&m_v4, &m_toEyeptVector, &m_rot);//回転行列を使ってm_toEyeptVectorを回転
+		D3DXVECTOR3 m_toEyeptVectorOld = m_toEyeptVector;
+		m_toEyeptVector.x = m_v4.x;
+		m_toEyeptVector.y = m_v4.y;
+		m_toEyeptVector.z = m_v4.z;
+		D3DXVECTOR3 toPosDir;
+		D3DXVec3Normalize(&toPosDir, &m_toEyeptVector);
+		if (toPosDir.y < -0.5f) {
+			//カメラが上向きすぎ。
+			m_toEyeptVector = m_toEyeptVectorOld;
+		}
+		else if (toPosDir.y > 0.8f) {
+			//カメラが下向きすぎ。
+			m_toEyeptVector = m_toEyeptVectorOld;
+		}
 	}
 
 	//右スティックを使った横のカメラ移動
@@ -68,11 +86,9 @@ void Camera::Update()
 		m_toEyeptVector.y = m_v4.y;
 		m_toEyeptVector.z = m_v4.z;
 	}
-	//カメラがプレイヤーに追従する処理
-	D3DXVECTOR3 V = m_player->GetPlayerPos();
-	V.y += 1.0f;
-	m_lookatPt = V;	//注視点をプレイヤーの少し上に設定
-	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる
+
+	//カメラ逆行列の計算(カメラのワールド行列の逆行列)
+	D3DXMatrixInverse(&m_viewMatrixInv, NULL, &m_viewMatrix);
 
 	//左手座標系ビュー行列を作成する
 	D3DXMatrixLookAtLH(&m_viewMatrix,	//左手座標系ビュー行列　D3DXMATRIX構造体へのポインタ

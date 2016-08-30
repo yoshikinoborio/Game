@@ -18,19 +18,24 @@ public:
 	void Update();
 	//描画
 	void Draw();
+	//解放
 	void Terminate();
+	//プレイヤーのインスタンスの取得
 	Player* GetPlayer()
 	{
 		return &player;
 	}
+	//ライトのインスタンスの取得
 	Light* GetLight()
 	{
 		return &light;
 	}
+	//カメラのインスタンスの取得
 	Camera* GetCamera()
 	{
 		return &camera;
 	}
+	//ステージのインスタンスの取得
 	Stage* GatStage()
 	{
 		return &stage;

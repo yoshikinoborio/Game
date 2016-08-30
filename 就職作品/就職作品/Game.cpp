@@ -18,12 +18,12 @@ void Game::Initialize()
 {
 	//ライトを初期化。
 	light.Initialize();
+	//カメラの初期化
+	camera.Initialize();
 	//プレイヤー初期化
 	player.Initialize(g_pd3dDevice);
 	//ステージの初期化
 	stage.Initialize(g_pd3dDevice);
-	//カメラの初期化
-	camera.Initialize();
 }
 
 //-----------------------------------------------------------------------------
@@ -68,14 +68,14 @@ void Game::Update()
 {
 	//ライトの更新。
 	light.Update();
-	//プレイヤーの更新
-	player.Update();
-	//ステージの更新
-	stage.Update();
 	//カメラの更新
 	camera.Update();
 	//パッドの更新
 	g_pad.Update();
+	//プレイヤーの更新
+	player.Update();
+	//ステージの更新
+	stage.Update();
 
 }
 

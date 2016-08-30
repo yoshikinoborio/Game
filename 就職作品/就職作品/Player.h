@@ -1,6 +1,8 @@
 #pragma once
 #include "Model3D.h"
 
+class Camera;
+
 //プレイヤークラス
 class Player
 {
@@ -32,4 +34,5 @@ private:
 	D3DXVECTOR3		m_position;			//座標
 	D3DXMATRIX		m_world;			//ワールド行列
 	D3DXMATRIX		m_rotation;			//回転行列
+	Camera*         m_camera;			//カメラのインスタンス
 };

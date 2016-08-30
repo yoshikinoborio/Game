@@ -30,6 +30,12 @@ public:
 		return m_viewMatrix;
 	}
 
+	//ビュー行列の逆行列を取得。
+	D3DXMATRIX& GetViewMatrixInv()
+	{
+		return m_viewMatrixInv;
+	}
+
 	//プロジェクション行列の設定
 	void SetProjectionMatrix(D3DXMATRIX Proj)
 	{
@@ -116,6 +122,7 @@ public:
 private:
 	D3DXMATRIX		m_viewMatrix;			//ビュー行列 カメラ行列とも言う
 	D3DXMATRIX		m_projectionMatrix;		//プロジェクション行列 ビュー空間から射影空間に変換する行列
+	D3DXMATRIX		m_viewMatrixInv;		//ビュー行列の逆行列
 	D3DXVECTOR3		m_eyePt;				//カメラの座標
 	D3DXVECTOR3		m_lookatPt;				//カメラの注視点
 	D3DXVECTOR3		m_upVec;				//カメラの上方向
@@ -126,6 +133,7 @@ private:
 	Player*			m_player;				//プレイヤーインスタンス
 	float			m_angle;				//回転
 	D3DXQUATERNION	m_yAxis;				//Y軸回転のクォータニオン
+	D3DXQUATERNION	m_zAxis;				//Z軸回転のクォータニオン
 	D3DXMATRIX		m_rot;					//クォータニオンから作った回転行列を格納
 	D3DXVECTOR4		m_v4;					//回転行列を使ってm_toEyeptVectorを回転させたのを格納
 	float			m_rStick_x;				//右スティックのX軸の入力量を格納
