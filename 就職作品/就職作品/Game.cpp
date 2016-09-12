@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Game.h"
 
+EffectManager*			g_effectManager = NULL;
 Pad g_pad;
 
 Game::Game()
@@ -16,6 +17,7 @@ Game::~Game()
 //-----------------------------------------------------------------------------
 void Game::Initialize()
 {
+	g_effectManager = new EffectManager;
 	//ライトを初期化。
 	light.Initialize();
 	//カメラの初期化
@@ -86,4 +88,5 @@ void Game::Terminate()
 {
 	player.Release();
 	stage.Release();
+	g_pd3dDevice->Release();
 }

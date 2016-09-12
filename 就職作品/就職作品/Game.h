@@ -4,6 +4,7 @@
 #include "Stage.h"
 #include "Light.h"
 #include "Pad.h"
+#include "EffectManager.h"
 
 class Game
 {
@@ -49,3 +50,4 @@ private:
 
 extern Game* game;
 extern Pad g_pad;				//‚Ç‚±‚Å‚àŽg‚¦‚é‚æ‚¤‚Éextern
+extern EffectManager* g_effectManager;

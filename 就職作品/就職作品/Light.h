@@ -1,10 +1,9 @@
 #pragma once
-
 const int LIGHT_NUM = 4;	//ライトの数
-
 //ライトのクラス
 class Light
 {
+
 public:
 	Light();
 	~Light();
@@ -24,6 +23,31 @@ public:
 	D3DXVECTOR4* GetDiffuseLightColor()
 	{
 		return m_diffuseLightColor;
+	}
+	/*!
+	*@brief	平行光源の方向を設定。
+	*@param[in]	lightNo		ライトの番号
+	*@param[in]	dir			方向。
+	*/
+	void SetDiffuseLightDirection(int lightNo, const D3DXVECTOR4& dir)
+	{
+		m_diffuseLightDirection[lightNo] = dir;
+	}
+	/*!
+	*@brief	平行光源の色を設定。
+	*@param[in]	lightNo		ライトの番号。
+	*@param[in]	color		平行光源の色。
+	*/
+	void SetDiffuseLightColor(int lightNo, const D3DXVECTOR4& color)
+	{
+		m_diffuseLightColor[lightNo] = color;
+	}
+	/*!
+	* @brief	環境光を設定。
+	*/
+	void SetAmbientLight(const D3DXVECTOR4& ambient)
+	{
+		m_ambientLight = ambient;
 	}
 	//環境光取得
 	D3DXVECTOR4 GetAmbientLight()

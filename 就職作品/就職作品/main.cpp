@@ -34,4 +34,5 @@ void Update()
 void Terminate()
 {
 	game->Terminate();
+
 }

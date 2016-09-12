@@ -1,5 +1,7 @@
 #pragma once
 #include "Model3D.h"
+#include "SkinModel.h"
+#include "SkinModelData.h"
 
 //ステージクラス
 class Stage
@@ -24,8 +26,13 @@ public:
 	//解放
 	void Release();
 private:
-	Model3D					m_model3d;			//3D関係を表示するModel3Dのインスタンスを保持
-	D3DXVECTOR3				m_position;			//座標
-	D3DXMATRIX				m_world;			//ワールド行列
-	D3DXMATRIX				m_rotation;			//回転行列
+	Model3D			m_model3d;			//3D関係を表示するModel3Dのインスタンスを保持
+	D3DXVECTOR3		m_position;			//座標
+	D3DXMATRIX		m_world;			//ワールド行列
+	D3DXMATRIX		m_rotation;			//回転行列
+	SkinModelData	m_skinModelData;	//スキンモデルデータ
+	SkinModel		m_skinModel;		//スキンモデル
+	//D3DXQUATERNION	m_rotation;
+	D3DXVECTOR3		m_scale;			//スケール
+	Animation       m_animation;
 };
