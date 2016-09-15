@@ -1,34 +1,28 @@
 #include "stdafx.h"
 #include "Game.h"
-#include "Player.h"
+#include "UnityChan.h"
 
-Player::Player()
+UnityChan::UnityChan()
 {
-	//コンストラクタで初期化する理由は
-	//Cplayer pl;
-	//pl.Initilize()の実装忘れで初期化されてない変数を無くすため
-	//D3DXMatrixIdentity(&m_world);
-	//D3DXMatrixIdentity(&m_rotation);
-	m_scale = D3DXVECTOR3(2.0f,2.0f,2.0f);
+	m_scale = D3DXVECTOR3(3.0f, 3.0f, 3.0f);
 	//D3DXQUATERNIONの引数は回転軸(0.0f～1.0fがMax);
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
 	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_animationcount = 0;
 }
 
-Player::~Player()
+UnityChan::~UnityChan()
 {
 	Release();
 }
 
-//初期化
-void Player::Initialize()
+void UnityChan::Initialize()
 {
-	//m_model3d.Initialize("image\\unitychan.X");
-
-	m_skinModelData.LoadModelData("image\\Unity.X"/*"image\\Debri.x"*/, &m_animation);
+	m_skinModelData.LoadModelData("image\\Unity.X", &m_animation);
 	m_skinModel.Initialize(&m_skinModelData);
 
-	//m_animation.SetAnimationEndtime(AnimationRun, 0.8);
+	m_animation.SetAnimationEndtime(AnimationRun, 0.8f);
+	m_animation.SetAnimationEndtime(AnimationJump, 1.6f);
 	m_currentAnimSetNo = AnimationInvalid;
 	m_animation.PlayAnimation(m_currentAnimSetNo);
 
@@ -36,8 +30,7 @@ void Player::Initialize()
 	m_camera = game->GetCamera();
 }
 
-//更新
-void Player::Update()
+void UnityChan::Update()
 {
 	m_animation.Update(1.0f / 60.0f);
 
@@ -49,42 +42,31 @@ void Player::Update()
 	{
 		PostQuitMessage(0);
 	}
-	m_animation.PlayAnimation(AnimationStand, 1.0f);
+	if (g_pad.IsPress(enButtonA))
+	{
+		m_currentAnimSetNo = AnimationJump;
+	}
+	m_animation.PlayAnimation(m_currentAnimSetNo, 1.0f);
 
 	m_skinModel.Update(m_position, m_rotation, m_scale);
-	//ワールド行列の更新。
-	//D3DXMatrixTranslation(&m_world, m_position.x, m_position.y, m_position.z);
 }
 
-// 描画。
-void Player::Draw(D3DXMATRIX viewMatrix,
+void UnityChan::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	D3DXVECTOR4* diffuseLightDirection,
 	D3DXVECTOR4* diffuseLightColor,
 	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight){
-
-	/*m_model3d.Draw(pd3dDevice,
-		viewMatrix,
-		projMatrix,
-		diffuseLightDirection,
-		diffuseLightColor,
-		ambientLight,
-		m_world,
-		m_rotation,
-		numDiffuseLight
-		);*/
+	int numDiffuseLight)
+{
 	m_skinModel.Draw(&viewMatrix, &projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight);
 }
 
-//開放。
-void Player::Release()
+void UnityChan::Release()
 {
-	//m_model3d.Release();
 	m_skinModelData.Release();
 }
 
-void Player::PadMove()
+void UnityChan::PadMove()
 {
 	//カメラの方向にプレイヤーを進める処理
 	//左スティックからのカメラ行列における入力を保持

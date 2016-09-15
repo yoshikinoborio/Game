@@ -23,9 +23,11 @@ void Game::Initialize()
 	//カメラの初期化
 	camera.Initialize();
 	//プレイヤー初期化
-	player.Initialize(g_pd3dDevice);
+	//player.Initialize();
 	//ステージの初期化
-	stage.Initialize(g_pd3dDevice);
+	stage.Initialize();
+	//ユニティちゃんの初期化
+	unitychan.Initialize();
 }
 
 //-----------------------------------------------------------------------------
@@ -39,22 +41,28 @@ void Game::Draw()
 	g_pd3dDevice->BeginScene();
 
 	//プレイヤーの描画
-	player.Draw(g_pd3dDevice,
-		camera.GetViewMatrix(),
+	//player.Draw(camera.GetViewMatrix(),
+	//	camera.GetProjectionMatrix(),
+	//	light.GetDiffuseLightDirection(),
+	//	light.GetDiffuseLightColor(),
+	//	light.GetAmbientLight(),
+	//	light.GetLight_Num());
+
+	//ステージの描画
+	stage.Draw(camera.GetViewMatrix(),
+		camera.GetProjectionMatrix(),
+		light.GetDiffuseLightDirection(),
+		light.GetDiffuseLightColor(),
+		light.GetAmbientLight(),
+		light.GetLight_Num());
+	//ユニティちゃんの描画
+	unitychan.Draw(camera.GetViewMatrix(),
 		camera.GetProjectionMatrix(),
 		light.GetDiffuseLightDirection(),
 		light.GetDiffuseLightColor(),
 		light.GetAmbientLight(),
 		light.GetLight_Num());
 
-	//ステージの描画
-	stage.Draw(g_pd3dDevice,
-		camera.GetViewMatrix(),
-		camera.GetProjectionMatrix(),
-		light.GetDiffuseLightDirection(),
-		light.GetDiffuseLightColor(),
-		light.GetAmbientLight(),
-		light.GetLight_Num());
 
 	// シーンの描画終了。
 	g_pd3dDevice->EndScene();
@@ -75,9 +83,11 @@ void Game::Update()
 	//パッドの更新
 	g_pad.Update();
 	//プレイヤーの更新
-	player.Update();
+	//player.Update();
 	//ステージの更新
 	stage.Update();
+	//ユニティちゃんの更新
+	unitychan.Update();
 
 }
 
@@ -86,7 +96,8 @@ void Game::Update()
 //-----------------------------------------------------------------------------
 void Game::Terminate()
 {
-	player.Release();
+	//player.Release();
+	unitychan.Release();
 	stage.Release();
 	g_pd3dDevice->Release();
 }

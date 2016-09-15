@@ -23,11 +23,11 @@ public:
 	SkinModelData();
 	~SkinModelData();
 	
-	//モデルデータをロード。
-	//filePath	ファイルパス。
+	//モデルデータをロード
+	//filePath	ファイルパス
 	//anim		アニメーション付きモデルデータの場合、アニメーションクラスも構築される
 	void LoadModelData(const char* filePath, Animation* anim);
-	
+
 	//フレームルートの取得
 	LPD3DXFRAME GetFrameRoot()
 	{

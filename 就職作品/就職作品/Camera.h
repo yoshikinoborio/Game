@@ -1,6 +1,7 @@
 #pragma once
 
 class Player;
+class UnityChan;
 
 //カメラクラス
 class Camera
@@ -131,6 +132,7 @@ private:
 	float			m_aspect;				//アスペクト比
 	D3DXVECTOR3		m_toEyeptVector;		//注視点からカメラの座標に向かうベクトル
 	Player*			m_player;				//プレイヤーインスタンス
+	UnityChan*      m_unitychan;			//ユニティちゃんのインスタンス
 	float			m_angle;				//回転
 	D3DXQUATERNION	m_yAxis;				//Y軸回転のクォータニオン
 	D3DXQUATERNION	m_zAxis;				//Z軸回転のクォータニオン

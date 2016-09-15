@@ -1,10 +1,8 @@
 #pragma once
-#include "Model3D.h"
-#include "SkinModel.h"
-#include "SkinModelData.h"
+#include "NonAnimationModel3D.h"
 
 //ステージクラス
-class Stage
+class Stage : NonAnimationModel3D
 {
 public:
 	//デストラクタ
@@ -12,12 +10,11 @@ public:
 	//コンストラクタ
 	~Stage();
 	//初期化
-	void Initialize(LPDIRECT3DDEVICE9 pd3dDevice);
+	void Initialize()override;
 	//更新
-	void Update();
+	void Update()override;
 	//描画
-	void Draw(LPDIRECT3DDEVICE9 pd3dDevice,
-		D3DXMATRIX viewMatrix,
+	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		D3DXVECTOR4* diffuseLightDirection,
 		D3DXVECTOR4* diffuseLightColor,
@@ -30,9 +27,4 @@ private:
 	D3DXVECTOR3		m_position;			//座標
 	D3DXMATRIX		m_world;			//ワールド行列
 	D3DXMATRIX		m_rotation;			//回転行列
-	SkinModelData	m_skinModelData;	//スキンモデルデータ
-	SkinModel		m_skinModel;		//スキンモデル
-	//D3DXQUATERNION	m_rotation;
-	D3DXVECTOR3		m_scale;			//スケール
-	Animation       m_animation;
 };

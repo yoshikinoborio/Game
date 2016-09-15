@@ -1,22 +1,17 @@
 #pragma once
-#include "Model3D.h"
-#include "SkinModel.h"
-#include "SkinModelData.h"
+#include "AnimationModel3D.h"
 
 class Camera;
 
-//プレイヤークラス
-class Player
+class UnityChan : AnimationModel3D
 {
 public:
-	//コンストラクタ
-	Player();
-	//デストラクタ
-	~Player();
+	UnityChan();
+	~UnityChan();
 	//初期化
-	void Initialize();
+	void Initialize()override;
 	//更新
-	void Update();
+	void Update()override;
 	//描画
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
@@ -26,12 +21,12 @@ public:
 		int numDiffuseLight);
 	//解放
 	void Release();
-	D3DXVECTOR3 GetPlayerPos()
+	//パッドによるカメラの奥に移動する処理
+	void PadMove();
+	D3DXVECTOR3 GetUnityChanPos()
 	{
 		return m_position;
 	}
-	//パッドによるカメラの奥に移動する処理
-	void PadMove();
 private:
 	enum AnimationNo {
 		AnimationInvalid = -1,
@@ -40,15 +35,11 @@ private:
 		AnimationRun,		//走り
 		AnimationJump,		//ジャンプ
 	};
-	Model3D			m_model3d;			//3D関係を表示するModel3Dのインスタンスを保持
 	D3DXVECTOR3		m_position;			//座標
 	D3DXVECTOR3     m_scale;			//スケール
-	//D3DXMATRIX		m_world;			//ワールド行列
-	//D3DXMATRIX		m_rotation;		//回転行列
+	D3DXMATRIX		m_world;			//ワールド行列
 	Camera*         m_camera;			//カメラのインスタンス
-	SkinModelData	m_skinModelData;	//スキンモデルデータ
-	SkinModel		m_skinModel;		//スキンモデル
-	Animation		m_animation;		//アニメーション
 	AnimationNo		m_currentAnimSetNo;
 	D3DXQUATERNION  m_rotation;			//回転行列
+	int				m_animationcount;
 };

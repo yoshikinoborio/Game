@@ -84,10 +84,10 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
 	HWND hWnd = CreateWindow("就職作品",			//RegisterClassEx()で登録したクラスの名前
 		"就職作品",									//タイトルバーとかに表示する文字列
 		WS_OVERLAPPEDWINDOW,						//ウインドウスタイル(dwStyle)
-		100,										//ウインドウ左上x座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
-		100,										//ウインドウ左上y座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
-		900,										//ウインドウ幅．適当でいい時はCW_USEDEFAULT
-		900,										//ウインドウ高さ．適当でいい時はCW_USEDEFAULT
+		0,											//ウインドウ左上x座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
+		0,											//ウインドウ左上y座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
+		1920,										//ウインドウ幅．適当でいい時はCW_USEDEFAULT
+		1080,										//ウインドウ高さ．適当でいい時はCW_USEDEFAULT
 		NULL,										//親ウインドウのハンドル．なければNULL．dwStyleでDW_CHILDを指定したときは必須．
 		NULL,										//メニューのハンドル．デフォルト(WNDCLASS.lpszMenuName)を使う場合はNULL
 		wc.hInstance,								//WM_CREATEでLPARAMに渡したい値．だいたいNULL

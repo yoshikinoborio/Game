@@ -1,6 +1,6 @@
 #pragma once
 
-//3Dモデルのクラス
+//アニメーションしない3Dモデルのクラス
 class Model3D
 {
 public:
@@ -11,11 +11,10 @@ public:
 	~Model3D();
 
 	//初期化
-	void Initialize(LPDIRECT3DDEVICE9 pd3dDevice, LPCSTR name);
+	void Initialize(LPCSTR FileName);
 
 	//描画
-	void Draw(LPDIRECT3DDEVICE9 pd3dDevice,
-		D3DXMATRIX viewMatrix,
+	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		D3DXVECTOR4* diffuseLightDirection,
 		D3DXVECTOR4* diffuseLightColor,

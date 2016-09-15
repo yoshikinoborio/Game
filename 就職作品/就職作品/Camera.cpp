@@ -19,6 +19,7 @@ Camera::Camera()
 
 Camera::~Camera()
 {
+
 }
 
 //カメラの初期化
@@ -26,14 +27,16 @@ void Camera::Initialize()
 {
 	m_near = 0.1f;
 	m_far = 1000.0f;
-	m_aspect = 1.0f;
+	m_aspect = 1920.0f / 1020.0f;
 
-	m_eyePt = D3DXVECTOR3(0.0f, 7.0f, -20.0f);
+	m_eyePt = D3DXVECTOR3(0.0f, 7.0f, -10.0f);
 	m_lookatPt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_upVec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 	//プレイヤーのインスタンスの取得
-	m_player = game->GetPlayer();
+	//m_player = game->GetPlayer();
+	//ユニティちゃんのインスタンスの取得
+	m_unitychan = game->GetUnityChan();
 	
 	//注視点から視点に向かうベクトルの算出
 	m_toEyeptVector = m_eyePt - m_lookatPt;
@@ -48,9 +51,15 @@ void Camera::Update()
 	m_rStick_y = g_pad.GetRStickYF();
 
 	//カメラがプレイヤーに追従する処理
-	D3DXVECTOR3 V = m_player->GetPlayerPos();
+	//D3DXVECTOR3 V = m_player->GetPlayerPos();
+	//V.y += 1.0f;
+	//m_lookatPt = V;	//注視点をプレイヤーの少し上に設定
+	//m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる
+
+	//カメラがユニティちゃんに追従する処理
+	D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
 	V.y += 1.0f;
-	m_lookatPt = V;	//注視点をプレイヤーの少し上に設定
+	m_lookatPt = V;	//注視点をユニティちゃんの少し上に設定
 	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる
 
 	//右スティックを使った縦のカメラ移動

@@ -15,15 +15,15 @@ Model3D::~Model3D()
 }
 
 //初期化
-void Model3D::Initialize(LPDIRECT3DDEVICE9 pd3dDevice, LPCSTR name)
+void Model3D::Initialize(LPCSTR FileName)
 {
 	LPD3DXBUFFER pD3DXMtrlBuffer;	//マテリアルバッファ
 
 	//Xファイルのロード。
 	D3DXLoadMeshFromX(
-		name,	//Xファイルへの相対または絶対パス
+		FileName,	//Xファイルへの相対または絶対パス
 		D3DXMESH_SYSTEMMEM,		//頂点、インデックスバッファが何のメモリを使うかを指定する
-		pd3dDevice,				//D3Dのデバイスへのポインタ
+		g_pd3dDevice,				//D3Dのデバイスへのポインタ
 		NULL,					//ポリゴンの隣接情報の出力先
 		&pD3DXMtrlBuffer,		//マテリアルバッファの出力先
 		NULL,					//今回も今後も使う事が無いと思うのでNULL
@@ -40,7 +40,7 @@ void Model3D::Initialize(LPDIRECT3DDEVICE9 pd3dDevice, LPCSTR name)
 	{
 		m_textures[i] = NULL;
 		//画像ファイルからテクスチャを作成する。
-		D3DXCreateTextureFromFileA(pd3dDevice,	//デバイスのポインタ
+		D3DXCreateTextureFromFileA(g_pd3dDevice,	//デバイスのポインタ
 			d3dxMaterials[i].pTextureFilename,	//画像ファイルへの相対または絶対パス
 			&m_textures[i]);					//生成されたテクスチャオブジェクトのポインタが返る
 	}
@@ -51,7 +51,7 @@ void Model3D::Initialize(LPDIRECT3DDEVICE9 pd3dDevice, LPCSTR name)
 
 	//シェーダーをコンパイル。
 	HRESULT hr = D3DXCreateEffectFromFile(
-		pd3dDevice,								//いつものデバイスのポインタ
+		g_pd3dDevice,								//いつものデバイスのポインタ
 		"basic.fx",								//シェーダプログラムが書き込まれたファイルへの相対または絶対パス
 		NULL,									//プリプロセッサの定義
 		NULL,									//ID3DXIncludeインターフェイスの定義
@@ -68,8 +68,7 @@ void Model3D::Initialize(LPDIRECT3DDEVICE9 pd3dDevice, LPCSTR name)
 }
 
 //描画
-void Model3D::Draw(LPDIRECT3DDEVICE9 pd3dDevice,
-	D3DXMATRIX viewMatrix,
+void Model3D::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	D3DXVECTOR4* diffuseLightDirection,
 	D3DXVECTOR4* diffuseLightColor,

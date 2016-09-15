@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Pad.h"
 #include "EffectManager.h"
+#include "UnityChan.h"
 
 class Game
 {
@@ -26,6 +27,11 @@ public:
 	{
 		return &player;
 	}
+	//ユニティちゃんのインスタンス取得
+	UnityChan* GetUnityChan()
+	{
+		return &unitychan;
+	}
 	//ライトのインスタンスの取得
 	Light* GetLight()
 	{
@@ -43,6 +49,7 @@ public:
 	}
 private:
 	Player player;
+	UnityChan unitychan;
 	Camera camera;
 	Stage stage;
 	Light light;
