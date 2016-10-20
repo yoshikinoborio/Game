@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Game.h"
 #include "Stage.h"
 
 Stage::Stage()
@@ -6,6 +7,7 @@ Stage::Stage()
 	D3DXMatrixIdentity(&m_world);
 	D3DXMatrixIdentity(&m_rotation);
 	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
 }
 
 Stage::~Stage()
@@ -13,13 +15,16 @@ Stage::~Stage()
 	Release();
 }
 
-//初期化
+//初期化。
 void Stage::Initialize()
 {
-	m_model3d.Initialize("image\\Stage2.X");
+	m_model3d.Initialize("image\\Stage3.X");
+	//影描画するフラグをセット
+	m_model3d.SetShadowReceiverFlag(TRUE);
+	
 }
 
-//更新
+//更新。
 void Stage::Update()
 {
 	D3DXMatrixTranslation(&m_world, m_position.x, m_position.y, m_position.z);

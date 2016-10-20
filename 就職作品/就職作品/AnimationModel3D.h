@@ -1,8 +1,7 @@
 #pragma once
 #include "SkinModel.h"
-#include "SkinModelData.h"
 
-//アニメーションする3Dモデルの基底クラス
+//アニメーションする3Dモデルの基底クラス。
 class AnimationModel3D
 {
 public:
@@ -15,7 +14,7 @@ public:
 	virtual void Initialize() = 0;
 	virtual void Update() = 0;
 protected:
-	SkinModelData	m_skinModelData;	//スキンモデルデータ
-	SkinModel		m_skinModel;		//スキンモデル
-	Animation		m_animation;		//アニメーション
+	SkinModelData	m_skinModelData;	//スキンモデルデータ。
+	SkinModel		m_skinModel;		//スキンモデル。
+	Animation		m_animation;		//アニメーション。
 };

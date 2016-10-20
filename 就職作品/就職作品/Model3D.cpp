@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Game.h"
 #include "Model3D.h"
 
 Model3D::Model3D()
@@ -7,6 +8,7 @@ Model3D::Model3D()
 	m_textures = NULL;
 	m_numMaterial = 0;
 	m_effect = NULL;
+	m_isShadowReceiver = FALSE;
 }
 
 Model3D::~Model3D()
@@ -14,35 +16,35 @@ Model3D::~Model3D()
 	Release();
 }
 
-//初期化
+//初期化。
 void Model3D::Initialize(LPCSTR FileName)
 {
-	LPD3DXBUFFER pD3DXMtrlBuffer;	//マテリアルバッファ
+	LPD3DXBUFFER pD3DXMtrlBuffer;	//マテリアルバッファ。
 
 	//Xファイルのロード。
 	D3DXLoadMeshFromX(
-		FileName,	//Xファイルへの相対または絶対パス
-		D3DXMESH_SYSTEMMEM,		//頂点、インデックスバッファが何のメモリを使うかを指定する
-		g_pd3dDevice,				//D3Dのデバイスへのポインタ
-		NULL,					//ポリゴンの隣接情報の出力先
-		&pD3DXMtrlBuffer,		//マテリアルバッファの出力先
-		NULL,					//今回も今後も使う事が無いと思うのでNULL
-		&m_numMaterial,			//マテリアルの数の出力先
-		&m_mesh					//Xファイルから作成されたID3DXMeshのインスタンスの格納先
+		FileName,	//Xファイルへの相対または絶対パス。
+		D3DXMESH_SYSTEMMEM,		//頂点、インデックスバッファが何のメモリを使うかを指定する。
+		g_pd3dDevice,				//D3Dのデバイスへのポインタ。
+		NULL,					//ポリゴンの隣接情報の出力先。
+		&pD3DXMtrlBuffer,		//マテリアルバッファの出力先。
+		NULL,					//今回も今後も使う事が無いと思うのでNULL。
+		&m_numMaterial,			//マテリアルの数の出力先。
+		&m_mesh					//Xファイルから作成されたID3DXMeshのインスタンスの格納先。
 		);
 
 	// マテリアルバッファを取得。
 	D3DXMATERIAL* d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
 
 	m_textures = new LPDIRECT3DTEXTURE9[m_numMaterial];
-	//マテリアルの数だけループを回してテクスチャをロード
+	//マテリアルの数だけループを回してテクスチャをロード。
 	for (DWORD i = 0; i < m_numMaterial; i++)
 	{
 		m_textures[i] = NULL;
 		//画像ファイルからテクスチャを作成する。
-		D3DXCreateTextureFromFileA(g_pd3dDevice,	//デバイスのポインタ
-			d3dxMaterials[i].pTextureFilename,	//画像ファイルへの相対または絶対パス
-			&m_textures[i]);					//生成されたテクスチャオブジェクトのポインタが返る
+		D3DXCreateTextureFromFileA(g_pd3dDevice,	//デバイスのポインタ。
+			d3dxMaterials[i].pTextureFilename,	//画像ファイルへの相対または絶対パス。
+			&m_textures[i]);					//生成されたテクスチャオブジェクトのポインタが返る。
 	}
 	// マテリアルバッファを解放。
 	pD3DXMtrlBuffer->Release();
@@ -51,23 +53,23 @@ void Model3D::Initialize(LPCSTR FileName)
 
 	//シェーダーをコンパイル。
 	HRESULT hr = D3DXCreateEffectFromFile(
-		g_pd3dDevice,								//いつものデバイスのポインタ
-		"basic.fx",								//シェーダプログラムが書き込まれたファイルへの相対または絶対パス
-		NULL,									//プリプロセッサの定義
-		NULL,									//ID3DXIncludeインターフェイスの定義
-		D3DXSHADER_SKIPVALIDATION,				//シェーダーコンパイル時のコンパイルオプションを指定
-		NULL,									//エフェクト間で共有するグローバル変数をとりまとめてくれるID3DXEffectPoolインターフェイスを渡す
-		&m_effect,								//ID3DXEffectのインスタンス
-		&compileErrorBuffer						//コンパイルエラーが起こった時のエラー情報が格納される
+		g_pd3dDevice,							//いつものデバイスのポインタ。
+		"basic.fx",								//シェーダプログラムが書き込まれたファイルへの相対または絶対パス。
+		NULL,									//プリプロセッサの定義。
+		NULL,									//ID3DXIncludeインターフェイスの定義。
+		D3DXSHADER_SKIPVALIDATION,				//シェーダーコンパイル時のコンパイルオプションを指定。
+		NULL,									//エフェクト間で共有するグローバル変数をとりまとめてくれるID3DXEffectPoolインターフェイスを渡す。
+		&m_effect,								//ID3DXEffectのインスタンス。
+		&compileErrorBuffer						//コンパイルエラーが起こった時のエラー情報が格納される。
 		);
 	if (hr != S_OK) {
-		//シェーダーのエラー表示
+		//シェーダーのエラー表示。
 		MessageBox(NULL, (char*)(compileErrorBuffer->GetBufferPointer()), "error", MB_OK);
 		std::abort();
 	}
 }
 
-//描画
+//描画。
 void Model3D::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	D3DXVECTOR4* diffuseLightDirection,
@@ -77,9 +79,13 @@ void Model3D::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX	m_rotation,
 	int numDiffuseLight)
 {
+
 	m_effect->SetTechnique("SkinModel");
 	m_effect->Begin(NULL, D3DXFX_DONOTSAVESHADERSTATE);
 	m_effect->BeginPass(0);
+
+	//ライトビュープロジェクション行列の計算。
+	m_LVP = game->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * game->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
 
 	//定数レジスタに設定するカラー。
 	D3DXVECTOR4 color(1.0f, 0.0f, 0.0f, 1.0f);
@@ -98,15 +104,29 @@ void Model3D::Draw(D3DXMATRIX viewMatrix,
 	//環境光を設定。
 	m_effect->SetVector("g_ambientLight", &ambientLight);
 
-	m_effect->CommitChanges();						//この関数を呼び出すことで、データの転送が確定する。描画を行う前に一回だけ呼び出す。
+	//影のフラグを転送。
+	//StageでフラグをTRUEにしている
+	m_effect->SetInt("g_ShadowReceiverFlag", m_isShadowReceiver);
 
+	//ライトビュープロジェクション行列の転送。
+	m_effect->SetMatrix("g_mLVP", &m_LVP);
+
+	//影を描画しているレンダーターゲットのテクスチャを取得。
+	if (m_isShadowReceiver == TRUE)
+	{
+		m_effect->SetTexture("g_shadowTexture", game->GetRenderTarget()->GetTexture());
+	}
+
+	
 	for (DWORD i = 0; i < m_numMaterial; i++)
 	{
 		m_effect->SetTexture("g_diffuseTexture", m_textures[i]);
-		// Draw the m_mesh subset
+		m_effect->CommitChanges();						//この関数を呼び出すことで、データの転送が確定する。描画を行う前に一回だけ呼び出す。
+	// Draw the m_mesh subset
 		m_mesh->DrawSubset(i);
 	}
 
+	
 	m_effect->EndPass();
 	m_effect->End();
 }

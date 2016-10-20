@@ -7,7 +7,7 @@
 //スキン行列。
 #define MAX_MATRICES  26
 float4x3    g_mWorldMatrixArray[MAX_MATRICES] : WORLDMATRIXARRAY;
-float4x4    g_mViewProj : VIEWPROJECTION;
+float4x4    g_mViewProj : VIEWPROJECTION;//カメラの回転行列
 float		g_numBone;			//骨の数。
 
 float4x4	g_worldMatrix;			//!<ワールド行列。

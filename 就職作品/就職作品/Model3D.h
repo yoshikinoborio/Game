@@ -1,19 +1,19 @@
 #pragma once
 
-//アニメーションしない3Dモデルのクラス
+//アニメーションしない3Dモデルのクラス。
 class Model3D
 {
 public:
-	//コンストラクタ
+	//コンストラクタ。
 	Model3D();
 
-	//デストラクタ
+	//デストラクタ。
 	~Model3D();
 
-	//初期化
+	//初期化。
 	void Initialize(LPCSTR FileName);
 
-	//描画
+	//描画。
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		D3DXVECTOR4* diffuseLightDirection,
@@ -23,11 +23,21 @@ public:
 		D3DXMATRIX	m_rotation,
 		int numDiffuseLight);
 
-	//解放
+	//解放。
 	void Release();
+	/*!
+	* @brief	シャドウレシーバーのフラグを設定。
+	*@param[in]	flag	シャドウレシーバーのフラグ。
+	*/
+	void SetShadowReceiverFlag(bool flag)
+	{
+		m_isShadowReceiver = flag;
+	}
 private:
-	LPD3DXMESH				m_mesh;				//メッシュ。
-	LPDIRECT3DTEXTURE9*		m_textures;			//テクスチャ。
-	DWORD					m_numMaterial;		//マテリアルの数。
-	ID3DXEffect*			m_effect;			//エフェクト。
+	LPD3DXMESH				m_mesh;					//メッシュ。
+	LPDIRECT3DTEXTURE9*		m_textures;				//テクスチャ。
+	DWORD					m_numMaterial;			//マテリアルの数。
+	ID3DXEffect*			m_effect;				//エフェクト。
+	bool					m_isShadowReceiver;		//シャドウレシーバー。
+	D3DXMATRIX				m_LVP;					//ライトビュープロジェクション行列
 };

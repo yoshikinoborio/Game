@@ -1,5 +1,7 @@
 #pragma once
+
 const int LIGHT_NUM = 4;	//ライトの数
+
 //ライトのクラス
 class Light
 {

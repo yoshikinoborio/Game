@@ -23,26 +23,26 @@ namespace {
 	{
 		D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)pFrameBase;
 
-		// フレームにある行列からワールド変換行列を生成
+		// フレームにある行列からワールド変換行列を生成。
 		if (pParentMatrix != NULL)
 			D3DXMatrixMultiply(&pFrame->CombinedTransformationMatrix,
 			&pFrame->TransformationMatrix,
 			pParentMatrix);
 		else
 			pFrame->CombinedTransformationMatrix = pFrame->TransformationMatrix;
-		//兄弟フレームの行列をワールド変換行列に
+		//兄弟フレームの行列をワールド変換行列に。
 		if (pFrame->pFrameSibling != NULL)
 		{
 			UpdateFrameMatrices(pFrame->pFrameSibling, pParentMatrix);
 		}
-		//子フレームをの行列をワールド変換行列に
+		//子フレームをの行列をワールド変換行列に。
 		if (pFrame->pFrameFirstChild != NULL)
 		{
 			UpdateFrameMatrices(pFrame->pFrameFirstChild, &pFrame->CombinedTransformationMatrix);
 		}
 	}
 
-	//アニメーションおよびレンダリングのためのメッシュ階層をセットアップ
+	//アニメーションおよびレンダリングのためのメッシュ階層をセットアップ。
 	HRESULT GenerateSkinnedMesh(
 		IDirect3DDevice9* pd3dDevice,
 		D3DXMESHCONTAINER_DERIVED* pMeshContainer
@@ -99,11 +99,11 @@ namespace {
 			if (NewFVF != pMeshContainer->MeshData.pMesh->GetFVF())
 			{
 				LPD3DXMESH pMesh;
-				//CloneMeshFVF(メッシュの作成オプションを指定,
-				//出力メッシュに含まれる頂点の頂点フォーマットを指定,
-				//メッシュに関連付けられているデバイス オブジェクト,
-				//コピーされたメッシュ,)柔軟な頂点フォーマット (FVF) コードを使ってメッシュのコピーを作成する
-				//戻り値は成功した場合は、D3D_OK
+				//CloneMeshFVF(メッシュの作成オプションを指定。
+				//出力メッシュに含まれる頂点の頂点フォーマットを指定。
+				//メッシュに関連付けられているデバイス オブジェクト。
+				//コピーされたメッシュ,)柔軟な頂点フォーマット (FVF) コードを使ってメッシュのコピーを作成する。
+				//戻り値は成功した場合は、D3D_OK。
 				hr = pMeshContainer->MeshData.pMesh->CloneMeshFVF(pMeshContainer->MeshData.pMesh->GetOptions(), NewFVF,
 					pd3dDevice, &pMesh);
 				if (!FAILED(hr))
@@ -175,18 +175,18 @@ namespace {
 	}
 	//--------------------------------------------------------------------------------------
 	// Called to setup the pointers for a given bone to its transformation matrix
-	//関数内部でルートフレームから子フレームを検索しながら、メッシュ情報を持つフレームを探し当て、そこに格納されている「ボーン」の情報を格納している
+	//関数内部でルートフレームから子フレームを検索しながら、メッシュ情報を持つフレームを探し当て、そこに格納されている「ボーン」の情報を格納している。
 	//--------------------------------------------------------------------------------------
 	HRESULT SetupBoneMatrixPointersOnMesh(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME rootFrame)
 	{
 		UINT iBone, cBones;
 		D3DXFRAME_DERIVED* pFrame;
 
-		//MeshContainerはメッシュに含まれるボーンなどの色々な情報を格納している
+		//MeshContainerはメッシュに含まれるボーンなどの色々な情報を格納している。
 		D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
 
 		// if there is a skinmesh, then setup the bone matrices
-		//アニメーションするかしないかの判定
+		//アニメーションするかしないかの判定。
 		if (pMeshContainer->pSkinInfo != NULL)
 		{
 			cBones = pMeshContainer->pSkinInfo->GetNumBones();
@@ -197,7 +197,7 @@ namespace {
 
 			for (iBone = 0; iBone < cBones; iBone++)
 			{
-				//メッシュがどのボーンを使うかをD3DXFrameFind(子フレームが見つかった場合はそれを返す)を使って探して設定している
+				//メッシュがどのボーンを使うかをD3DXFrameFind(子フレームが見つかった場合はそれを返す)を使って探して設定している。
 				pFrame = (D3DXFRAME_DERIVED*)D3DXFrameFind(rootFrame,
 					pMeshContainer->pSkinInfo->GetBoneName(iBone));
 				if (pFrame == NULL)
@@ -213,13 +213,13 @@ namespace {
 
 	//--------------------------------------------------------------------------------------
 	// Called to setup the pointers for a given bone to its transformation matrix
-	//ループによってフレームに格納されているメッシュコンテナを格納
+	//ループによってフレームに格納されているメッシュコンテナを格納。
 	//--------------------------------------------------------------------------------------
 	HRESULT SetupBoneMatrixPointers(LPD3DXFRAME pFrame, LPD3DXFRAME pRootFrame)
 	{
 		HRESULT hr;
 
-		//親フレーム
+		//親フレーム。
 		if (pFrame->pMeshContainer != NULL)
 		{
 			hr = SetupBoneMatrixPointersOnMesh(pFrame->pMeshContainer, pRootFrame);
@@ -227,7 +227,7 @@ namespace {
 				return hr;
 		}
 
-		//兄弟フレーム
+		//兄弟フレーム。
 		if (pFrame->pFrameSibling != NULL)
 		{
 			hr = SetupBoneMatrixPointers(pFrame->pFrameSibling, pRootFrame);
@@ -235,7 +235,7 @@ namespace {
 				return hr;
 		}
 
-		//子フレーム
+		//子フレーム。
 		if (pFrame->pFrameFirstChild != NULL)
 		{
 			hr = SetupBoneMatrixPointers(pFrame->pFrameFirstChild, pRootFrame);
@@ -245,20 +245,20 @@ namespace {
 
 		return S_OK;
 	}
-	//ID3DXAllocateHierarchyはユーザの実装が必要
-	//インターフェイスは実体を持たない抽象クラス、抽象クラスを、
-	//ID3DXAllocateHierarchy AlllocHrcy;
-	//と実体を宣言すると、コンパイラから抽象オブジェクトは実体化できないと怒られる
-	//しかし
-	//ID3DXAllocateHierarchy *pAlllocHrcy;
-	//とポインタ宣言することは可能（ポインタは実体ではないから）しかし、
-	//これをD3DXLoadMeshHierarchyFromX関数に渡す暴挙に出ると、関数内部でポインタが参照された瞬間メモリ保護違反でアプリケーションが止まる、つまり、
-	//ID3DXAllocateHierarchyからクラスを派生して、定義されている仮想関数を実際に実装する必要がある
-	//ID3DXAllocateHierarchyはオブジェクトの作成と削除を担当する専門家
+	//ID3DXAllocateHierarchyはユーザの実装が必要。
+	//インターフェイスは実体を持たない抽象クラス、抽象クラスを。
+	//ID3DXAllocateHierarchy AlllocHrcy。
+	//と実体を宣言すると、コンパイラから抽象オブジェクトは実体化できないと怒られる。
+	//しかし。
+	//ID3DXAllocateHierarchy *pAlllocHrcy。
+	//とポインタ宣言することは可能（ポインタは実体ではないから）しかし。
+	//これをD3DXLoadMeshHierarchyFromX関数に渡す暴挙に出ると、関数内部でポインタが参照された瞬間メモリ保護違反でアプリケーションが止まる、つまり。
+	//ID3DXAllocateHierarchyからクラスを派生して、定義されている仮想関数を実際に実装する必要がある。
+	//ID3DXAllocateHierarchyはオブジェクトの作成と削除を担当する専門家。
 	class AllocateHierarchy : public ID3DXAllocateHierarchy
 	{
 	public:
-		//こう書かないとエラーになる
+		//こう書かないとエラーになる。
 		STDMETHOD(CreateFrame)(THIS_ LPCSTR Name, LPD3DXFRAME *ppNewFrame);
 		STDMETHOD(CreateMeshContainer)(THIS_
 			LPCSTR Name,
@@ -277,7 +277,7 @@ namespace {
 		}
 	};
 	//--------------------------------------------------------------------------------------
-	// Name: AllocateHierarchy::CreateFrame(ボーンのツリー階層を作っている(親から子、子から孫みたいに))
+	// Name: AllocateHierarchy::CreateFrame(ボーンのツリー階層を作っている(親から子、子から孫みたいに))。
 	// Desc: 
 	//--------------------------------------------------------------------------------------
 	HRESULT AllocateHierarchy::CreateFrame(LPCSTR Name, LPD3DXFRAME* ppNewFrame)
@@ -299,11 +299,11 @@ namespace {
 			goto e_Exit;
 
 		// initialize other data members of the frame
-		//ボーンのと合成行列の初期化
+		//ボーンのと合成行列の初期化。
 		D3DXMatrixIdentity(&pFrame->TransformationMatrix);
 		D3DXMatrixIdentity(&pFrame->CombinedTransformationMatrix);
 
-		//次に子と孫のフレームの初期化
+		//次に子と孫のフレームの初期化。
 		pFrame->pMeshContainer = NULL;
 		pFrame->pFrameSibling = NULL;
 		pFrame->pFrameFirstChild = NULL;
@@ -317,18 +317,18 @@ namespace {
 	}
 	//--------------------------------------------------------------------------------------
 	// Name: AllocateHierarchy::CreateMeshContainer()
-	//メッシュコンテナ(D3DXMESHCONTAINER構造体)を作成
+	//メッシュコンテナ(D3DXMESHCONTAINER構造体)を作成。
 	// Desc: 
 	//--------------------------------------------------------------------------------------
 	HRESULT AllocateHierarchy::CreateMeshContainer(
-		LPCSTR Name,									//メッシュの名前
-		CONST D3DXMESHDATA *pMeshData,					//メッシュ データ構造体へのポインター
-		CONST D3DXMATERIAL *pMaterials,					//メッシュに使用するマテリアルの配列
-		CONST D3DXEFFECTINSTANCE *pEffectInstances,		//メッシュに使用するエフェクト インスタンスの配列
-		DWORD NumMaterials,								//マテリアル配列内のマテリアル数
-		CONST DWORD *pAdjacency,						//メッシュの隣接ポリゴンインデックスの配列
-		LPD3DXSKININFO pSkinInfo,						//スキンデータが見つかった場合のスキンメッシュオブジェクトへのポインター
-		LPD3DXMESHCONTAINER *ppNewMeshContainer)		//作成されたメッシュコンテナーを返す
+		LPCSTR Name,									//メッシュの名前。
+		CONST D3DXMESHDATA *pMeshData,					//メッシュ データ構造体へのポインター。
+		CONST D3DXMATERIAL *pMaterials,					//メッシュに使用するマテリアルの配列。
+		CONST D3DXEFFECTINSTANCE *pEffectInstances,		//メッシュに使用するエフェクト インスタンスの配列。
+		DWORD NumMaterials,								//マテリアル配列内のマテリアル数。
+		CONST DWORD *pAdjacency,						//メッシュの隣接ポリゴンインデックスの配列。
+		LPD3DXSKININFO pSkinInfo,						//スキンデータが見つかった場合のスキンメッシュオブジェクトへのポインター。
+		LPD3DXMESHCONTAINER *ppNewMeshContainer)		//作成されたメッシュコンテナーを返す。
 	{
 		HRESULT hr;
 		D3DXMESHCONTAINER_DERIVED *pMeshContainer = NULL;
@@ -342,7 +342,7 @@ namespace {
 		*ppNewMeshContainer = NULL;
 
 		// this sample does not handle patch meshes, so fail when one is found
-		//通常メッシュかどうか
+		//通常メッシュかどうか。
 		if (pMeshData->Type != D3DXMESHTYPE_MESH)
 		{
 			hr = E_FAIL;
@@ -353,7 +353,7 @@ namespace {
 		pMesh = pMeshData->pMesh;
 		DWORD numVert = pMesh->GetNumVertices();
 		// this sample does not FVF compatible meshes, so fail when one is found
-		//メッシュに何一つ情報が入っていない場合のエラー
+		//メッシュに何一つ情報が入っていない場合のエラー。
 		if (pMesh->GetFVF() == 0)
 		{
 			hr = E_FAIL;
@@ -361,7 +361,7 @@ namespace {
 		}
 
 		// allocate the overloaded structure to return as a D3DXMESHCONTAINER
-		// メッシュコンテナオブジェクトの生成
+		// メッシュコンテナオブジェクトの生成。
 		pMeshContainer = new D3DXMESHCONTAINER_DERIVED;
 		if (pMeshContainer == NULL)
 		{
@@ -371,23 +371,23 @@ namespace {
 		memset(pMeshContainer, 0, sizeof(D3DXMESHCONTAINER_DERIVED));
 
 		// make sure and copy the name.  All memory as input belongs to caller, interfaces can be addref'd though
-		//メモリを確保して文字列を格納する ( フレーム等の名前格納用 )
+		//メモリを確保して文字列を格納する ( フレーム等の名前格納用 )。
 		hr = AllocateName(Name, &pMeshContainer->Name);
-		//// メモリ確保失敗
+		//// メモリ確保失敗。
 		if (FAILED(hr))
 			goto e_Exit;
 
 		pMesh->GetDevice(&pd3dDevice);
-		//メッシュに含まれるポリゴンの数を取得します
+		//メッシュに含まれるポリゴンの数を取得します。
 		NumFaces = pMesh->GetNumFaces();
 
 		pMeshContainer->MeshData.pMesh = pMesh;
-		//メッシュコンテナに通常メッシュを設定
+		//メッシュコンテナに通常メッシュを設定。
 		pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
 
-		//参照カウンタを1つ増やす必要がある
-		//同じテクスチャなどインスタンスが何個使っているかを管理している
-		//減算はインスタンスのデストラクタが呼ばれた時に行われる
+		//参照カウンタを1つ増やす必要がある。
+		//同じテクスチャなどインスタンスが何個使っているかを管理している。
+		//減算はインスタンスのデストラクタが呼ばれた時に行われる。
 		pMesh->AddRef();
 
 		D3DVERTEXELEMENT9 decl[] = {
@@ -406,7 +406,7 @@ namespace {
 		pMeshContainer->NumMaterials = max(1, NumMaterials);
 		pMeshContainer->pMaterials = new D3DXMATERIAL[pMeshContainer->NumMaterials];
 		pMeshContainer->ppTextures = new LPDIRECT3DTEXTURE9[pMeshContainer->NumMaterials];
-		//はある1つの三角ポリゴンに隣接する3つのポリゴンインデックス番号を格納した隣接ポリゴンインデックス
+		//はある1つの三角ポリゴンに隣接する3つのポリゴンインデックス番号を格納した隣接ポリゴンインデックス。
 		pMeshContainer->pAdjacency = new DWORD[NumFaces * 3];
 		if ((pMeshContainer->pAdjacency == NULL) || (pMeshContainer->pMaterials == NULL))
 		{
@@ -414,18 +414,18 @@ namespace {
 			goto e_Exit;
 		}
 
-		// 隣接情報をコピー
+		// 隣接情報をコピー。
 		memcpy(pMeshContainer->pAdjacency, pAdjacency, sizeof(DWORD)* NumFaces * 3);
 		memset(pMeshContainer->ppTextures, 0, sizeof(LPDIRECT3DTEXTURE9)* pMeshContainer->NumMaterials);
 
 		// if materials provided, copy them
-		// 受け取ったマテリアルをコピーする
+		// 受け取ったマテリアルをコピーする。
 		if (NumMaterials > 0)
 		{
-			// まずは丸ごとコピー
+			// まずは丸ごとコピー。
 			memcpy(pMeshContainer->pMaterials, pMaterials, sizeof(D3DXMATERIAL)* NumMaterials);
 
-			//// テクスチャ名を保存する
+			//// テクスチャ名を保存する。
 			for (iMaterial = 0; iMaterial < NumMaterials; iMaterial++)
 			{
 				if (pMeshContainer->pMaterials[iMaterial].pTextureFilename != NULL)
@@ -434,11 +434,11 @@ namespace {
 					char filePath[64];
 					strcpy(filePath, baseDir);
 					strcat(filePath, pMeshContainer->pMaterials[iMaterial].pTextureFilename);
-					//ファイルを基にしてテクスチャを作成する
+					//ファイルを基にしてテクスチャを作成する。
 					if (FAILED(D3DXCreateTextureFromFile(
 						pd3dDevice,
-						filePath,//ファイル名を指定する文字列へのポインタ。コンパイラの設定がUnicodeを要求している場合、データタイプLPCTSTRはLPCWSTRになる。それ以外の場合は、この文字列のデータタイプはLPCSTR 
-						&pMeshContainer->ppTextures[iMaterial]))//作成されたキューブ テクスチャ オブジェクトを表す、IDirect3DTexture9 インターフェイスへのポインタのアドレス
+						filePath,//ファイル名を指定する文字列へのポインタ。コンパイラの設定がUnicodeを要求している場合、データタイプLPCTSTRはLPCWSTRになる。それ以外の場合は、この文字列のデータタイプはLPCSTR 。
+						&pMeshContainer->ppTextures[iMaterial]))//作成されたキューブ テクスチャ オブジェクトを表す、IDirect3DTexture9 インターフェイスへのポインタのアドレス。
 						) {
 						pMeshContainer->ppTextures[iMaterial] = NULL;
 					}
@@ -462,7 +462,7 @@ namespace {
 		if (pSkinInfo != NULL)
 		{
 			// first save off the SkinInfo and original mesh data
-			//// スキン情報を格納
+			//スキン情報を格納。
 			pMeshContainer->pSkinInfo = pSkinInfo;
 			pSkinInfo->AddRef();
 
@@ -470,7 +470,7 @@ namespace {
 			pMesh->AddRef();
 
 			// Will need an array of offset matrices to move the vertices from the figure space to the bone's space
-			// 物体のローカル空間からボーン空間に頂点を移動するためのオフセット行列用の配列を用意する
+			// 物体のローカル空間からボーン空間に頂点を移動するためのオフセット行列用の配列を用意する。
 			cBones = pSkinInfo->GetNumBones();
 			pMeshContainer->pBoneOffsetMatrices = new D3DXMATRIX[cBones];
 			if (pMeshContainer->pBoneOffsetMatrices == NULL)
@@ -480,15 +480,15 @@ namespace {
 			}
 
 			// get each of the bone offset matrices so that we don't need to get them later
-			// それぞれのボーンのオフセット行列(ボーンの逆行列)を取り出して保存する
-			//自分を原点にボーンが移動、回転させるようにするから正しい移動量で動く
+			// それぞれのボーンのオフセット行列(ボーンの逆行列)を取り出して保存する。
+			//自分を原点にボーンが移動、回転させるようにするから正しい移動量で動く。
 			for (iBone = 0; iBone < cBones; iBone++)
 			{
 				pMeshContainer->pBoneOffsetMatrices[iBone] = *(pMeshContainer->pSkinInfo->GetBoneOffsetMatrix(iBone));
 			}
 
 			// GenerateSkinnedMesh will take the general skinning information and transform it to a HW friendly version
-			// スキンメッシュを作成する
+			// スキンメッシュを作成する。
 			hr = GenerateSkinnedMesh(pd3dDevice, pMeshContainer);
 			if (FAILED(hr))
 				goto e_Exit;
@@ -500,24 +500,24 @@ namespace {
 				pd3dDevice, &pOutMesh);
 			if (FAILED(hr))
 				goto e_Exit;
-			//D3DXComputeTangentFrameExはメッシュの接線フレームの計算を実行し、接線ベクトル(ポリゴンの向きに直行するベクトル)、従法線ベクトル(ポリゴンの向きとポリゴンの向きに直行するベクトルに直行するベクトル)、および必要に応じて法線ベクトル(ポリゴンの向き)が生成される
+			//D3DXComputeTangentFrameExはメッシュの接線フレームの計算を実行し、接線ベクトル(ポリゴンの向きに直行するベクトル)、従法線ベクトル(ポリゴンの向きとポリゴンの向きに直行するベクトルに直行するベクトル)、および必要に応じて法線ベクトル(ポリゴンの向き)が生成される。
 			hr = D3DXComputeTangentFrameEx(
-				pOutMesh,				// ID3DXMeshメッシュオブジェクトへのポインタ
-				D3DDECLUSAGE_TEXCOORD,	//テクスチャー座標の入力セマンティクスを指定する、D3DX_DEFAULTを指定するとこの関数はテクスチャー座標をないものと見なし、法線ベクトル計算が指定されない限り関数は失敗する
-				0,						//メッシュに複数のテクスチャー座標がある場合に、接線フレームの計算に使用するテクスチャー座標を指定する。0 の場合、メッシュにはテクスチャー座標が1つしかない
-				D3DDECLUSAGE_TANGENT,	//出力セマンティクス(セマンティクス(意味)、この情報は何なのかと言う情報を付与している、TANGENTなら接線)のタイプを指定する。通常、Uテクスチャー座標を基準とする偏微分が格納されることを表すD3DDECLUSAGE_TANGENTを指定する。D3DX_DEFAULTの場合、この偏微分は格納されません
-				0,						//U テクスチャー座標を基準とする偏微分を格納するセマンティクス インデックスを指定する
-				D3DX_DEFAULT,			//D3DDECLUSAGE型を指定する。通常、V テクスチャー座標を基準とする偏微分が格納されることを表すD3DDECLUSAGE_BINORMALを指定する。D3DX_DEFAULTの場合、この偏微分は格納されない
-				0,						//Vテクスチャー座標を基準とする偏微分を格納するセマンティクスインデックスを指定する
-				D3DDECLUSAGE_NORMAL,	//出力標準セマンティクスを指定する。通常、頂点ごとの法線ベクトルが格納されることを表すD3DDECLUSAGE_NORMALを指定する。D3DX_DEFAULTの場合、この法線ベクトルは格納されない
-				0,						//頂点ごとの法線ベクトルを格納するセマンティクス インデックスを指定する
-				0,						//接線フレームの計算のオプションを指定する
-				NULL,					//面ごとの3つの WORD値を格納する配列へのポインター
-				0.01f,    //ボケ具合.値をおおきくするとぼけなくなる
+				pOutMesh,				// ID3DXMeshメッシュオブジェクトへのポインタ。
+				D3DDECLUSAGE_TEXCOORD,	//テクスチャー座標の入力セマンティクスを指定する、D3DX_DEFAULTを指定するとこの関数はテクスチャー座標をないものと見なし、法線ベクトル計算が指定されない限り関数は失敗する。
+				0,						//メッシュに複数のテクスチャー座標がある場合に、接線フレームの計算に使用するテクスチャー座標を指定する。0 の場合、メッシュにはテクスチャー座標が1つしかない。
+				D3DDECLUSAGE_TANGENT,	//出力セマンティクス(セマンティクス(意味)、この情報は何なのかと言う情報を付与している、TANGENTなら接線)のタイプを指定する。通常、Uテクスチャー座標を基準とする偏微分が格納されることを表すD3DDECLUSAGE_TANGENTを指定する。D3DX_DEFAULTの場合、この偏微分は格納されない。
+				0,						//U テクスチャー座標を基準とする偏微分を格納するセマンティクス インデックスを指定する。
+				D3DX_DEFAULT,			//D3DDECLUSAGE型を指定する。通常、V テクスチャー座標を基準とする偏微分が格納されることを表すD3DDECLUSAGE_BINORMALを指定する。D3DX_DEFAULTの場合、この偏微分は格納されない。
+				0,						//Vテクスチャー座標を基準とする偏微分を格納するセマンティクスインデックスを指定する。
+				D3DDECLUSAGE_NORMAL,	//出力標準セマンティクスを指定する。通常、頂点ごとの法線ベクトルが格納されることを表すD3DDECLUSAGE_NORMALを指定する。D3DX_DEFAULTの場合、この法線ベクトルは格納されない。
+				0,						//頂点ごとの法線ベクトルを格納するセマンティクス インデックスを指定する。
+				0,						//接線フレームの計算のオプションを指定する。
+				NULL,					//面ごとの3つの WORD値を格納する配列へのポインター。
+				0.01f,    //ボケ具合.値をおおきくするとぼけなくなる。
 				0.25f,
 				0.01f,
-				&pOutMesh,	//算出された接線ベクトル、従法線ベクトル、および法線ベクトルのデータを受け取る出力ID3DXMeshメッシュオブジェクトへのポインターのアドレス
-				NULL		//このメソッドで計算した新しい頂点から元の頂点へのマッピングを受け取る出力ID3DXBufferバッファーオブジェクトへのポインターのアドレス、バッファーは DWORDの配列であり、配列のサイズはppMeshOutの頂点の数として定義される
+				&pOutMesh,	//算出された接線ベクトル、従法線ベクトル、および法線ベクトルのデータを受け取る出力ID3DXMeshメッシュオブジェクトへのポインターのアドレス。
+				NULL		//このメソッドで計算した新しい頂点から元の頂点へのマッピングを受け取る出力ID3DXBufferバッファーオブジェクトへのポインターのアドレス、バッファーは DWORDの配列であり、配列のサイズはppMeshOutの頂点の数として定義される。
 				);
 			pMeshContainer->MeshData.pMesh->Release();
 			pMeshContainer->MeshData.pMesh = pOutMesh;
@@ -557,7 +557,7 @@ namespace {
 				0,
 				0,
 				NULL,
-				0.01f,    //ボケ具合.値をおおきくするとぼけなくなる
+				0.01f,    //ボケ具合.値をおおきくするとぼけなくなる。
 				0.25f,
 				0.01f,
 				&pOutMesh,
@@ -570,13 +570,13 @@ namespace {
 				goto e_Exit;
 			//LPD3DXMESH optMesh;
 			//std::vector<DWORD> adjList;
-			////リストのサイズが要求されたサイズ (_Newsize) よりも小さい場合は、要求されたサイズになるまで、リストに要素が追加される  
-			////リストのサイズが要求されたサイズよりも大きい場合は、リストのサイズが _Newsize になるまで、リストの末尾に近い要素から順に削除される
-			////リストの現在のサイズが要求されたサイズと同じ場合は、何も実行されない
+			////リストのサイズが要求されたサイズ (_Newsize) よりも小さい場合は、要求されたサイズになるまで、リストに要素が追加される 。 
+			////リストのサイズが要求されたサイズよりも大きい場合は、リストのサイズが _Newsize になるまで、リストの末尾に近い要素から順に削除される。
+			////リストの現在のサイズが要求されたサイズと同じ場合は、何も実行されない。
 			//adjList.resize(3 * pOutMesh->GetNumFaces());
-			////メッシュエッジのリスト(各エッジに繋がってるポリゴンの情報)と、各エッジを共有する面のリストを生成する
-			//pOutMesh->GenerateAdjacency(1.0f, &adjList[0]); // EPSIONは適当な値(1.0f/512とか)
-			//numVert = pOutMesh->GetNumVertices();  // Optimizeの一種
+			////メッシュエッジのリスト(各エッジに繋がってるポリゴンの情報)と、各エッジを共有する面のリストを生成する。
+			//pOutMesh->GenerateAdjacency(1.0f, &adjList[0]); // EPSIONは適当な値(1.0f/512とか)。
+			//numVert = pOutMesh->GetNumVertices();  // Optimizeの一種。
 			//pOutMesh->Optimize(D3DXMESHOPT_COMPACT, &adjList[0], NULL, NULL, NULL, &optMesh);
 			//numVert = optMesh->GetNumVertices();
 
@@ -602,7 +602,7 @@ namespace {
 	//--------------------------------------------------------------------------------------
 	HRESULT AllocateHierarchy::DestroyFrame(LPD3DXFRAME pFrameToFree)
 	{
-		SAFE_DELETE_ARRAY(pFrameToFree->Name);	//char型の配列として動的にメモリを確保しているのでdeleteする必要がある
+		SAFE_DELETE_ARRAY(pFrameToFree->Name);	//char型の配列として動的にメモリを確保しているのでdeleteする必要がある。
 		SAFE_DELETE(pFrameToFree);
 		return S_OK;
 	}
@@ -612,7 +612,7 @@ namespace {
 
 	//--------------------------------------------------------------------------------------
 	// Name: AllocateHierarchy::DestroyMeshContainer()
-	//沢山のメモリをちまちまと確保しているので、漏らすことなく消さないといけない
+	//沢山のメモリをちまちまと確保しているので、漏らすことなく消さないといけない。
 	// Desc: 
 	//--------------------------------------------------------------------------------------
 	HRESULT AllocateHierarchy::DestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase)
@@ -664,16 +664,19 @@ void SkinModelData::Release()
 void SkinModelData::LoadModelData(const char* filePath, Animation* anim)
 {
 	AllocateHierarchy alloc;
-	//xファイル内に定義されているポリゴンメッシュのフレーム階層を読み込んで格納する関数(xファイルからアニメーション情報を取り出す)
+	//xファイル内に定義されているポリゴンメッシュのフレーム階層を読み込んで格納する関数(xファイルからアニメーション情報を取り出す)。
 	HRESULT hr = D3DXLoadMeshHierarchyFromX(
-		filePath,	//xファイルのファイルパス
-		D3DXMESH_VB_MANAGED,	//メッシュ作成のオプション、D3DXMESH_MANAGEDを指定するのが一般的、Direct3Dが管理するメモリ下に作成
-		g_pd3dDevice,	//デバイスへのポインタ
-		&alloc,			//ID3DXAllocateHierarchyインターフェイスへのポインタ(指定xファイルからフレーム階層を構築)
-		nullptr,		//xファイル内にユーザ定義部分があるとき、その情報をここに格納
-		&m_frameRoot,	//D3DXFRAME構造体へのダブルポインタで、ここにフレーム階層の親分（ルートフレーム）へのポインタのポインタが返る、このポインタを通して子フレームにアクセスできる、要するにフレーム階層の全てが格納される
-		&m_pAnimController	//ID3DXAnimationControllerインターフェイスへのポインタで、xファイル内のアニメーションに対応するアニメーションコントローラへのポインタが返る
+		filePath,	//xファイルのファイルパス。
+		D3DXMESH_VB_MANAGED,	//メッシュ作成のオプション、D3DXMESH_MANAGEDを指定するのが一般的、Direct3Dが管理するメモリ下に作成。
+		g_pd3dDevice,	//デバイスへのポインタ。
+		&alloc,			//ID3DXAllocateHierarchyインターフェイスへのポインタ(指定xファイルからフレーム階層を構築)。
+		nullptr,		//xファイル内にユーザ定義部分があるとき、その情報をここに格納。
+		&m_frameRoot,	//D3DXFRAME構造体へのダブルポインタで、ここにフレーム階層の親分（ルートフレーム）へのポインタのポインタが返る、このポインタを通して子フレームにアクセスできる、要するにフレーム階層の全てが格納される。
+		&m_pAnimController	//ID3DXAnimationControllerインターフェイスへのポインタで、xファイル内のアニメーションに対応するアニメーションコントローラへのポインタが返る。
 		);
+	if (FAILED(hr)) {
+		return;
+	}
 	//m_m_pAnimController->(0);
 	SetupBoneMatrixPointers(m_frameRoot, m_frameRoot);
 	if (anim && m_pAnimController) {

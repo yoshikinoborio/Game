@@ -5,20 +5,21 @@
 class SkinModelData;
 class Light;
 
-	//スキンモデル
+	//スキンモデル。
 class SkinModel {
 public:
 	SkinModel();
 	~SkinModel();
-	//初期化
+	//初期化。
 	void Initialize(SkinModelData* modelData);
-	//描画
+	//描画。
 	void Draw(D3DXMATRIX* viewMatrix, 
 		D3DXMATRIX* projMatrix, 
 		D3DXVECTOR4* diffuseLightDirection,
 		D3DXVECTOR4* diffuseLightColor,
 		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight);
+		int numDiffuseLight,
+		bool isDrawToShadowMap);
 	/*!
 	*@brief	更新。
 	*@details
@@ -40,7 +41,8 @@ public:
 		D3DXVECTOR4* diffuseLightDirection,
 		D3DXVECTOR4* diffuseLightColor,
 		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight
+		int numDiffuseLight,
+		bool isDrawToShadowMap
 		);
 	void DrawFrame(
 		IDirect3DDevice9* pd3dDevice,
@@ -53,20 +55,23 @@ public:
 		D3DXVECTOR4* diffuseLightDirection,
 		D3DXVECTOR4* diffuseLightColor,
 		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight
+		int numDiffuseLight,
+		bool isDrawToShadowMap
 		);
-	//ライトの設定
+	//ライトの設定。
 	void SetLight(Light* light)
 	{
 		this->m_light = light;
 	}
+	
 private:
-	D3DXMATRIX				m_worldMatrix;		//ワールド行列
-	D3DXMATRIX				m_rotationMatrix;	//回転行列
+	D3DXMATRIX				m_worldMatrix;		//ワールド行列。
+	D3DXMATRIX				m_rotationMatrix;	//回転行列。
 	SkinModelData*			m_skinModelData;	//スキンモデルデータ。
-	Animation				m_animation;		//アニメーション
-	static const int		MAX_MATRIX_PALLET = 128;	//マトリクスパレットの最大数
-	D3DXMATRIX				m_boneMatrixPallet[MAX_MATRIX_PALLET];	//マトリクスパレット
-	ID3DXEffect*			m_effect;			//エフェクト
+	Animation				m_animation;		//アニメーション。
+	static const int		MAX_MATRIX_PALLET = 128;	//マトリクスパレットの最大数。
+	D3DXMATRIX				m_boneMatrixPallet[MAX_MATRIX_PALLET];	//マトリクスパレット。
+	ID3DXEffect*			m_effect;			//エフェクト。
+	ID3DXEffect*			m_shadoweffect;			//シャドウエフェクト。
 	Light*					m_light;			//ライト。
 };
