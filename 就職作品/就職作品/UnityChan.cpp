@@ -24,7 +24,6 @@ void UnityChan::Initialize()
 	m_animation.SetAnimationEndtime(AnimationRun, 0.8f);
 	m_animation.SetAnimationEndtime(AnimationJump, 1.6f);
 	m_currentAnimSetNo = AnimationInvalid;
-	m_animation.PlayAnimation(m_currentAnimSetNo);
 
 	//カメラのインスタンスの取得。
 	m_camera = game->GetCamera();
@@ -35,6 +34,8 @@ void UnityChan::Update()
 
 	//パッドによるカメラの奥に移動する処理。
 	PadMove();
+
+	m_currentAnimSetNo = AnimationStand;
 
 	//パッドのスタートボタンでゲーム終了。
 	if (g_pad.IsPress(enButtonStart))
