@@ -1,7 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-
-Project("{8C74D8C9-A198-73D8-1B5F-825F17841A5C}") = "MapUnity", "Assembly-CSharp-Editor.csproj", "{DD853AED-F30A-9C9D-DE74-F4958315B71A}"
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapUnity.CSharp.Editor", "MapUnity.CSharp.Editor.csproj", "{66F7615A-A6FE-6A23-D992-8928F5B1175C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,15 +9,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DD853AED-F30A-9C9D-DE74-F4958315B71A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD853AED-F30A-9C9D-DE74-F4958315B71A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD853AED-F30A-9C9D-DE74-F4958315B71A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD853AED-F30A-9C9D-DE74-F4958315B71A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66F7615A-A6FE-6A23-D992-8928F5B1175C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66F7615A-A6FE-6A23-D992-8928F5B1175C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66F7615A-A6FE-6A23-D992-8928F5B1175C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66F7615A-A6FE-6A23-D992-8928F5B1175C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal

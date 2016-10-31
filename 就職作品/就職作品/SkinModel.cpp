@@ -13,6 +13,7 @@ SkinModel::SkinModel()
 	m_light = nullptr;
 	m_effect = NULL;
 	m_shadoweffect = NULL;
+	m_isShadowReceiver = FALSE;
 }
 
 SkinModel::~SkinModel()
@@ -119,6 +120,9 @@ void SkinModel::DrawMeshContainer(
 			}
 		}
 
+		//ライトビュープロジェクション行列の計算。
+		m_LVP = game->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * game->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
+
 		//定数レジスタに設定するカラー。
 		D3DXVECTOR4 color(1.0f, 0.0f, 0.0f, 1.0f);
 		//ワールド行列の転送。
@@ -137,10 +141,20 @@ void SkinModel::DrawMeshContainer(
 		m_effect->SetVectorArray("g_diffuseLightColor", diffuseLightColor, numDiffuseLight);
 		////環境光を設定。
 		m_effect->SetVector("g_ambientLight", &ambientLight);
+		//影のフラグを転送。
+		//影を落としたいモデルでフラグをTRUEにしている
+		m_effect->SetInt("g_ShadowReceiverFlag", m_isShadowReceiver);
+		//ライトビュープロジェクション行列の転送。
+		m_effect->SetMatrix("g_mLVP", &m_LVP);
 		//ビュープロジェクション。
 		m_effect->SetMatrix("g_mViewProj", &viewProj);
 		//視点。
 		m_effect->SetVector("vEyePos", &(D3DXVECTOR4)game->GetCamera()->GetEyePt());
+		//影を描画しているレンダーターゲットのテクスチャを取得。
+		if (m_isShadowReceiver == TRUE)
+		{
+			m_effect->SetTexture("g_shadowTexture", game->GetRenderTarget()->GetTexture());
+		}
 
 		if (pMeshContainer->pSkinInfo != NULL)
 		{

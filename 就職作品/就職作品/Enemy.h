@@ -10,6 +10,7 @@ struct EnemyLocInfo {
 	D3DXQUATERNION	rotation;	//回転。
 	D3DXVECTOR3 scale;			//スケール。
 };
+
 class Enemy : AnimationModel3D
 {
 public:
@@ -29,10 +30,20 @@ public:
 		bool isShadowReceiver);
 	//解放
 	void Release();
+	//エネミーで再生されるアニメーションの種類。
+	enum EnemyAnimationNo {
+		AnimationInvalid = -1,
+		AnimationWait,	//待機(立ち)。
+	};
+
+	//エネミーの状態遷移の種類。
+	enum EnemyState{
+		StateWait = 0,	//待機(立ち)。
+	};
 private:
 	int tableSize;					//位置情報のテーブル数
 	SkinModel m_skinModel[MapEnemyNum];	//スキンモデル。
-	Animation m_animation;		//アニメーション。
+	EnemyAnimationNo m_currentAnimSetNo;		//アニメーション。
 	SkinModelData m_skinModelData[MapEnemyNum];//スキンモデルデータ。
+	EnemyState     m_state;			//エネミーの状態。
 };
-

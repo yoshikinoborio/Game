@@ -63,7 +63,11 @@ public:
 	{
 		this->m_light = light;
 	}
-	
+	//シャドウレシーバーのフラグを設定。
+	void SetShadowReceiverFlag(bool flag)
+	{
+		m_isShadowReceiver = flag;
+	}
 private:
 	D3DXMATRIX				m_worldMatrix;		//ワールド行列。
 	D3DXMATRIX				m_rotationMatrix;	//回転行列。
@@ -74,4 +78,6 @@ private:
 	ID3DXEffect*			m_effect;			//エフェクト。
 	ID3DXEffect*			m_shadoweffect;			//シャドウエフェクト。
 	Light*					m_light;			//ライト。
+	bool					m_isShadowReceiver;		//シャドウレシーバー。
+	D3DXMATRIX				m_LVP;					//ライトビュープロジェクション行列
 };

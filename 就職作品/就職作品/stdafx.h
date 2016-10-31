@@ -5,10 +5,15 @@
 #include <strsafe.h>
 #pragma warning( default : 4996 )
 #include <cstdlib>
-
+#include "btBulletDynamicsCommon.h"
+#include "BulletCollision\CollisionDispatch\btGhostObject.h"
 #include "GraphicsDevice.h"
 #include <memory.h>
 #include "Assert.h"
+
+#define fPI 3.14159265358979323846f
+
+const float g_cTurnSpeed D3DXToRadian(10.0f);
 
 /*!
 *@brief	仮想ボタン定義。

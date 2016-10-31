@@ -85,6 +85,7 @@ public:
 	{
 		return m_rStickY;
 	}
+	
 private:
 	PAD_STATE m_state;			//パッドステート。
 	int m_padNo;				//パッド番号。

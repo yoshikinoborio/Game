@@ -1,8 +1,8 @@
 #pragma once
-#include "NonAnimationModel3D.h"
+#include "AnimationModel3D.h"
 
 //ステージクラス
-class Stage : NonAnimationModel3D
+class Stage : AnimationModel3D
 {
 public:
 	//デストラクタ
@@ -19,11 +19,12 @@ public:
 		D3DXVECTOR4* diffuseLightDirection,
 		D3DXVECTOR4* diffuseLightColor,
 		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight);
+		int numDiffuseLight,
+		bool isShadowReceiver);
 	//解放
 	void Release();
 private:
 	D3DXVECTOR3		m_position;			//座標。
-	D3DXMATRIX		m_world;			//ワールド行列。
-	D3DXMATRIX		m_rotation;				//回転行列。
+	D3DXVECTOR3     m_scale;			//スケール。
+	D3DXQUATERNION  m_rotation;			//回転行列。
 };

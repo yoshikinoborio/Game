@@ -37,8 +37,8 @@ void Game::Initialize()
 	//空の初期化。
 	m_sky.Initialize();
 	//レンダリングターゲットの作成。
-	m_renderTarget.Create(400,
-		400,
+	m_renderTarget.Create(2480,
+		2480,
 		1,		
 		D3DFMT_A8R8G8B8,
 		D3DFMT_D16,
@@ -68,6 +68,7 @@ void Game::Draw()
 		g_pd3dDevice->SetDepthStencilSurface(m_renderTarget.GetDepthStencilBuffer());
 
 		//レンダリングターゲットを初期化。
+		//現在設定されているレンダーターゲットをクリア。
 		g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
 
 		//影ユニティちゃんの描画。
@@ -116,16 +117,17 @@ void Game::Draw()
 		m_light.GetDiffuseLightDirection(),
 		m_light.GetDiffuseLightColor(),
 		m_light.GetAmbientLight(),
-		m_light.GetLight_Num());
+		m_light.GetLight_Num(),
+		FALSE);
 
 	//マップにあるオブジェクトの描画。
 	m_map.Draw(m_camera.GetViewMatrix(),
-	m_camera.GetProjectionMatrix(),
-	m_light.GetDiffuseLightDirection(),
-	m_light.GetDiffuseLightColor(),
-	m_light.GetAmbientLight(),
-	m_light.GetLight_Num(),
-	FALSE);
+		m_camera.GetProjectionMatrix(),
+		m_light.GetDiffuseLightDirection(),
+		m_light.GetDiffuseLightColor(),
+		m_light.GetAmbientLight(),
+		m_light.GetLight_Num(),
+		FALSE);
 
 	//ユニティちゃんの描画。
 	m_unitychan.Draw(m_camera.GetViewMatrix(),

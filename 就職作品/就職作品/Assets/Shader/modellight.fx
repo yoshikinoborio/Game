@@ -20,11 +20,13 @@ float3 		vEyePos;			//カメラの位置。
 float4	g_diffuseLightDirection[DIFFUSE_LIGHT_NUM];	//ディフューズライトの方向。
 float4	g_diffuseLightColor[DIFFUSE_LIGHT_NUM];		//ディフューズライトのカラー。
 float4	g_ambientLight;
+int     g_ShadowReceiverFlag;		//影を落とすフラグ。
+float4x4 g_mLVP;			//ライトビュープロジェクション行列。 //環境光。
 
 //bool g_isHasNormalMap;			//法線マップ保持している？
 
 texture g_diffuseTexture;		//ディフューズテクスチャ。
-//texture g_shadowTexture;		//シャドウ用のテクスチャ。
+texture g_shadowTexture;		//シャドウ用のテクスチャ。
 sampler g_diffuseTextureSampler = 
 sampler_state
 {
@@ -35,6 +37,18 @@ sampler_state
     AddressU = Wrap;
 	AddressV = Wrap;
 };
+
+sampler g_shadowTextureSampler = 
+sampler_state
+{
+	Texture = <g_shadowTexture>;
+    MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+    AddressU = CLAMP;
+	AddressV = CLAMP;
+};
+
 
 //法線マップ。
 //texture g_normalTexture;		//法線マップ。
@@ -79,6 +93,7 @@ struct VS_OUTPUT
 //      float3  Normal			: NORMAL;
         float2  Tex0   			: TEXCOORD0;
 //      float3	Tangent			: TEXCOORD1;	//接ベクトル。
+	float4  lightViewPos_1	: TEXCOORD4;
 };
 /*!
  *@brief	ワールド座標とワールド法線をスキン行列から計算する。
@@ -143,6 +158,11 @@ VS_OUTPUT VSMain( VS_INPUT In, uniform bool hasSkin )
 		CalcWorldPosAndNormal(In, Pos);//, Normal, Tangent );
 	}
   
+	float4 worldpos = mul(In.Pos,g_worldMatrix);
+	worldpos.w = 1.0f;
+
+	o.lightViewPos_1 = mul(worldpos,g_mLVP );
+
 	o.Pos = mul(float4(Pos.xyz, 1.0f), g_mViewProj);	//ビュー空間から射影空間に変換。
     //拡散光+環境光。
     float amb = -g_diffuseLightDirection[0].w;
@@ -163,6 +183,13 @@ VS_OUTPUT VSMain( VS_INPUT In, uniform bool hasSkin )
  */
 float4 PSMain( VS_OUTPUT In ) : COLOR
 {
+	float4 posInLVP = In.lightViewPos_1;
+	posInLVP.xyz /= posInLVP.w;
+
+	//uv座標に変換。
+	float2 shadowMapUV = float2(0.5f, -0.5f) * posInLVP.xy + float2(0.5f, 0.5f);
+	float2 shadow_val = 1.0f;
+
 	//ライトを計算。
 	float4 lig = 0.0f;
 	{
@@ -178,7 +205,14 @@ float4 PSMain( VS_OUTPUT In ) : COLOR
 		lig += g_ambientLight;
 	}
 	float4 color = tex2D(g_diffuseTextureSampler, In.Tex0);
-	//color *= tex2D(g_shadowTextureSampler, In.Tex0);
+
+	if(g_ShadowReceiverFlag==true)
+	{
+		if ((shadowMapUV.x > 0.0f && shadowMapUV.x <1.0f) && (shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f))
+		{
+			color *= tex2D(g_shadowTextureSampler, shadowMapUV);
+		}
+	}
 	color.xyz *= lig;
 	return color;
 }

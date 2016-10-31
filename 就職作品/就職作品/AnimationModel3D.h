@@ -1,5 +1,6 @@
 #pragma once
 #include "SkinModel.h"
+#include "Turn.h"
 
 //アニメーションする3Dモデルの基底クラス。
 class AnimationModel3D
@@ -17,4 +18,5 @@ protected:
 	SkinModelData	m_skinModelData;	//スキンモデルデータ。
 	SkinModel		m_skinModel;		//スキンモデル。
 	Animation		m_animation;		//アニメーション。
+	Turn			m_turn;				//回転。
 };

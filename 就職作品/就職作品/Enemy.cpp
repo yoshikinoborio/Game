@@ -26,19 +26,26 @@ void Enemy::Initialize()
 		m_skinModelData[i].LoadModelData(EnemyChipLocInfoTable[i].modelName, &m_animation);
 		m_skinModel[i].Initialize(&m_skinModelData[i]);
 	}
+	m_currentAnimSetNo = AnimationInvalid;
+	m_state = StateWait;
 
 }
 
 void Enemy::Update()
 {
+	m_animation.Update(1.0f / 60.0f);
+
+	if (m_state == StateWait)
+	{
+		m_currentAnimSetNo = AnimationWait;
+	}
+
 	for (int i = 0; i < tableSize; i++)
 	{
-
 		//マップオブジェクト一つ一つを更新。
-		m_animation.Update(1.0f / 60.0f);
 		m_skinModel[i].Update(EnemyChipLocInfoTable[i].pos, EnemyChipLocInfoTable[i].rotation, EnemyChipLocInfoTable[i].scale);
-		
 	}
+	m_animation.PlayAnimation(m_currentAnimSetNo, 0.1f);
 }
 
 void Enemy::Draw(

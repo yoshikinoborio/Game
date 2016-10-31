@@ -4,8 +4,8 @@
 
 Stage::Stage()
 {
-	D3DXMatrixIdentity(&m_world);
-	D3DXMatrixIdentity(&m_rotation);
+	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
 	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 }
@@ -18,16 +18,17 @@ Stage::~Stage()
 //初期化。
 void Stage::Initialize()
 {
-	m_model3d.Initialize("image\\Stage3.X");
+	m_skinModelData.LoadModelData("image\\Stage3.X", &m_animation);
+	m_skinModel.Initialize(&m_skinModelData);
 	//影描画するフラグをセット
-	m_model3d.SetShadowReceiverFlag(TRUE);
+	m_skinModel.SetShadowReceiverFlag(TRUE);
 	
 }
 
 //更新。
 void Stage::Update()
 {
-	D3DXMatrixTranslation(&m_world, m_position.x, m_position.y, m_position.z);
+	m_skinModel.Update(m_position, m_rotation, m_scale);
 }
 
 // 描画。
@@ -36,21 +37,14 @@ void Stage::Draw(D3DXMATRIX viewMatrix,
 	D3DXVECTOR4* diffuseLightDirection,
 	D3DXVECTOR4* diffuseLightColor,
 	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight){
+	int numDiffuseLight,
+	bool isShadowReceiver){
 
-	m_model3d.Draw(viewMatrix,
-		projMatrix,
-		diffuseLightDirection,
-		diffuseLightColor,
-		ambientLight,
-		m_world,
-		m_rotation,
-		numDiffuseLight
-		);
+	m_skinModel.Draw(&viewMatrix, &projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight, isShadowReceiver);
 }
 
 //開放。
 void Stage::Release()
 {
-	m_model3d.Release();
+	m_skinModelData.Release();
 }
