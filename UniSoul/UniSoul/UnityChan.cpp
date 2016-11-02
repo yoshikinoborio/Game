@@ -7,9 +7,11 @@ UnityChan::UnityChan()
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	//D3DXQUATERNIONの引数は回転軸(0.0f～1.0fがMax);
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_position = D3DXVECTOR3(0.0f, 20.0f, 0.0f);
 	m_moveDir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_moveSpeed = 0.0f;
+	m_height = 0.0f;
+	m_radius = 0.0f;
 	m_isTurn = FALSE;
 }
 
@@ -46,6 +48,15 @@ void UnityChan::Initialize()
 
 	//カメラのインスタンスの取得。
 	m_camera = game->GetCamera();
+
+	//ユニティちゃんの高さと半径。
+	m_height = 1.0f;
+	m_radius = 0.5f;
+
+	//キャラクタコントローラを初期化。
+	//第一引数が半径、第二引数が高さ、第三引数が位置。
+	m_characterController.Init(m_radius, m_height, m_position);
+	m_characterController.SetGravity(-20.0f);	//重力強め。
 }
 void UnityChan::Update()
 {
@@ -56,7 +67,6 @@ void UnityChan::Update()
 	//動いている、止まっている時の処理。
 	if (m_state == StateRun || m_state == StateWait_00)
 	{
-
 		//パッドによるカメラの奥に移動する処理。
 		PadMove();
 
@@ -101,7 +111,7 @@ void UnityChan::Update()
 				
 			}
 		}
-	}
+	}//スライディング。
 	else if (m_state == StateSLID)
 	{
 		m_position += m_moveDir*RUNSPEED;
@@ -110,9 +120,11 @@ void UnityChan::Update()
 		{
 			m_state = StateWait_00;
 		}
-	}
+	}//バックステップ。
 	else if (m_state == StateBackStep)
 	{
+		//D3DXMATRIX&	UnityPos = m_world;
+		//m_position = UnityPos.m[0][0];
 		//バックステップが終了したら待機に遷移。
 		if (!m_animation.IsPlay())
 		{
@@ -126,7 +138,7 @@ void UnityChan::Update()
 		//待機(立ち)を設定。
 		m_currentAnimSetNo = AnimationWait_00;
 	}
-	else if (m_state == StateWait_01)
+	else if (m_state == StateWait_00)
 	{
 		m_currentAnimSetNo = AnimationWait_01;
 	}
@@ -179,7 +191,26 @@ void UnityChan::Update()
 	if (GetAsyncKeyState(VK_DOWN))
 	{
 		m_position.z -= 1.0f;
-	}
+	}				
+
+	//重力計算するためにキャラクターコントロールが計算した移動量を取得。
+	D3DXVECTOR3	GravitymoveSpeed;			//重力が反映された移動量。
+	GravitymoveSpeed = m_characterController.GetMoveSpeed();
+
+	//入力されたキャラの移動する方向を保存。
+	D3DXVECTOR3	m_moveDirSpeed;	//移動量。
+	m_moveDirSpeed = m_moveDir*m_moveSpeed;
+
+	//重力を反映するためにYは計算された値を使用するので何もしない。
+	GravitymoveSpeed.x = m_moveDirSpeed.x;
+	GravitymoveSpeed.z = m_moveDirSpeed.z;
+
+	//キャラクタが動く速度を設定。
+	m_characterController.SetMoveSpeed(GravitymoveSpeed);
+	//キャラクタコントローラーを実行。
+	m_characterController.Execute();
+	//キャラクターコントロールで計算した位置をプレイヤーの位置に反映。
+	m_position = m_characterController.GetPosition();
 
 	m_currentAngleY = m_turn.Update(m_isTurn, m_targetAngleY);
 
@@ -206,9 +237,10 @@ void UnityChan::Release()
 
 void UnityChan::PadMove()
 {
+	//D3DXVECTOR3 moveSpeed = m_characterController.GetMoveSpeed();
+
 	//カメラの方向にプレイヤーを進める処理。
 	//左スティックからのカメラ行列における入力を保持。
-	
 	//前後の動き
 	if (fabs(g_pad.GetLStickXF()) > 0.0f)
 	{
@@ -243,7 +275,7 @@ void UnityChan::PadMove()
 	m_moveDir.y = 0.0f;	//Y軸はいらない。
 	m_moveDir.z = cameraX.z * moveDirCameraLocal.x + cameraZ.z * moveDirCameraLocal.z;
 
-	m_position += m_moveDir*m_moveSpeed;
+	//m_position += m_moveDir*m_moveSpeed;
 	//カメラが向いている方向を正規化。
 	D3DXVec3Normalize(&m_moveDir, &m_moveDir);
 

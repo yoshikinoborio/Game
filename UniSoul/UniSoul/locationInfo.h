@@ -29,21 +29,14 @@
 //image\\Bucket.X
 {
 	"image\\Bucket.X",
-	D3DXVECTOR3(3.67f, 0.00f, 1.76f),             //平行移動
+	D3DXVECTOR3(3.67f, 9.96f, 1.76f),             //平行移動
 	D3DXQUATERNION(-0.71f, 0.00f, 0.00f, 0.71f ),    //回転
 	D3DXVECTOR3(1.00f, 1.00f, 1.00f ),            //拡大
 },
 //image\\Barrel.X
 {
 	"image\\Barrel.X",
-	D3DXVECTOR3(0.00f, 0.00f, 1.88f),             //平行移動
+	D3DXVECTOR3(0.00f, 9.42f, 1.88f),             //平行移動
 	D3DXQUATERNION(-0.71f, 0.00f, 0.00f, 0.71f ),    //回転
-	D3DXVECTOR3(1.00f, 1.00f, 1.00f ),            //拡大
-},
-//image\\Castle_01.X
-{
-	"image\\Castle_01.X",
-	D3DXVECTOR3(0.00f, 0.00f, -71.30f),             //平行移動
-	D3DXQUATERNION(0.00f, 0.00f, 0.00f, 1.00f ),    //回転
 	D3DXVECTOR3(1.00f, 1.00f, 1.00f ),            //拡大
 },

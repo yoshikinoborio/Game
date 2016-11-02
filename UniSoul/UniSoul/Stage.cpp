@@ -22,6 +22,22 @@ void Stage::Initialize()
 	m_skinModel.Initialize(&m_skinModelData);
 	//影描画するフラグをセット
 	m_skinModel.SetShadowReceiverFlag(TRUE);
+	m_skinModel.Update(m_position, m_rotation, m_scale);
+	//ここから衝突判定絡みの初期化。
+	//スキンモデルからメッシュコライダーを作成する。
+	D3DXMATRIX* rootBoneMatrix = m_skinModelData.GetRootBoneWorldMatrix();
+	m_meshCollider.CreateFromSkinModel(&m_skinModel, rootBoneMatrix);
+	//続いて剛体を作成する。
+	//まずは剛体を作成するための情報を設定。
+	RigidBodyInfo rbInfo;
+	rbInfo.collider = &m_meshCollider;	//剛体のコリジョンを設定する。
+	rbInfo.mass = 0.0f;					//質量を0にすると動かない剛体になる。
+	rbInfo.pos = m_position;
+	rbInfo.rot = m_rotation;
+	//剛体を作成。
+	m_rigidBody.Create(rbInfo);
+	//作成した剛体を物理ワールドに追加。
+	game->GetPhysicsWorld()->AddRigidBody(&m_rigidBody);
 	
 }
 

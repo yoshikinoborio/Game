@@ -27,7 +27,7 @@ void Light::Initialize()
 	m_diffuseLightColor[3] = D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f);
 
 	//ŠÂ‹«ŒõB
-	m_ambientLight = D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_ambientLight = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 

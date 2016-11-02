@@ -33,13 +33,29 @@ public:
 	{
 		return m_frameRoot;
 	}
+
 	//アニメーションコントローラーの取得
 	ID3DXAnimationController* GetAnimationController()
 	{
 		return m_pAnimController;
 	}
+
+	//一番最初に見つかったオリジナルメッシュを取得。
+	LPD3DXMESH GetOrgMeshFirst();
+
+	//一番最初に見つかったオリジナルメッシュを取得。
+	LPD3DXMESH GetOrgMesh(LPD3DXFRAME frame);
+
+	//ルートのボーンを取得。
+	D3DXMATRIX* GetRootBoneWorldMatrix()
+	{
+		D3DXFRAME_DERIVED* frameDer = (D3DXFRAME_DERIVED*)m_frameRoot;
+		return &frameDer->CombinedTransformationMatrix;
+	}
+
 	//ボーン行列の更新
 	void UpdateBoneMatrix(const D3DXMATRIX& matWorld);
+
 	void Release();
 private:
 	LPD3DXFRAME					m_frameRoot;		//フレームルート。

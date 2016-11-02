@@ -1,18 +1,19 @@
 #pragma once
 #include "AnimationModel3D.h"
+#include "CharacterController.h"
 #define WALKSPEED 0.02f	//歩くスピード。
-#define RUNSPEED 0.2f	//走るスピード。
-#define MAX_RUN 0.6f	//歩きまでの上限値。
+#define RUNSPEED 0.2f*60.0f	//走るスピード。
+#define MAX_RUN 0.6f*60.0f	//歩きまでの上限値。
 
 class Camera;
 
-class UnityChan : AnimationModel3D
+class UnityChan : public AnimationModel3D
 {
 public:
 	UnityChan();
 	~UnityChan();
 	//初期化。
-	void Initialize()override;
+	void Initialize();
 	//更新。
 	void Update()override;
 	//描画。
@@ -74,11 +75,14 @@ private:
 	PlayerState     m_state;					//プレイヤーの状態。
 	D3DXQUATERNION  m_rotation;					//回転行列。
 	D3DXVECTOR3     m_moveDir;					//カメラから求めた方向。
-	float           m_moveSpeed;				//移動速度(歩く時と走るときの速度調整用)。
+	float           m_moveSpeed;				//移動速度(歩く時と走る時の速度調整用)。
 	float           m_waitAnimetionChangeTime;	//待機アニメーションの切り替え時間。
 	float			m_currentAngleY;			//現在の方向。
 	float			m_targetAngleY;				//向きたい方向。
 	bool			m_isTurn;					//回転フラグ。
 	float           m_saveLStickX;				//左スティックの左右の入力量を格納。
 	float			m_saveLStickY;				//左スティックの前後の入力量を格納。
+	CharacterController m_characterController;	//キャラクタコントローラ。
+	float			m_height;					//ユニティちゃんの高さ。
+	float			m_radius;					//ユニティちゃんの半径。
 };

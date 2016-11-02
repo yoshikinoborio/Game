@@ -1,7 +1,9 @@
 #pragma once
 #include "SkinModel.h"
 #include <string.h>
-#define MapObjectNum 7
+#include "RigidBody.h"
+#include "MeshCollider.h"
+#define MapObjectNum 6
 
 //マップチップの配置情報。
 struct MapLocInfo {
@@ -34,5 +36,6 @@ private:
 	SkinModel m_skinModel[MapObjectNum];	//スキンモデル。
 	Animation m_animation;		//アニメーション。
 	SkinModelData m_skinModelData[MapObjectNum];//スキンモデルデータ。
+	MeshCollider	m_meshCollider[MapObjectNum];	//メッシュコライダー。
+	RigidBody		m_rigidBody[MapObjectNum];		//剛体。
 };
-

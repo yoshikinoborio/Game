@@ -2,13 +2,13 @@
 #include "AnimationModel3D.h"
 
 //空クラス
-class Sky : AnimationModel3D
+class Sky : public AnimationModel3D
 {
 public:
 	Sky();
 	~Sky();
 	//初期化。
-	void Initialize()override;
+	void Initialize();
 	//更新。
 	void Update()override;
 	//描画。

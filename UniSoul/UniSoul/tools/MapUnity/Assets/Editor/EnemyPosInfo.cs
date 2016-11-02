@@ -39,7 +39,7 @@ public class EnemyPosInfo : EditorWindow
             }
         }
 
-        StreamWriter sw = new StreamWriter("C:/Github/Game/就職作品/就職作品/EnemyPosInfo.h", false, Encoding.UTF8);
+        StreamWriter sw = new StreamWriter("C:/Github/Game/UniSoul/UniSoul/EnemyPosInfo.h", false, Encoding.UTF8);
         sw.Write(headerTxt);
         sw.Close();
     }

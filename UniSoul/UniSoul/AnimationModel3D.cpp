@@ -4,7 +4,3 @@
 AnimationModel3D::AnimationModel3D()
 {
 }
-
-AnimationModel3D::~AnimationModel3D()
-{
-}

@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniSoul", "UniSoul\UniSoul.vcxproj", "{9558F650-5997-4CE0-B6D9-009B96F8EDD8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{28EF574A-84DB-3CB0-9B45-DB3545B2D05C} = {28EF574A-84DB-3CB0-9B45-DB3545B2D05C}
+		{4DCE52A5-106C-3D94-815D-C8EBC6133B5E} = {4DCE52A5-106C-3D94-815D-C8EBC6133B5E}
+		{9BF1ADF3-EB57-35E8-B156-ADE8FFC7E2F0} = {9BF1ADF3-EB57-35E8-B156-ADE8FFC7E2F0}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletCollision", "bulletPhysics\src\BulletCollision\BulletCollision.vcxproj", "{28EF574A-84DB-3CB0-9B45-DB3545B2D05C}"
 EndProject

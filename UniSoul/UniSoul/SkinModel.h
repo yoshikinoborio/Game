@@ -68,6 +68,8 @@ public:
 	{
 		m_isShadowReceiver = flag;
 	}
+
+	LPD3DXMESH GetOrgMeshFirst();
 private:
 	D3DXMATRIX				m_worldMatrix;		//ワールド行列。
 	D3DXMATRIX				m_rotationMatrix;	//回転行列。

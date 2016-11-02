@@ -2,7 +2,7 @@
 #include "AnimationModel3D.h"
 
 //ステージクラス
-class Stage : AnimationModel3D
+class Stage :public AnimationModel3D
 {
 public:
 	//デストラクタ
@@ -10,7 +10,7 @@ public:
 	//コンストラクタ
 	~Stage();
 	//初期化
-	void Initialize()override;
+	void Initialize();
 	//更新
 	void Update()override;
 	//描画

@@ -10,6 +10,7 @@
 #include "Map.h"
 #include "Sky.h"
 #include "Enemy.h"
+#include "Physics.h"
 
 class Game
 {
@@ -56,6 +57,11 @@ public:
 	{
 		return &m_renderTarget;
 	}
+	//物理ワールドの取得。
+	PhysicsWorld* GetPhysicsWorld()
+	{
+		return &m_physicsWorld;
+	}
 private:
 	UnityChan m_unitychan;
 	Camera m_camera;
@@ -66,6 +72,7 @@ private:
 	Map				m_map;
 	Sky				m_sky;
 	Enemy			m_enemy;
+	PhysicsWorld	m_physicsWorld;
 };
 
 //どこでも使えるようにextern。

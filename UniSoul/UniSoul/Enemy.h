@@ -11,7 +11,7 @@ struct EnemyLocInfo {
 	D3DXVECTOR3 scale;			//スケール。
 };
 
-class Enemy : AnimationModel3D
+class Enemy : public AnimationModel3D
 {
 public:
 	Enemy();
@@ -34,16 +34,20 @@ public:
 	enum EnemyAnimationNo {
 		AnimationInvalid = -1,
 		AnimationWait,	//待機(立ち)。
+		AnimationWalk,	//歩き。
+		AnimationRun,	//走り。
 	};
 
 	//エネミーの状態遷移の種類。
 	enum EnemyState{
 		StateWait = 0,	//待機(立ち)。
+		StateWalk,		//歩き。
+		StateRun,		//走り。
 	};
 private:
 	int tableSize;					//位置情報のテーブル数
-	SkinModel m_skinModel[MapEnemyNum];	//スキンモデル。
-	EnemyAnimationNo m_currentAnimSetNo;		//アニメーション。
-	SkinModelData m_skinModelData[MapEnemyNum];//スキンモデルデータ。
-	EnemyState     m_state;			//エネミーの状態。
+	SkinModel m_skinModel1[MapEnemyNum];	//スキンモデル。
+	EnemyAnimationNo m_currentAnimSetNo1;		//アニメーション。
+	SkinModelData m_skinModelData1[MapEnemyNum];//スキンモデルデータ。
+	EnemyState     m_state1;			//エネミーの状態。
 };

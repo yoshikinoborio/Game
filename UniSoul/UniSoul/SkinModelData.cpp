@@ -458,6 +458,9 @@ namespace {
 			pMeshContainer->pMaterials[0].MatD3D.Specular = pMeshContainer->pMaterials[0].MatD3D.Diffuse;
 		}
 
+		pMeshContainer->pOrigMesh = pMesh;
+		pMesh->AddRef();
+
 		// if there is skinning information, save off the required data and then setup for HW skinning
 		if (pSkinInfo != NULL)
 		{
@@ -466,8 +469,7 @@ namespace {
 			pMeshContainer->pSkinInfo = pSkinInfo;
 			pSkinInfo->AddRef();
 
-			pMeshContainer->pOrigMesh = pMesh;
-			pMesh->AddRef();
+			
 
 			// Will need an array of offset matrices to move the vertices from the figure space to the bone's space
 			// 物体のローカル空間からボーン空間に頂点を移動するためのオフセット行列用の配列を用意する。
@@ -687,4 +689,35 @@ void SkinModelData::LoadModelData(const char* filePath, Animation* anim)
 void SkinModelData::UpdateBoneMatrix(const D3DXMATRIX& matWorld)
 {
 	UpdateFrameMatrices(m_frameRoot, &matWorld);
+}
+
+LPD3DXMESH SkinModelData::GetOrgMeshFirst()
+{
+	return GetOrgMesh(m_frameRoot);
+}
+
+LPD3DXMESH SkinModelData::GetOrgMesh(LPD3DXFRAME frame)
+{
+	D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)(frame->pMeshContainer);
+	if (pMeshContainer != NULL) {
+		return pMeshContainer->pOrigMesh;
+	}
+	if (frame->pFrameSibling != NULL) {
+		//兄弟
+		LPD3DXMESH mesh = GetOrgMesh(frame->pFrameSibling);
+
+		if (mesh) {
+			return mesh;
+		}
+	}
+	if (frame->pFrameFirstChild != NULL)
+	{
+		//子供。
+		LPD3DXMESH mesh = GetOrgMesh(frame->pFrameFirstChild);
+		if (mesh) {
+			return mesh;
+		}
+	}
+
+	return NULL;
 }

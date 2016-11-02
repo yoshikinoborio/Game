@@ -74,15 +74,15 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
 		NULL,					//マウスカーソルのハンドル
 		NULL,					//ウインドウ背景色(背景描画用ブラシのハンドル)
 		NULL,					//デフォルトメニュー名
-		"就職作品",				//ウインドウクラスにつける名前
+		"UniSoul",				//ウインドウクラスにつける名前
 		NULL					//16×16の小さいサイズのアイコン(タスクバーに表示されるアイコン)
 	};
 	//作成したウィンドウクラスの登録
 	RegisterClassEx(&wc);
 
 	// ウィンドウを作成。
-	HWND hWnd = CreateWindow("就職作品",			//RegisterClassEx()で登録したクラスの名前
-		"就職作品",									//タイトルバーとかに表示する文字列
+	HWND hWnd = CreateWindow("UniSoul",			//RegisterClassEx()で登録したクラスの名前
+		"UniSoul",									//タイトルバーとかに表示する文字列
 		WS_OVERLAPPEDWINDOW,						//ウインドウスタイル(dwStyle)
 		0,											//ウインドウ左上x座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
 		0,											//ウインドウ左上y座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
@@ -122,6 +122,6 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
 	}
 	//ウインドウクラス解放(RegisterClass(Ex)で登録したクラスを解放する関数 このクラスを使ったウインドウを全て閉じてから使うこと)
 	//クラス名,クラスを作成したモジュールのインスタンスハンドル
-	UnregisterClass("就職作品", wc.hInstance);
+	UnregisterClass("UniSoul", wc.hInstance);
 	return 0;
 }

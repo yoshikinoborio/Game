@@ -20,6 +20,8 @@ void Game::Initialize()
 {
 	g_effectManager = new EffectManager;
 
+	//物理ワールドを初期化。
+	m_physicsWorld.Initialize();
 	//ライトを初期化。
 	m_light.Initialize();
 	//カメラの初期化。
@@ -168,6 +170,8 @@ void Game::Draw()
 -----------------------------------------------------------------------------*/
 void Game::Update()
 {
+	//物理ワールドの更新。
+	m_physicsWorld.Update();
 	//ライトの更新。
 	m_light.Update();
 	//パッドの更新。

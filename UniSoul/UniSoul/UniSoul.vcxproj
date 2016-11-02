@@ -14,6 +14,7 @@
     <ProjectGuid>{9558F650-5997-4CE0-B6D9-009B96F8EDD8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>就職作品</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -89,17 +90,23 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationModel3D.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CapsuleCollider.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemySkeleton.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="Model3D.cpp" />
     <ClCompile Include="NonAnimationModel3D.cpp" />
     <ClCompile Include="Pad.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="ShadowMapCamera.cpp" />
     <ClCompile Include="SkinModel.cpp" />
     <ClCompile Include="SkinModelData.cpp" />
@@ -114,19 +121,28 @@
     <ClInclude Include="AnimationModel3D.h" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CapsuleCollider.h" />
+    <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="CollisionAttr.h" />
     <ClInclude Include="EffectManager.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBase.h" />
     <ClInclude Include="EnemyPosInfo.h" />
+    <ClInclude Include="EnemySkeleton.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GraphicsDevice.h" />
+    <ClInclude Include="ICollider.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="locationInfo.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="Model3D.h" />
     <ClInclude Include="NonAnimationModel3D.h" />
     <ClInclude Include="Pad.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="ShadowMapCamera.h" />
     <ClInclude Include="SkinModel.h" />
     <ClInclude Include="SkinModelData.h" />

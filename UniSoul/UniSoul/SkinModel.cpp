@@ -21,6 +21,11 @@ SkinModel::~SkinModel()
 
 }
 
+LPD3DXMESH SkinModel::GetOrgMeshFirst()
+{
+	return m_skinModelData->GetOrgMeshFirst();
+}
+
 void SkinModel::Initialize(SkinModelData* modelData)
 {
 	m_effect = g_effectManager->LoadEffect("Assets/Shader/modellight.fx");
