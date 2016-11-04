@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Enemy.h"
-#define  _CRT_SECURE_NO_WARNINGS
 
 //マップチップの配置情報のテーブル。
 EnemyLocInfo EnemyChipLocInfoTable[] = {

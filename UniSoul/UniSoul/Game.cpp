@@ -33,7 +33,9 @@ void Game::Initialize()
 	//ユニティちゃんの初期化。
 	m_unitychan.Initialize();
 	//マップにいるエネミーの初期化。
-	m_enemy.Initialize();
+	//m_enemy.Initialize();
+	//エネミーマネージャーの初期化。
+	m_enemyManager.Initialize();
 	//マップにあるオブジェクトの初期化。
 	m_map.Initialize();
 	//空の初期化。
@@ -82,7 +84,7 @@ void Game::Draw()
 			m_light.GetLight_Num(),
 			TRUE);
 
-		//マップにあるオブジェクトの影の描画
+		//マップにあるオブジェクトの影の描画。
 		m_map.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
 			m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
 			m_light.GetDiffuseLightDirection(),
@@ -91,8 +93,17 @@ void Game::Draw()
 			m_light.GetLight_Num(),
 			TRUE);
 
-		//マップにいるエネミーの影の描画
-		m_enemy.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
+		//マップにいるエネミーの影の描画。
+		//m_enemy.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
+		//	m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
+		//	m_light.GetDiffuseLightDirection(),
+		//	m_light.GetDiffuseLightColor(),
+		//	m_light.GetAmbientLight(),
+		//	m_light.GetLight_Num(),
+		//	TRUE);
+
+		//エネミーマネージャーの敵の影の描画。
+		m_enemyManager.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
 			m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
 			m_light.GetDiffuseLightDirection(),
 			m_light.GetDiffuseLightColor(),
@@ -141,7 +152,16 @@ void Game::Draw()
 		FALSE);
 
 	//マップにいるエネミーの描画。
-	m_enemy.Draw(m_camera.GetViewMatrix(),
+	//m_enemy.Draw(m_camera.GetViewMatrix(),
+	//	m_camera.GetProjectionMatrix(),
+	//	m_light.GetDiffuseLightDirection(),
+	//	m_light.GetDiffuseLightColor(),
+	//	m_light.GetAmbientLight(),
+	//	m_light.GetLight_Num(),
+	//	FALSE);
+
+	//エネミーマネージャーの描画。
+	m_enemyManager.Draw(m_camera.GetViewMatrix(),
 		m_camera.GetProjectionMatrix(),
 		m_light.GetDiffuseLightDirection(),
 		m_light.GetDiffuseLightColor(),
@@ -183,7 +203,9 @@ void Game::Update()
 	//マップにあるオブジェクトの更新。
 	m_map.Update();
 	//マップにいるエネミーの更新。
-	m_enemy.Update();
+	//m_enemy.Update();
+	//エネミーマネージャーの更新。
+	m_enemyManager.Update();
 	//空の更新。
 	m_sky.Update();
 	//カメラの更新。
@@ -202,4 +224,5 @@ void Game::Terminate()
 	m_stage.Release();
 	m_sky.Release();
 	g_pd3dDevice->Release();
+	m_enemyManager.Release();
 }

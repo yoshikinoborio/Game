@@ -11,6 +11,7 @@
 #include "Sky.h"
 #include "Enemy.h"
 #include "Physics.h"
+#include "EnemyManager.h"
 
 class Game
 {
@@ -73,6 +74,7 @@ private:
 	Sky				m_sky;
 	Enemy			m_enemy;
 	PhysicsWorld	m_physicsWorld;
+	EnemyManager	m_enemyManager;
 };
 
 //Ç«Ç±Ç≈Ç‡égÇ¶ÇÈÇÊÇ§Ç…externÅB

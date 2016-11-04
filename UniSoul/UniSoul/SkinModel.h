@@ -68,6 +68,10 @@ public:
 	{
 		m_isShadowReceiver = flag;
 	}
+	D3DXMATRIX& GetWorldMatrix()
+	{
+		return m_worldMatrix;
+	}
 
 	LPD3DXMESH GetOrgMeshFirst();
 private:

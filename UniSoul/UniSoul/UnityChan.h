@@ -85,4 +85,5 @@ private:
 	CharacterController m_characterController;	//キャラクタコントローラ。
 	float			m_height;					//ユニティちゃんの高さ。
 	float			m_radius;					//ユニティちゃんの半径。
+	D3DXVECTOR3		m_moveDirSpeed;				//移動量。
 };

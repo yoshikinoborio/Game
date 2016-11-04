@@ -114,7 +114,7 @@ void UnityChan::Update()
 	}//スライディング。
 	else if (m_state == StateSLID)
 	{
-		m_position += m_moveDir*RUNSPEED;
+	//	m_moveSpeed += m_moveDir*RUNSPEED;
 		//スライディンが終了したら待機に遷移。
 		if (!m_animation.IsPlay())
 		{
@@ -123,8 +123,10 @@ void UnityChan::Update()
 	}//バックステップ。
 	else if (m_state == StateBackStep)
 	{
-		//D3DXMATRIX&	UnityPos = m_world;
-		//m_position = UnityPos.m[0][0];
+		D3DXMATRIX&	UnityPos = m_skinModel.GetWorldMatrix();
+		D3DXVECTOR3 vMoveSpeed = m_characterController.GetMoveSpeed();
+		vMoveSpeed.x += -UnityPos.m[3][0] * 100.0f;
+		vMoveSpeed.z += -UnityPos.m[3][2] * 100.0f;
 		//バックステップが終了したら待機に遷移。
 		if (!m_animation.IsPlay())
 		{
@@ -152,7 +154,7 @@ void UnityChan::Update()
 	}
 	else
 	{
-		if (m_moveSpeed == RUNSPEED)
+		if (m_moveSpeed >= WALKSPEED)
 		{
 			//走りを設定
 			m_currentAnimSetNo = AnimationRun;
@@ -198,7 +200,6 @@ void UnityChan::Update()
 	GravitymoveSpeed = m_characterController.GetMoveSpeed();
 
 	//入力されたキャラの移動する方向を保存。
-	D3DXVECTOR3	m_moveDirSpeed;	//移動量。
 	m_moveDirSpeed = m_moveDir*m_moveSpeed;
 
 	//重力を反映するためにYは計算された値を使用するので何もしない。
