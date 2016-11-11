@@ -94,13 +94,13 @@ void Game::Draw()
 			TRUE);
 
 		//マップにいるエネミーの影の描画。
-		//m_enemy.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
-		//	m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
-		//	m_light.GetDiffuseLightDirection(),
-		//	m_light.GetDiffuseLightColor(),
-		//	m_light.GetAmbientLight(),
-		//	m_light.GetLight_Num(),
-		//	TRUE);
+		m_enemy.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
+			m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
+			m_light.GetDiffuseLightDirection(),
+			m_light.GetDiffuseLightColor(),
+			m_light.GetAmbientLight(),
+			m_light.GetLight_Num(),
+			TRUE);
 
 		//エネミーマネージャーの敵の影の描画。
 		m_enemyManager.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),

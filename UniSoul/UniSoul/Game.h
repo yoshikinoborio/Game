@@ -81,3 +81,4 @@ private:
 extern Game* game;
 extern Pad g_pad;				
 extern EffectManager* g_effectManager;
+extern SkinModelData g_orginSkinModelData;

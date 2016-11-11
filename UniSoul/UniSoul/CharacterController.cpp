@@ -103,7 +103,7 @@ namespace {
 }
 
 
-void CharacterController::Init(float radius, float height, const D3DXVECTOR3& position)
+void CharacterController::Initialize(float radius, float height, const D3DXVECTOR3& position)
 {
 	m_position = position;
 	//コリジョン作成。
@@ -139,7 +139,7 @@ void CharacterController::Execute()
 	originalXZDir.y = 0.0f;
 	D3DXVec3Normalize(&originalXZDir, &originalXZDir);
 	
-	//XZ平面での衝突検出と衝突解決を行う。
+	//XZ平面での衝突/]]衝突解決を行う。
 	{
 		int loopCount = 0;
 		while (true) {

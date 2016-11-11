@@ -56,8 +56,31 @@ public:
 	//ボーン行列の更新
 	void UpdateBoneMatrix(const D3DXMATRIX& matWorld);
 
+	//モデルデータのクローンを作成。
+	//スケルトンは新しく作成され、メッシュデータは共通のものが使用されます。
+	void CloneModelData(const SkinModelData& modelData, Animation* anim);
+
+	//オリジナルのスケルトンを削除。
+	//@param[in]	frame	スケルトン。
+	void DeleteSkeleton(LPD3DXFRAME frame);
+
+	//スケルトンのクローンを削除。
+	//@param[in]	frame		削除するスケルトン。
+	void DeleteCloneSkeleton(LPD3DXFRAME frame);
+
+	//スケルトンのクローンを作成。
+	//@param[out]	dstFrame		クローン先のスケルトンの格納先。
+	//@param[in]		srcFrame		クローン元のスケルトン。
+	void CloneSkeleton(LPD3DXFRAME& dstFrame, LPD3DXFRAME srcFrame);
+
+	//クローンしたアニメーションコントローラーは何もしていないのでオリジナルのフレームルートを指している。
+	//なのでクローンのアニメーションコントローラーをクローンスケルトンのフレームルートを指すようする必要がある。
+	//それがこの処理。
+	void SetupOutputAnimationRegist(LPD3DXFRAME frame, ID3DXAnimationController* animCtr);
+
 	void Release();
 private:
 	LPD3DXFRAME					m_frameRoot;		//フレームルート。
 	ID3DXAnimationController*   m_pAnimController;	//アニメーションコントローラ。
+	bool						m_isClone;			//クローン。
 };

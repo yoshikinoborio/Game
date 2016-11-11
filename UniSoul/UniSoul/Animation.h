@@ -54,6 +54,12 @@ public:
 		return !m_isAnimEnd;
 	}
 
+	//ローカルアニメーションタイムの取得。
+	double GetlocalAnimationTime()
+	{
+		return m_localAnimationTime;
+	}
+
 	//補間時間を元にトラックの重みを更新。
 	void UpdateTrackWeights();
 #if 0

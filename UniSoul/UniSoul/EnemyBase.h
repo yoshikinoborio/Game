@@ -7,9 +7,10 @@ class EnemyBase : public AnimationModel3D
 public:
 	enum EnemyAnimation {
 		enAnimInvalid = -1,
-		enAnimWait,		//待機。
+		enAnimWait,		//待機中。
 		enAnimWalk,		//歩き中。
 		enAnimRun,		//走り中。
+		enAnimAttack,	//攻撃中。
 	};
 	EnemyBase() {
 

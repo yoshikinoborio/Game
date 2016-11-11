@@ -6,7 +6,7 @@ Stage::Stage()
 {
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_position = D3DXVECTOR3(0.0f, -20.0f, 0.0f);
 
 }
 
@@ -18,7 +18,7 @@ Stage::~Stage()
 //初期化。
 void Stage::Initialize()
 {
-	m_skinModelData.LoadModelData("image\\Stage3.X", &m_animation);
+	m_skinModelData.LoadModelData("image\\StageSabaku.X", &m_animation);
 	m_skinModel.Initialize(&m_skinModelData);
 	//影描画するフラグをセット
 	m_skinModel.SetShadowReceiverFlag(TRUE);

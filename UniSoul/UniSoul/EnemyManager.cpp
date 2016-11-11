@@ -2,6 +2,8 @@
 #include "EnemyManager.h"
 #include "EnemySkeleton.h"
 
+SkinModelData g_orginSkinModelData;
+
 //エネミー型の可変長配列。
 std::vector< EnemySkeleton*> enemyskeleton;
 
@@ -24,10 +26,14 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
+	Release();
 }
 
 void EnemyManager::Initialize()
 {
+	//敵のモデル情報からオリジナルを作成。
+	g_orginSkinModelData.LoadModelData(EnemyChipLocInfoTable->modelName,&m_animation);
+
 	for (EnemyManagerLocInfo& enemyinfo : EnemyChipLocInfoTable) {
 		EnemySkeleton* newEnemy = new EnemySkeleton;
 		newEnemy->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
@@ -37,7 +43,7 @@ void EnemyManager::Initialize()
 
 void EnemyManager::Update()
 {
-	for (int i = 0; i < enemyskeleton.size(); i++) {
+	for (unsigned int i = 0; i < enemyskeleton.size(); i++) {
 		enemyskeleton[i]->Update();
 	}
 }
@@ -50,7 +56,7 @@ void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	int numDiffuseLight,
 	bool isShadowReceiver)
 {
-	for (int i = 0; i < enemyskeleton.size(); i++)
+	for (unsigned int i = 0; i < enemyskeleton.size(); i++)
 	{
 		enemyskeleton[i]->Draw(viewMatrix, projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight, isShadowReceiver);
 	}
@@ -62,7 +68,7 @@ void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 
 void EnemyManager::Release()
 {
-	for (int i = 0; i < enemyskeleton.size(); i++)
+	for (unsigned int i = 0; i < enemyskeleton.size(); i++)
 	{
 		enemyskeleton[i]->Release();
 	}

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SkinModelData.h"
 #include "Animation.h"
+//#define _CRT_SECURE_NO_WARNINGS
 
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)       { if (p) { delete (p);     (p)=NULL; } }
@@ -40,6 +41,35 @@ namespace {
 		{
 			UpdateFrameMatrices(pFrame->pFrameFirstChild, &pFrame->CombinedTransformationMatrix);
 		}
+	}
+
+	void InnerDestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase)
+	{
+		UINT iMaterial;
+		D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
+
+		SAFE_DELETE_ARRAY(pMeshContainer->pAttributeTable);
+		SAFE_DELETE_ARRAY(pMeshContainer->Name);
+		SAFE_DELETE_ARRAY(pMeshContainer->pAdjacency);
+		SAFE_DELETE_ARRAY(pMeshContainer->pMaterials);
+		SAFE_DELETE_ARRAY(pMeshContainer->pBoneOffsetMatrices);
+
+		// release all the allocated textures
+		if (pMeshContainer->ppTextures != NULL)
+		{
+			for (iMaterial = 0; iMaterial < pMeshContainer->NumMaterials; iMaterial++)
+			{
+				SAFE_RELEASE(pMeshContainer->ppTextures[iMaterial]);
+			}
+		}
+
+		SAFE_DELETE_ARRAY(pMeshContainer->ppTextures);
+		SAFE_DELETE_ARRAY(pMeshContainer->ppBoneMatrixPtrs);
+		SAFE_RELEASE(pMeshContainer->pBoneCombinationBuf);
+		SAFE_RELEASE(pMeshContainer->MeshData.pMesh);
+		SAFE_RELEASE(pMeshContainer->pSkinInfo);
+		SAFE_RELEASE(pMeshContainer->pOrigMesh);
+		SAFE_DELETE(pMeshContainer);
 	}
 
 	//アニメーションおよびレンダリングのためのメッシュ階層をセットアップ。
@@ -197,9 +227,11 @@ namespace {
 
 			for (iBone = 0; iBone < cBones; iBone++)
 			{
+				pMeshContainer->ppBoneMatrixPtrs[iBone] = NULL;
+				LPCSTR boneName = pMeshContainer->pSkinInfo->GetBoneName(iBone);
 				//メッシュがどのボーンを使うかをD3DXFrameFind(子フレームが見つかった場合はそれを返す)を使って探して設定している。
 				pFrame = (D3DXFRAME_DERIVED*)D3DXFrameFind(rootFrame,
-					pMeshContainer->pSkinInfo->GetBoneName(iBone));
+					boneName);
 				if (pFrame == NULL)
 					return E_FAIL;
 
@@ -619,47 +651,77 @@ namespace {
 	//--------------------------------------------------------------------------------------
 	HRESULT AllocateHierarchy::DestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase)
 	{
-		UINT iMaterial;
-		D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
-
-		SAFE_DELETE_ARRAY(pMeshContainer->Name);
-		SAFE_DELETE_ARRAY(pMeshContainer->pAdjacency);
-		SAFE_DELETE_ARRAY(pMeshContainer->pMaterials);
-		SAFE_DELETE_ARRAY(pMeshContainer->pBoneOffsetMatrices);
-
-		// release all the allocated textures
-		if (pMeshContainer->ppTextures != NULL)
-		{
-			for (iMaterial = 0; iMaterial < pMeshContainer->NumMaterials; iMaterial++)
-			{
-				SAFE_RELEASE(pMeshContainer->ppTextures[iMaterial]);
-			}
-		}
-
-		SAFE_DELETE_ARRAY(pMeshContainer->ppTextures);
-		SAFE_DELETE_ARRAY(pMeshContainer->ppBoneMatrixPtrs);
-		SAFE_RELEASE(pMeshContainer->pBoneCombinationBuf);
-		SAFE_RELEASE(pMeshContainer->MeshData.pMesh);
-		SAFE_RELEASE(pMeshContainer->pSkinInfo);
-		SAFE_RELEASE(pMeshContainer->pOrigMesh);
-		SAFE_DELETE(pMeshContainer);
+		InnerDestroyMeshContainer(pMeshContainerBase);
 		return S_OK;
 	}
 
 
 }
 SkinModelData::SkinModelData() :
+m_isClone(false),
 m_frameRoot(nullptr),
 m_pAnimController(nullptr)
 {
 }
 SkinModelData::~SkinModelData()
 {
+	Release();
 }
 void SkinModelData::Release()
 {
 	if (m_pAnimController) {
 		m_pAnimController->Release();
+	}
+	if (m_isClone && m_frameRoot) {
+		//クローン
+		DeleteCloneSkeleton(m_frameRoot);
+		m_frameRoot = nullptr;
+	}
+	else {
+		//オリジナル。
+		DeleteSkeleton(m_frameRoot);
+	}
+}
+
+void SkinModelData::DeleteSkeleton(LPD3DXFRAME frame)
+{
+	if (!frame) {
+		return;
+	}
+	if (frame->pMeshContainer != NULL)
+	{
+		//メッシュコンテナがある。
+		InnerDestroyMeshContainer(frame->pMeshContainer);
+	}
+
+	if (frame->pFrameSibling != NULL)
+	{
+		//兄弟がいる。
+		DeleteSkeleton(frame->pFrameSibling);
+	}
+
+	if (frame->pFrameFirstChild != NULL)
+	{
+		//子供がいる。
+		DeleteSkeleton(frame->pFrameFirstChild);
+	}
+	SAFE_DELETE_ARRAY(frame->Name);
+	SAFE_DELETE(frame);
+}
+
+
+void SkinModelData::SetupOutputAnimationRegist(LPD3DXFRAME frame, ID3DXAnimationController* animCtr)
+{
+	if (animCtr == nullptr) {
+		return;
+	}
+	HRESULT hr = animCtr->RegisterAnimationOutput(frame->Name, &frame->TransformationMatrix, nullptr, nullptr, nullptr);
+	if (frame->pFrameSibling != nullptr) {
+		SetupOutputAnimationRegist(frame->pFrameSibling, animCtr);
+	}
+	if (frame->pFrameFirstChild != nullptr)
+	{
+		SetupOutputAnimationRegist(frame->pFrameFirstChild, animCtr);
 	}
 }
 
@@ -684,6 +746,90 @@ void SkinModelData::LoadModelData(const char* filePath, Animation* anim)
 	if (anim && m_pAnimController) {
 		anim->Initialize(m_pAnimController);
 	}
+}
+
+void SkinModelData::DeleteCloneSkeleton(LPD3DXFRAME frame)
+{
+
+	if (frame->pFrameSibling != nullptr) {
+		//兄弟
+		DeleteCloneSkeleton(frame->pFrameSibling);
+	}
+	if (frame->pFrameFirstChild != nullptr)
+	{
+		//子供。
+		DeleteCloneSkeleton(frame->pFrameFirstChild);
+	}
+	D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)(frame->pMeshContainer);
+	if (pMeshContainer) {
+		SAFE_DELETE_ARRAY(pMeshContainer->ppBoneMatrixPtrs);
+		SAFE_DELETE(pMeshContainer);
+	}
+	SAFE_DELETE_ARRAY(frame->Name);
+	SAFE_DELETE(frame);
+}
+
+void SkinModelData::CloneSkeleton(LPD3DXFRAME& dstFrame, LPD3DXFRAME srcFrame)
+{
+	//名前と行列をコピー。
+	dstFrame->TransformationMatrix = srcFrame->TransformationMatrix;
+	//メッシュコンテナをコピー。メッシュは使いまわす。
+	if (srcFrame->pMeshContainer) {
+		dstFrame->pMeshContainer = new D3DXMESHCONTAINER_DERIVED;
+		memcpy(dstFrame->pMeshContainer, srcFrame->pMeshContainer, sizeof(D3DXMESHCONTAINER_DERIVED));
+	}
+	else {
+		dstFrame->pMeshContainer = NULL;
+	}
+	AllocateName(srcFrame->Name, &dstFrame->Name);
+
+
+	if (srcFrame->pFrameSibling != nullptr) {
+		//兄弟がいるので、兄弟のためのメモリを確保。
+		dstFrame->pFrameSibling = new D3DXFRAME_DERIVED;
+		dstFrame->pFrameSibling->pFrameFirstChild = nullptr;
+		dstFrame->pFrameSibling->pFrameSibling = nullptr;
+		dstFrame->pFrameSibling->pMeshContainer = nullptr;
+		CloneSkeleton(dstFrame->pFrameSibling, srcFrame->pFrameSibling);
+	}
+	if (srcFrame->pFrameFirstChild != nullptr)
+	{
+		//子供がいるので、子供のためのメモリを確保。
+		dstFrame->pFrameFirstChild = new D3DXFRAME_DERIVED;
+		dstFrame->pFrameFirstChild->pFrameFirstChild = nullptr;
+		dstFrame->pFrameFirstChild->pFrameSibling = nullptr;
+		dstFrame->pFrameFirstChild->pMeshContainer = nullptr;
+
+		CloneSkeleton(dstFrame->pFrameFirstChild, srcFrame->pFrameFirstChild);
+	}
+}
+
+void SkinModelData::CloneModelData(const SkinModelData& modelData, Animation* anim)
+{
+	//スケルトン(ボーンのひとかたまり)の複製を作成。。
+	m_isClone = true;
+	m_frameRoot = new D3DXFRAME_DERIVED;
+	m_frameRoot->pFrameFirstChild = nullptr;
+	m_frameRoot->pFrameSibling = nullptr;
+	m_frameRoot->pMeshContainer = nullptr;
+	CloneSkeleton(m_frameRoot, modelData.m_frameRoot);
+	//アニメーションコントローラを作成して、スケルトンと関連付けを行う。
+	if (modelData.m_pAnimController) {
+		modelData.m_pAnimController->CloneAnimationController(
+			modelData.m_pAnimController->GetMaxNumAnimationOutputs(),
+			modelData.m_pAnimController->GetMaxNumAnimationSets(),
+			modelData.m_pAnimController->GetMaxNumTracks(),
+			modelData.m_pAnimController->GetMaxNumEvents(),
+			&m_pAnimController
+		);
+
+		SetupOutputAnimationRegist(m_frameRoot, m_pAnimController);
+
+		if (anim && m_pAnimController) {
+			anim->Initialize(m_pAnimController);
+		}
+	}
+	SetupBoneMatrixPointers(m_frameRoot, m_frameRoot);
 }
 
 void SkinModelData::UpdateBoneMatrix(const D3DXMATRIX& matWorld)

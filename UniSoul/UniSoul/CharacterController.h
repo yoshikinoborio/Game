@@ -23,7 +23,7 @@ public:
 	/*!
 		* @brief	初期化。
 		*/
-	void Init(float radius, float height, const D3DXVECTOR3& position);
+	void Initialize(float radius, float height, const D3DXVECTOR3& position);
 	/*!
 		* @brief	実行。
 		*/
@@ -103,6 +103,20 @@ public:
 	* @brief	剛体を物理エンジンから削除。。
 	*/
 	void RemoveRigidBoby();
+	/*!
+	* @brief	剛体の半径を設定。。
+	*/
+	void SetRadius(float radius)
+	{
+		m_radius = radius;
+	}
+	/*!
+	* @brief	剛体の高さを設定。。
+	*/
+	void SetHeight(float height)
+	{
+		m_height = height;
+	}
 private:
 	D3DXVECTOR3 		m_position;						//座標。
 	D3DXVECTOR3 		m_moveSpeed ;					//移動速度。 

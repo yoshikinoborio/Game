@@ -66,13 +66,24 @@ void Animation::PlayAnimation(int animationSetIndex, float interpolateTime){
 			if (m_oldAnimationSetNo == m_currentAnimationSetNo){
 				return;
 			}
-
+			//デバック用のコード。
+#if 0 //@todo for debug
+			char text[256];
+			sprintf(text, "animationSetIndex = %d\n", animationSetIndex);
+			//出力ウィンドウに出す処理。
+			OutputDebugString(text);
+			if (animationSetIndex == 0) {
+				printf("hoge");
+			}
+#endif
 			// 補間中フラグをtrueにする
 			m_isInterpolate = true;
 			this->m_interpolateTime = 0.0f;
 			m_interpolateEndTime = interpolateTime;
+			int prevTrackNo = m_currentTrackNo;
 			m_currentTrackNo = (m_currentTrackNo + 1) % m_numMaxTracks;
 			m_pAnimController->SetTrackAnimationSet(m_currentTrackNo, m_animationSets[m_currentAnimationSetNo]);
+			m_pAnimController->SetTrackSpeed(prevTrackNo, 0.0f);
 			m_pAnimController->SetTrackEnable(m_currentTrackNo, true);
 			m_pAnimController->SetTrackSpeed(m_currentTrackNo, 1.0f);
 			m_pAnimController->SetTrackPosition(m_currentTrackNo, 0.0f);

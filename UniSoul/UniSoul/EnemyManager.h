@@ -1,4 +1,6 @@
 #pragma once
+#include "Animation.h"
+//エネミー全部の処理をするクラス。
 class EnemyManager
 {
 public:
@@ -14,5 +16,5 @@ public:
 		int numDiffuseLight,
 		bool isShadowReceiver);
 	void Release();
-private:
+	Animation m_animation;
 };

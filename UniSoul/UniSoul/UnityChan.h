@@ -1,7 +1,7 @@
 #pragma once
 #include "AnimationModel3D.h"
 #include "CharacterController.h"
-#define WALKSPEED 0.02f	//歩くスピード。
+#define WALKSPEED 0.02f*60.0f	//歩くスピード。
 #define RUNSPEED 0.2f*60.0f	//走るスピード。
 #define MAX_RUN 0.6f*60.0f	//歩きまでの上限値。
 
@@ -46,24 +46,31 @@ public:
 	}
 	//プレイヤーで再生されるアニメーションの種類。
 	enum PlayerAnimationNo {
-		AnimationInvalid = -1,
-		AnimationWait_00,	//待機(立ち)。
+		AnimationWait_00 = 0,	//待機(立ち)。
 		AnimationWalk,		//歩き。
 		AnimationRun,		//走り。
 		AnimationWait_01,	//待機(腕伸ばし)。
 		AnimationWait_02,	//待機(クルクル)。
 		AnimationSLID,		//スライディング。
 		AnimationBackStep,	//バックステップ。
+		AnimationFall,		//落下中。
+		AnimationLanding,	//着地。
+		AnimationJump,		//ジャンプ。
 	};
+
 	//プレイヤーの状態遷移の種類。
-	enum PlayerState{
-		StateWait_00 = 0,	//待機(立ち)。
+	enum PlayerState {
+		StateInvalid = -1,
+		StateWait_00,	//待機(立ち)。
 		StateWait_01,		//待機(腕伸ばし)。
 		StateWait_02,		//待機(クルクル)。
 		StateWalk,          //歩き。
 		StateRun,			//走り。
 		StateSLID,			//スライディング。
 		StateBackStep,		//バックステップ。
+		StateFall,			//落下。
+		StateLanding,		//着地。
+		StateJump,			//ジャンプ。
 	};
 
 private:
@@ -75,6 +82,7 @@ private:
 	PlayerState     m_state;					//プレイヤーの状態。
 	D3DXQUATERNION  m_rotation;					//回転行列。
 	D3DXVECTOR3     m_moveDir;					//カメラから求めた方向。
+	D3DXVECTOR3     m_move;						//移動量。
 	float           m_moveSpeed;				//移動速度(歩く時と走る時の速度調整用)。
 	float           m_waitAnimetionChangeTime;	//待機アニメーションの切り替え時間。
 	float			m_currentAngleY;			//現在の方向。
@@ -85,5 +93,4 @@ private:
 	CharacterController m_characterController;	//キャラクタコントローラ。
 	float			m_height;					//ユニティちゃんの高さ。
 	float			m_radius;					//ユニティちゃんの半径。
-	D3DXVECTOR3		m_moveDirSpeed;				//移動量。
 };
