@@ -370,6 +370,7 @@ void UnityChan::PadMove()
 	//ƒJƒƒ‰‚ªŒü‚¢‚Ä‚¢‚é•ûŒü‚ð³‹K‰»B
 	D3DXVec3Normalize(&m_moveDir, &m_moveDir);
 
+	//‰ñ“]‚Ìˆ—B
 	if (D3DXVec3Length(&m_moveDir) > 0.0f)
 	{
 		D3DXVECTOR3 forward = D3DXVECTOR3(0.0f, 0.0f, 1.0f);

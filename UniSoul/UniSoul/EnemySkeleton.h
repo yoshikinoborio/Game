@@ -1,12 +1,17 @@
 #pragma once
 #include "EnemyBase.h"
 #include "CharacterController.h"
+#define SKELETONWALKSPEED 0.02f*60.0f
+#define SKELETONRUNSPEED 0.1f*60.0f
 
 class UnityChan;
 
 //エネミーの状態遷移の種類。
 enum SkeletonState {
-	SkeletonStateWait = 0,	//待機(立ち)。
+	SkeletonStateSearch = 0,//索敵中。
+	SkeletonStateFind,		//発見。
+	SkeletonStateAttack,
+	SkeletonStateWait,	//待機(立ち)。
 	SkeletonStateWalk,		//歩き。
 	SkeletonStateRun,		//走り。
 	SkeletonStateAttack,	//攻撃。
@@ -28,6 +33,8 @@ public:
 		int numDiffuseLight,
 		bool isShadowReceiver);
 	void Release();
+	//スケルトンの回転と移動の処理。
+	void SkeletonMove();
 private:
 	D3DXVECTOR3 m_initPos;						//骨の初期位置。
 	SkeletonState     m_state;					//骨の敵の状態。
@@ -37,4 +44,6 @@ private:
 	D3DXVECTOR3     m_move;						//移動量。
 	UnityChan*		m_unitytyan;				//ユニティちゃんのインスタンス。
 	D3DXVECTOR3		m_unityPos;					//ユニティちゃんの位置。
+	D3DXVECTOR3		m_posDifference;			//ユニティちゃんとの距離。
+	
 };
