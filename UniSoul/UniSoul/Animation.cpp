@@ -164,15 +164,19 @@ void Animation::Update(float deltaTime){
 				m_pAnimController->SetTrackPosition(m_currentTrackNo, m_localAnimationTime);
 				m_pAnimController->AdvanceTime(0, NULL);
 			}
-			else{
-				m_isAnimEnd = true;
-			}
+			m_isAnimEnd = true;
 		}
 		else{
 			// •’Ê‚ÉÄ¶B
-			if (m_animationSets[m_currentAnimationSetNo]->GetPeriod() < m_localAnimationTime
-				&& !m_animationLoopFlags[m_currentAnimationSetNo]) {
-				m_localAnimationTime = m_animationSets[m_currentAnimationSetNo]->GetPeriod();
+			if (m_animationSets[m_currentAnimationSetNo]->GetPeriod() < m_localAnimationTime) {
+				if (m_animationLoopFlags[m_currentAnimationSetNo]) {
+					m_localAnimationTime -= m_animationSets[m_currentAnimationSetNo]->GetPeriod();
+					m_pAnimController->SetTrackPosition(m_currentTrackNo, m_localAnimationTime);
+					m_pAnimController->AdvanceTime(0, NULL);
+				}
+				else {
+					m_localAnimationTime = m_animationSets[m_currentAnimationSetNo]->GetPeriod();
+				}
 				m_isAnimEnd = true;
 			}
 			else {

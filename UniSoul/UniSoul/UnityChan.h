@@ -1,9 +1,12 @@
 #pragma once
 #include "AnimationModel3D.h"
 #include "CharacterController.h"
+#include "ParticleEmitter.h"
 #define WALKSPEED 0.02f*60.0f	//歩くスピード。
 #define RUNSPEED 0.2f*60.0f	//走るスピード。
 #define MAX_RUN 0.6f*60.0f	//歩きまでの上限値。
+
+class CParticleEmitter;
 
 class Camera;
 
@@ -93,4 +96,6 @@ private:
 	CharacterController m_characterController;	//キャラクタコントローラ。
 	float			m_height;					//ユニティちゃんの高さ。
 	float			m_radius;					//ユニティちゃんの半径。
+	SParicleEmitParameter m_param;
+	std::list<CParticleEmitter*>	m_particleEmitterList;
 };

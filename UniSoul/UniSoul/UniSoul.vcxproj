@@ -92,6 +92,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="CharacterController.cpp" />
+    <ClCompile Include="DamageCollisionWorld.cpp" />
     <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
@@ -116,6 +117,7 @@
     <ClCompile Include="SkinModel.cpp" />
     <ClCompile Include="SkinModelData.cpp" />
     <ClCompile Include="Sky.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Turn.cpp" />
@@ -130,6 +132,7 @@
     <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="CollisionAttr.h" />
+    <ClInclude Include="DamageCollisionWorld.h" />
     <ClInclude Include="EffectManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBase.h" />
@@ -158,6 +161,7 @@
     <ClInclude Include="SkinModel.h" />
     <ClInclude Include="SkinModelData.h" />
     <ClInclude Include="Sky.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Turn.h" />

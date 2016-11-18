@@ -41,7 +41,8 @@ void CParticle::Init(const SParicleEmitParameter& param)
 	D3DXVECTOR4 uv(0.0f, 0.0f, 1.0f, 1.0f);
 	moveSpeed = param.initSpeed;
 
-	position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	position = param.position;
+
 	float add = ((rand() % 255) - 128) / 128.0f;
 	moveSpeed.x += add * 0.3f;
 	moveSpeed.y += add * 0.3f;
@@ -84,7 +85,7 @@ void CParticle::Init(const SParicleEmitParameter& param)
 	LPD3DXBUFFER  compileErrorBuffer = NULL;
 	hr = D3DXCreateEffectFromFile(
 		g_pd3dDevice,
-		"ColorTexPrim.fx",
+		"Assets/Shader/ColorTexPrim.fx",
 		NULL,
 		NULL,
 #ifdef _DEBUG
@@ -103,6 +104,7 @@ void CParticle::Init(const SParicleEmitParameter& param)
 }
 bool CParticle::Update()
 {
+
 	D3DXVECTOR3 gravity = D3DXVECTOR3(0.0f, 0.16f, 0.0f); //Y ï˚å¸Ç…-0.16m/frame^2 ÇÃèdóÕâ¡ë¨ìxÅB 
 	float deltaTime = 1.0f / 60.0f;
 	moveSpeed += gravity;

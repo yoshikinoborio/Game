@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "UnityChan.h"
+#include "DamageCollisionWorld.h"
+
+DamageCollisionWorld* g_damageCollisionWorld;
 
 UnityChan::UnityChan()
 {
@@ -60,6 +63,10 @@ void UnityChan::Initialize()
 	//第一引数が半径、第二引数が高さ、第三引数が位置。
 	m_characterController.Initialize(m_radius, m_height, m_position);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
+
+	//ポインタなのでnew。
+	g_damageCollisionWorld = new DamageCollisionWorld;
+	g_damageCollisionWorld->Start();
 }
 void UnityChan::Update()
 {
@@ -106,9 +113,21 @@ void UnityChan::Update()
 					m_moveSpeed = RUNSPEED;
 
 					//走っている途中にAボタンが押されるとスライディング。
-					if (g_pad.IsPress(enButtonA))
+					if (g_pad.IsTrigger(enButtonA))
 					{
 						m_state = StateSLID;
+						/*D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
+						m_param.texturePath = "image\\star.png";
+						m_param.w = 0.5f;
+						m_param.h = 0.5f;
+						m_param.intervalTime = 0.01f;
+						m_param.initSpeed = D3DXVECTOR3(-UniPos.m[2][0], 0.0f, m_move.z = -UniPos.m[2][2]);
+						m_param.position = m_position;
+						m_param.life = 1.0f;
+						CParticleEmitter* parmEmi = new CParticleEmitter;
+						parmEmi->Init(m_param);
+						m_particleEmitterList.push_back(parmEmi);*/
+						
 					}
 				}
 				else
@@ -210,6 +229,22 @@ void UnityChan::Update()
 		//落下中。
 		m_state = StateFall;
 	}
+	RigidBody* rb = m_characterController.GetRigidBody();
+	//どこかに発生している当たり判定を探している。
+	const DamageCollisionWorld::Collision* dmgColli = g_damageCollisionWorld->FindOverlappedDamageCollision(
+		DamageCollisionWorld::enDamageToPlayer,
+		rb->GetBody()
+		);
+	if (g_pad.IsTrigger(enButtonX))
+	{
+		//受け取った値から当たり判定を作っている。
+		g_damageCollisionWorld->Add(m_radius, m_position, 1.0f, 10, g_damageCollisionWorld->enDamageToPlayer,0);
+	}
+	
+
+	if (dmgColli!=NULL) {
+		m_state = StateBackStep;
+	}
 
 	//プレイヤーの状態を見て再生するアニメーションを設定。
 	{
@@ -255,6 +290,10 @@ void UnityChan::Update()
 			{
 				//スライディングのアニメーション。
 				m_currentAnimSetNo = AnimationSLID;
+				/*for (auto p : m_particleEmitterList)
+				{
+					p->Update();
+				}*/
 			}
 
 			//落下中を設定。
@@ -303,6 +342,8 @@ void UnityChan::Update()
 	//キャラクターコントロールで計算した位置をプレイヤーの位置に反映。
 	m_position = m_characterController.GetPosition();
 
+	g_damageCollisionWorld->Update();
+
 	m_currentAngleY = m_turn.Update(m_isTurn, m_targetAngleY);
 
 	m_animation.PlayAnimation(m_currentAnimSetNo, 0.1f);
@@ -319,6 +360,10 @@ void UnityChan::Draw(D3DXMATRIX viewMatrix,
 	bool isShadowReceiver)
 {
 	m_skinModel.Draw(&viewMatrix, &projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight, isShadowReceiver);
+	/*for (auto p : m_particleEmitterList)
+	{
+		p->Render(viewMatrix, projMatrix);
+	}*/
 }
 
 void UnityChan::Release()

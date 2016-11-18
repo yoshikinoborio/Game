@@ -7,7 +7,7 @@ extern LPDIRECT3DDEVICE9 g_pd3dDevice;
 using namespace std;
 
 CParticleEmitter::CParticleEmitter()
-{\
+{
 
 }
 
@@ -19,7 +19,7 @@ CParticleEmitter::~CParticleEmitter()
 void CParticleEmitter::Init(const SParicleEmitParameter& param)
 {
 	this->param = param;
-	timer = 0.0f;
+	timer = 1.0f;
 }
 
 void CParticleEmitter::Update()

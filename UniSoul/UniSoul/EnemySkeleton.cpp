@@ -13,6 +13,7 @@ EnemySkeleton::EnemySkeleton()
 	m_state = SkeletonStateSearch;
 	m_height = 0.0f;
 	m_radius = 0.0f;
+	m_walkTimer = 0.0f;
 	m_unitytyan = game->GetUnityChan();
 }
 
@@ -28,12 +29,20 @@ void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATE
 	//クローンを使って初期化。
 	m_skinModel.Initialize(&m_skinModelData);
 
+	//アニメーションの設定。
+	m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
+
+	//Unityで出力した情報を元に設定。
 	m_position = pos;
 	m_initPos = m_position;
 	this->m_rotation = rotation;
 	m_scale = scale;
-	m_state = SkeletonStateWait;
-	m_radius = 0.5f;
+
+	//索敵中から開始。
+	m_state = SkeletonStateSearch;
+
+	//スケルトンの半径と高さ。
+	m_radius = 0.6f;
 	m_height = 1.0f;
 
 	m_characterController.Initialize(m_radius, m_height, m_position);
@@ -51,46 +60,80 @@ void EnemySkeleton::Update()
 	m_isTurn = FALSE;
 
 	m_posDifference = m_unityPos - m_position;
-	
-	//地面に着いている時。
-	if (m_characterController.IsOnGround() == TRUE)
+
+	//距離判定に使う変数。
+	D3DXVECTOR3 PosDiff = m_posDifference;
+
+	switch (m_state)
 	{
-		if (m_state == SkeletonStateSearch)
+		//索敵中。
+	case SkeletonStateSearch:
+		//地面に着いている時。
+		if (m_characterController.IsOnGround() == TRUE)
 		{
 			//ユニティちゃんが近くに来た時の処理。
-			if (D3DXVec3LengthSq(&m_posDifference) < 200.0f)
+			if (D3DXVec3LengthSq(&PosDiff) < 500.0f)
+			{
+				//発見。
+				m_state = SkeletonStateFind;
+				break;
+			}
+			//近くにいない時は索敵中。
+			m_state = SkeletonStateSearch;
+			m_moveSpeed = SKELETONWAITTIME;
+			//m_moveSpeed = SKELETONWAITTIME;
+			SearchMove();
+		}
+		break;
+		//発見。
+	case SkeletonStateFind:
+		m_moveSpeed = SKELETONRUNSPEED;
+		//索敵範囲内にユニティちゃんを発見。
+		//発見中に近くに行くと攻撃する。
+		if (D3DXVec3LengthSq(&PosDiff) < 10.0f)
+		{
+			m_state = SkeletonStateAttack;
+		}
+		FindMove();
+		break;
+	case SkeletonStateAttack:
+		m_animation.SetAnimationLoopFlag(enAnimAttack, TRUE);
+		//攻撃中にユニティちゃんが攻撃可能範囲外に移動したら追跡。
+		if (D3DXVec3LengthSq(&PosDiff) > 10.0f)
+		{
+			//攻撃が終わってから移動開始。
+			if (!m_animation.IsPlay())
 			{
 				m_state = SkeletonStateFind;
-				m_moveSpeed = SKELETONRUNSPEED;
-			}
-			else
-			{
-				//近くにいない時は索敵中。
-				m_state == SkeletonStateSearch;
-				m_moveSpeed = SKELETONWALKSPEED;
-			}
-			10
-		}//索敵範囲内にユニティちゃんを発見。
-		else if (m_state == SkeletonStateFind)
-		{
-			//発見中に近くに行くと攻撃する。
-			if (D3DXVec3LengthSq(&m_posDifference) < 10.0f)
-			{
-				m_state = SkeletonStateAttack;
+				m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
+				break;
 			}
 		}
-		//回転と移動の処理。
-		SkeletonMove();
-
+		//攻撃中は動きを止める処理。
+		m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		break;
+	case SkeletonStateDamage:
+		break;
 	}
 
-	if (m_state==SkeletonStateSearch)
+	if (m_state == SkeletonStateSearch)
 	{
-		m_currentAnimSetNo = enAnimWait;
+		if (m_moveSpeed > SKELETONWAITTIME)
+		{
+			m_currentAnimSetNo = enAnimWalk;
+		}
+		else
+		{
+			m_currentAnimSetNo = enAnimWait;
+		}
 	}
 	else if (m_state == SkeletonStateFind)
 	{
 		m_currentAnimSetNo = enAnimRun;
+	}
+	else if (m_state == SkeletonStateAttack)
+	{
+		m_currentAnimSetNo = enAnimAttack;
 	}
 
 	//キャラクタが動く速度を設定。
@@ -124,7 +167,7 @@ void EnemySkeleton::Release()
 	m_skinModelData.Release();
 }
 
-void EnemySkeleton::SkeletonMove()
+void EnemySkeleton::FindMove()
 {
 	m_isTurn = TRUE;
 
@@ -151,4 +194,10 @@ void EnemySkeleton::SkeletonMove()
 			m_targetAngleY *= -1.0f;
 		}
 	}
+}
+
+void EnemySkeleton::SearchMove()
+{
+	m_walkTimer += 1.0f / 60.0f;
+
 }

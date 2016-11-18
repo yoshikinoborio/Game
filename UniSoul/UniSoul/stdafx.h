@@ -8,7 +8,8 @@
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision\CollisionDispatch\btGhostObject.h"
 #include "GraphicsDevice.h"
-#include <memory.h>
+#include <memory>
+#include <list>
 #include "Assert.h"
 
 #define fPI 3.14159265358979323846f

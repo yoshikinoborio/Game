@@ -3,6 +3,7 @@
 #include "Turn.h"
 #include "RigidBody.h"
 #include "MeshCollider.h"
+#include "DamageCollisionWorld.h"
 
 //アニメーションする3Dモデルの基底クラス。
 class AnimationModel3D

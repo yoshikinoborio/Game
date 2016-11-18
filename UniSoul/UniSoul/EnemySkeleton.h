@@ -1,6 +1,8 @@
 #pragma once
 #include "EnemyBase.h"
 #include "CharacterController.h"
+
+#define SKELETONWAITTIME 0.0f
 #define SKELETONWALKSPEED 0.02f*60.0f
 #define SKELETONRUNSPEED 0.1f*60.0f
 
@@ -10,11 +12,8 @@ class UnityChan;
 enum SkeletonState {
 	SkeletonStateSearch = 0,//索敵中。
 	SkeletonStateFind,		//発見。
-	SkeletonStateAttack,
-	SkeletonStateWait,	//待機(立ち)。
-	SkeletonStateWalk,		//歩き。
-	SkeletonStateRun,		//走り。
 	SkeletonStateAttack,	//攻撃。
+	SkeletonStateDamage,	//ダメージを受けている。
 };
 
 //エネミー(スケルトン)クラス。
@@ -33,8 +32,10 @@ public:
 		int numDiffuseLight,
 		bool isShadowReceiver);
 	void Release();
-	//スケルトンの回転と移動の処理。
-	void SkeletonMove();
+	//スケルトンが発見状態の時の回転と移動の処理。
+	void FindMove();
+	//スケルトンが索敵中の時の回転と移動の処理。
+	void SearchMove();
 private:
 	D3DXVECTOR3 m_initPos;						//骨の初期位置。
 	SkeletonState     m_state;					//骨の敵の状態。
@@ -45,5 +46,6 @@ private:
 	UnityChan*		m_unitytyan;				//ユニティちゃんのインスタンス。
 	D3DXVECTOR3		m_unityPos;					//ユニティちゃんの位置。
 	D3DXVECTOR3		m_posDifference;			//ユニティちゃんとの距離。
-	
+	float			m_walkTimer;				//歩く時間。
+	std::unique_ptr<btCollisionObject>	m_collisionObject;		//コリジョンオブジェクト。
 };
