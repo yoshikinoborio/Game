@@ -3,6 +3,7 @@
 #include <string.h>
 #include "RigidBody.h"
 #include "MeshCollider.h"
+#include "Light.h"
 #define MapObjectNum 6
 
 //マップチップの配置情報。
@@ -24,10 +25,6 @@ public:
 	//描画
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
-		D3DXVECTOR4* diffuseLightDirection,
-		D3DXVECTOR4* diffuseLightColor,
-		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight,
 		bool isShadowReceiver);
 	//解放
 	void Release();
@@ -38,4 +35,5 @@ private:
 	SkinModelData m_skinModelData[MapObjectNum];//スキンモデルデータ。
 	MeshCollider	m_meshCollider[MapObjectNum];	//メッシュコライダー。
 	RigidBody		m_rigidBody[MapObjectNum];		//剛体。
+	Light			m_light;
 };

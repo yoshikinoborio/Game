@@ -11,6 +11,8 @@ public:
 		enAnimWalk,		//歩き中。
 		enAnimRun,		//走り中。
 		enAnimAttack,	//攻撃中。
+		enAnimDamage,	//ダメージ。
+		enAnimDead,		//死。
 	};
 	EnemyBase() {
 
@@ -20,6 +22,18 @@ public:
 	{
 	}
 
+	//同じアニメーションが再生されていても気にせずにでも最初から流す。
+	virtual void PlayAnimationForce(EnemyAnimation animNo)
+	{
+		m_animation.PlayAnimation(animNo, 0.3f);
+		m_currentAnimSetNo = animNo;
+	}
+
+	//ダメージを受けることが出来るか判定。
+	virtual bool IsPossibleApplyDamage(const DamageCollisionWorld::Collision* colli) const
+	{
+		return true;
+	}
 protected:
 	D3DXVECTOR3		m_position;					//座標。
 	D3DXVECTOR3     m_scale;					//スケール。

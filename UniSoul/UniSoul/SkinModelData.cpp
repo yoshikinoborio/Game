@@ -3,6 +3,7 @@
 #include "Animation.h"
 //#define _CRT_SECURE_NO_WARNINGS
 
+// DeleteŠÖ˜AB
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)       { if (p) { delete (p);     (p)=NULL; } }
 #endif    
@@ -11,8 +12,8 @@
 #endif    
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p)=NULL; } }
-
 #endif
+
 UINT                        g_NumBoneMatricesMax = 0;
 D3DXMATRIXA16*              g_pBoneMatrices = NULL;
 

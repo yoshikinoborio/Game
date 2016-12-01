@@ -38,8 +38,7 @@ public class MapObjectInfo : EditorWindow
                 headerTxt += "},\n";
             }
         }
-
-        StreamWriter sw = new StreamWriter("C:/Github/Game/UniSoul/UniSoul/locationInfo.h", false, Encoding.UTF8);
+         StreamWriter sw = new StreamWriter("C:/Users/KBC/Documents/Game/UniSoul/UniSoul/locationInfo.h", false, Encoding.UTF8);
         sw.Write(headerTxt);
         sw.Close();
     }

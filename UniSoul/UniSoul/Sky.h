@@ -1,5 +1,6 @@
 #pragma once
 #include "AnimationModel3D.h"
+#include "Light.h"
 
 //空クラス
 class Sky : public AnimationModel3D
@@ -14,10 +15,6 @@ public:
 	//描画。
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
-		D3DXVECTOR4* diffuseLightDirection,
-		D3DXVECTOR4* diffuseLightColor,
-		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight,
 		bool isShadowReceiver);
 	//解放。
 	void Release();
@@ -27,4 +24,5 @@ private:
 	D3DXMATRIX		m_world;			//ワールド行列。
 	D3DXQUATERNION  m_rotation;			//回転行列。
 	bool			m_isShadowReceiver;		//シャドウレシーバー。
+	Light			m_light;
 };

@@ -2,11 +2,11 @@
 #include "Game.h"
 #include "UnityChan.h"
 #include "DamageCollisionWorld.h"
-
-DamageCollisionWorld* g_damageCollisionWorld;
+#include "SoundSource.h"
 
 UnityChan::UnityChan()
 {
+	m_state = StateInvalid;
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	//D3DXQUATERNIONの引数は回転軸(0.0f～1.0fがMax);
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
@@ -14,9 +14,21 @@ UnityChan::UnityChan()
 	m_moveDir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_moveSpeed = 0.0f;
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_UniDir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_height = 0.0f;
 	m_radius = 0.0f;
 	m_isTurn = FALSE;
+	m_battleFlag = FALSE;
+	m_fallTimer = 0.0f;
+	m_hp = 0;
+	m_maxhp = 0;
+	m_atrTime = 0.0f;
+	m_lv = 0;
+	m_lvUpEXP = 0;
+	m_holdEXP = 0;
+	m_getEXP = 0;
+	m_hp = 0;
+	m_maxhp = 0;
 }
 
 UnityChan::~UnityChan()
@@ -30,10 +42,27 @@ void UnityChan::Initialize()
 	m_skinModelData.LoadModelData("image\\Unitytyan.X", &m_animation);
 	m_skinModel.Initialize(&m_skinModelData);
 
+	//ライトの設定。
+	m_light.SetDiffuseLightDirection(0, D3DXVECTOR4(0.707f, 0.0f, -0.707f, 1.0f));
+	m_light.SetDiffuseLightDirection(1, D3DXVECTOR4(-0.707f, 0.0f, -0.707f, 1.0f));
+	m_light.SetDiffuseLightDirection(2, D3DXVECTOR4(0.0f, 0.707f, -0.707f, 1.0f));
+	m_light.SetDiffuseLightDirection(3, D3DXVECTOR4(0.0f, -0.707f, -0.707f, 1.0f));
+
+	m_light.SetDiffuseLightColor(0, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+	m_light.SetDiffuseLightColor(1, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+
+	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+	m_skinModel.SetLight(&m_light);
+
 	//アニメーションの終了時間の設定。
 	m_animation.SetAnimationEndtime(AnimationRun, 0.84f);
 	m_animation.SetAnimationEndtime(AnimationSLID, 1.5f);
 	m_animation.SetAnimationEndtime(AnimationBackStep, 1.0f);
+	m_animation.SetAnimationEndtime(AnimationFightingRun, 0.5f);
+	m_animation.SetAnimationEndtime(AnimationPunch, 0.5f);
+	m_animation.SetAnimationEndtime(AnimationRKick, 0.5f);
 	
 	//アニメーションのループ設定。
 	m_animation.SetAnimationLoopFlag(AnimationSLID,FALSE);
@@ -42,12 +71,19 @@ void UnityChan::Initialize()
 	m_animation.SetAnimationLoopFlag(AnimationWait_02, FALSE);
 	m_animation.SetAnimationLoopFlag(AnimationLanding, FALSE);
 	m_animation.SetAnimationLoopFlag(AnimationJump, FALSE);
+	m_animation.SetAnimationLoopFlag(AnimationPunch, FALSE);
+	m_animation.SetAnimationLoopFlag(AnimationRKick, FALSE);
+	m_animation.SetAnimationLoopFlag(AnimationRotationKick, FALSE);
+	m_animation.SetAnimationLoopFlag(AnimationSomersault, FALSE);
+	m_animation.SetAnimationLoopFlag(AnimationDaiLanding, FALSE);
+	m_animation.SetAnimationLoopFlag(AnimationDownFly, FALSE);
+	m_animation.SetAnimationLoopFlag(AnimationDamage_00,FALSE);
 
 	//アニメーション番号の初期化。
 	m_currentAnimSetNo = AnimationWait_00;
 	
 	//ステートの初期化。
-	m_state = StateInvalid;
+	m_state = StateWait_00;
 
 	//回転処理のクラスの初期化。
 	m_turn.Initialize();
@@ -67,10 +103,38 @@ void UnityChan::Initialize()
 	//ポインタなのでnew。
 	g_damageCollisionWorld = new DamageCollisionWorld;
 	g_damageCollisionWorld->Start();
+
+	m_lv = 1;
+	m_lvUpEXP = 10;
+	m_holdEXP = 0;
+	m_hp = 100;
+	m_maxhp = 100;
+
+	//経験値テーブルの中身の初期化。
+	int nextLevelPoint = 10;
+	levelUpExpTable[0] = 0;
+	for (int i = 1; i < 100; i++) {
+		nextLevelPoint *= 1.1f;
+		levelUpExpTable[i] = levelUpExpTable[i - 1] + nextLevelPoint;
+	}
+	m_soundSource.Init("image/landing.wav");
+	m_soundSource2.Init("image/LvUpSE.wav");
 }
 void UnityChan::Update()
 {
 	m_animation.Update(1.0f / 60.0f);
+
+	//累積経験値への加算。
+	m_holdEXP += m_getEXP;
+	m_getEXP = 0;
+	//累積経験値が必要経験値を上回るとレベルアップ。
+	while (m_holdEXP >= levelUpExpTable[m_lv] )
+	{
+		//レベルの加算。
+		m_lv += 1;
+		m_soundSource2.Play(FALSE);
+		m_soundSource2.SetVolume(0.25f);
+	}
 
 	//ユニティちゃんの半径と高さを設定。
 	m_characterController.SetRadius(m_radius);
@@ -80,170 +144,193 @@ void UnityChan::Update()
 	
 	m_isTurn = FALSE;
 
-	//地面にいる時の処理。
-	if (m_characterController.IsOnGround() == TRUE)
+	if (g_pad.IsTrigger(enButtonX))
 	{
-		//動いている、止まっている時の処理。
-		if (m_state == StateRun || m_state == StateWait_00)
-		{
+		m_state = StateAttack;
+	}
 
-			//パッドによるカメラの奥に移動する処理。
-			PadMove();
+	Damage();
 
-			//移動量を見て動いているか止まっているかをチェック。
-			if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
+	switch (m_battleFlag)
+	{
+	case FALSE:
+		switch (m_state)
+		{//待機状態。
+		case StateWait_00:
+			if (m_characterController.IsOnGround() == TRUE)
 			{
-				m_state = StateRun;
-			}
-			else
-			{
-				m_state = StateWait_00;
-			}
-
-			//走り状態の時。
-			if (m_state == StateRun)
-			{
-				//入力された値から移動量を求めて一定値を越えたら走りに遷移する。
-				if (D3DXVec3LengthSq(&m_move) > 0.6f)
+				//パッドによるカメラの奥に移動する処理。
+				PadMove();
+				//移動量を見て動いているか止まっているかをチェック。
+				if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
 				{
-					//走り状態。
 					m_state = StateRun;
-
-					//走る時のスピード。
-					m_moveSpeed = RUNSPEED;
-
-					//走っている途中にAボタンが押されるとスライディング。
-					if (g_pad.IsTrigger(enButtonA))
-					{
-						m_state = StateSLID;
-						/*D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
-						m_param.texturePath = "image\\star.png";
-						m_param.w = 0.5f;
-						m_param.h = 0.5f;
-						m_param.intervalTime = 0.01f;
-						m_param.initSpeed = D3DXVECTOR3(-UniPos.m[2][0], 0.0f, m_move.z = -UniPos.m[2][2]);
-						m_param.position = m_position;
-						m_param.life = 1.0f;
-						CParticleEmitter* parmEmi = new CParticleEmitter;
-						parmEmi->Init(m_param);
-						m_particleEmitterList.push_back(parmEmi);*/
-						
-					}
 				}
 				else
 				{
-					//歩く時のスピード。
-					m_moveSpeed = WALKSPEED;
+					m_state = StateWait_00;
 				}
-			}
 
-			//待機状態の時。
-			if (m_state == StateWait_00)
-			{
-				//待機中にAボタンを押すとバックステップ。
+				// 待機中にAボタンを押すとバックステップ。
 				if (g_pad.IsPress(enButtonA))
 				{
 					//バックステップの初速度を設定する処理。
 					//まずユニティちゃんのワールド行列を取得。
 					D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
 					//取得してきたワールド行列の前方向の逆方向に速度を設定。
-					m_move.x = -UniPos.m[2][0] * 50.0f;
-					m_move.z = -UniPos.m[2][2] * 50.0f;
+					m_move.x = -UniPos.m[2][0] * 15.0f;
+					m_move.z = -UniPos.m[2][2] * 15.0f;
 					m_state = StateBackStep;
 
 				}
-			}
 
-			//Bボタンを押されたらジャンプ。
-			if (g_pad.IsPress(enButtonB))
-			{
-				//ジャンプ中にジャンプさせないための処理。
-				if (!m_characterController.IsJump()) {
-					//ジャンプの初速度。
-					m_move.y = 10.0f;
-					m_characterController.Jump();
-					m_state = StateJump;
-				}
-			}
-		}//スライディング。
-		else if (m_state == StateSLID)
-		{
-			//ちょうど体が傾いてるタイミングで半径と高さを変更。
-			double AnimTime = m_animation.GetlocalAnimationTime();
-			if (AnimTime > 0.5f)
-			{
-				m_characterController.SetRadius(0.2f);
-				m_characterController.SetHeight(0.3f);
-			}
-
-			//スライディンが終了したら待機に遷移。
-			if (!m_animation.IsPlay())
-			{
-				m_state = StateWait_00;
-			}
-		}//バックステップ。
-		else if (m_state == StateBackStep)
-		{
-			//バックステップ後、少しずつ減速。
-			m_move *= 0.96f;
-			//バックステップの速度を設定。
-
-			//バックステップが終了したら待機に遷移。
-			if (!m_animation.IsPlay())
-			{
-				m_state = StateWait_00;
-			}
-		}//着地中
-		else if (m_state == StateLanding)
-		{
-			PadMove();
-
-			//着地して動いているか止まっているかをチェック。
-			if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
-			{
-				m_state = StateRun;
+				//Bボタンを押されたらジャンプ。
+				Jump();
 			}
 			else
 			{
-				//地面に着地して入力をされていなかったら着地に遷移。
-				m_state = StateLanding;
+				m_state = StateFall;
 			}
+			break;
+			//動いている状態。
+		case StateRun:
+			StateMove();
+			break;
+			//スライディングの状態。
+		case StateSLID:
+			if (m_characterController.IsOnGround() == TRUE)
+			{
+				//ちょうど体が傾いてるタイミングで半径と高さを変更。
+				double AnimTime = m_animation.GetlocalAnimationTime();
+				if (AnimTime > 0.5f)
+				{
+					m_characterController.SetRadius(0.2f);
+					m_characterController.SetHeight(0.3f);
+				}
 
-			//着地のアニメーションが終わったら待機にする。
-			if (!m_animation.IsPlay()) {
-				m_state = StateWait_00;
+				//スライディンが終了したら待機に遷移。
+				if (!m_animation.IsPlay())
+				{
+					m_state = StateWait_00;
+				}
 			}
-
-		}//ジャンプ中。
-		else if (m_state == StateJump)
-		{
+			else
+			{
+				m_state = StateFall;
+			}
+			break;
+			//ジャンプ状態。
+		case StateJump:
 			//ジャンプのアニメーションが終わったら落下に遷移。
 			if (!m_animation.IsPlay())
 			{
 				m_state = StateFall;
 			}
-		}
-	}
-	else
-	{
-		//落下中。
-		m_state = StateFall;
-	}
-	RigidBody* rb = m_characterController.GetRigidBody();
-	//どこかに発生している当たり判定を探している。
-	const DamageCollisionWorld::Collision* dmgColli = g_damageCollisionWorld->FindOverlappedDamageCollision(
-		DamageCollisionWorld::enDamageToPlayer,
-		rb->GetBody()
-		);
-	if (g_pad.IsTrigger(enButtonX))
-	{
-		//受け取った値から当たり判定を作っている。
-		g_damageCollisionWorld->Add(m_radius, m_position, 1.0f, 10, g_damageCollisionWorld->enDamageToPlayer,0);
-	}
-	
+			//落下状態。
+		case StateFall:
+			//落下中に地面に着地。
+			if (m_characterController.IsOnGround() == TRUE)
+			{
+				//着地に遷移。
+				m_state = StateLanding;
+				//着地した。
+				//着地音を再生。
+				m_soundSource.Play(FALSE);
+				m_soundSource.SetVolume(0.25f);
+			}
+			else
+			{
+				//落下中。
+				m_state = StateFall;
+				m_fallTimer += 1.0f / 60.0f;
+			}
+			break;
+			//着地状態。
+		case StateLanding:
+			if (m_characterController.IsOnGround() == TRUE)
+			{
+				PadMove();
+				
+				//着地して動いているか止まっているかをチェック。
+				if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
+				{
+					m_state = StateRun;
+				}
+				else
+				{
+					//地面に着地して入力をされていなかったら着地に遷移。
+					m_state = StateLanding;
+				}
 
-	if (dmgColli!=NULL) {
-		m_state = StateBackStep;
+				//着地のアニメーションが終わったら待機にする。
+				if (!m_animation.IsPlay()) {
+					m_state = StateWait_00;
+					//落下時間を0に戻す。
+					m_fallTimer = 0.0f;
+				}
+			}
+			else
+			{
+				m_state = StateFall;
+			}
+			break;
+			//バックステップ状態。
+		case StateBackStep:
+			if (m_characterController.IsOnGround() == TRUE)
+			{
+				//バックステップ後、少しずつ減速。
+				m_move *= 0.96f;
+				//バックステップの速度を設定。
+
+				//バックステップが終了したら待機に遷移。
+				if (!m_animation.IsPlay())
+				{
+					m_state = StateWait_00;
+				}
+			}
+			else
+			{
+				m_state = StateFall;
+			}
+			break;
+			//ダメージを受けている状態。
+		case StateDamage:
+			if (!m_animation.IsPlay())
+			{
+				m_state = StateWait_00;
+			}
+			PadMove();
+			//game->SetSlowFlag(TRUE);
+			break;
+			//死んだ状態。
+		case StateDead:
+			//ここに死んだ時に吹っ飛ばす処理を書く予定。
+			m_move.y = 10.0f;
+			if (!m_animation.IsPlay())
+			{
+				MessageBox(0, "ゲームオーバー", "ゲームオーバー", MB_OKCANCEL);
+				PostQuitMessage(0);
+			}
+			break;
+		case StateAttack:
+			m_atrTime += DeltaTime;
+			//ユニティちゃんのワールド行列を取得。
+			D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
+			if (m_atrTime > 1.0f)
+			{
+				g_damageCollisionWorld->Add(20.0f, D3DXVECTOR3(UniPos.m[3][0], UniPos.m[3][1], UniPos.m[3][2]), 0.05f, 10, DamageCollisionWorld::enDamageToEnemy, 0);
+				m_atrTime = 0.0f;
+			}
+			if (!m_animation.IsPlay())
+			{
+				m_state = StateWait_00;
+			}
+			m_move *= 0.89f;
+			break;
+		}
+		break;
+	case TRUE:
+		break;
 	}
 
 	//プレイヤーの状態を見て再生するアニメーションを設定。
@@ -290,34 +377,26 @@ void UnityChan::Update()
 			{
 				//スライディングのアニメーション。
 				m_currentAnimSetNo = AnimationSLID;
-				/*for (auto p : m_particleEmitterList)
-				{
-					p->Update();
-				}*/
 			}
 
 			//落下中を設定。
 			if (m_state == StateFall)
 			{
-				//落下中に地面に着地。
-				if (m_characterController.IsOnGround() == TRUE)
-				{
-					//着地に遷移。
-					m_state = StateLanding;
-				}
-				else
-				{
-					//落下中のアニメーション。
-					m_currentAnimSetNo = AnimationFall;
-				}
+				//落下中のアニメーション。
+				m_currentAnimSetNo = AnimationFall;
 			}
 
 			//着地中。
 			if (m_state == StateLanding)
 			{
-				//着地中のアニメーション。
-				m_currentAnimSetNo = AnimationLanding;
-				
+				if (m_fallTimer > 1.0f)
+				{
+					m_currentAnimSetNo = AnimationDaiLanding;
+				}
+				else
+				{
+					m_currentAnimSetNo = AnimationLanding;
+				}
 			}
 
 			//ジャンプ中。
@@ -326,13 +405,22 @@ void UnityChan::Update()
 				//ジャンプのアニメーション。
 				m_currentAnimSetNo = AnimationJump;
 			}
-		}
-	}
 
-	//パッドのスタートボタンでゲーム終了。
-	if (g_pad.IsPress(enButtonStart))
-	{
-		PostQuitMessage(0);
+			if (m_state == StateDamage)
+			{
+				m_currentAnimSetNo = AnimationDamage_00;
+			}
+
+			if (m_state==StateDead)
+			{
+				m_currentAnimSetNo = AnimationDownFly;
+			}
+
+			if (m_state==StateAttack)
+			{
+				m_currentAnimSetNo = AnimationPunch;
+			}
+		}
 	}
 
 	//キャラクタが動く速度を設定。
@@ -341,6 +429,9 @@ void UnityChan::Update()
 	m_characterController.Execute();
 	//キャラクターコントロールで計算した位置をプレイヤーの位置に反映。
 	m_position = m_characterController.GetPosition();
+
+	m_soundSource.Update();
+	m_soundSource2.Update();
 
 	g_damageCollisionWorld->Update();
 
@@ -353,13 +444,9 @@ void UnityChan::Update()
 
 void UnityChan::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
-	D3DXVECTOR4* diffuseLightDirection,
-	D3DXVECTOR4* diffuseLightColor,
-	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight,
 	bool isShadowReceiver)
 {
-	m_skinModel.Draw(&viewMatrix, &projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight, isShadowReceiver);
+	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowReceiver);
 	/*for (auto p : m_particleEmitterList)
 	{
 		p->Render(viewMatrix, projMatrix);
@@ -409,6 +496,8 @@ void UnityChan::PadMove()
 	m_moveDir.y = 0.0f;	//Y軸はいらない。
 	m_moveDir.z = cameraX.z * moveDirCameraLocal.x + cameraZ.z * moveDirCameraLocal.z;
 
+	m_UniDir = m_moveDir;
+
 	m_move.x = m_moveDir.x*m_moveSpeed;
 	m_move.z = m_moveDir.z*m_moveSpeed;
 
@@ -428,5 +517,107 @@ void UnityChan::PadMove()
 		}
 		//向きたい方向と上方向から軸を作りその軸を回転軸としてクォータニオンを回転。
 		D3DXQuaternionRotationAxis(&m_rotation, &axis, m_currentAngleY);
+	}
+}
+
+void UnityChan::Jump()
+{
+	//Bボタンを押されたらジャンプ。
+	if (g_pad.IsPress(enButtonB))
+	{
+		//ジャンプ中にジャンプさせないための処理。
+		if (!m_characterController.IsJump()) {
+			//ジャンプの初速度。
+			m_move.y = 10.0f;
+			m_characterController.Jump();
+			m_state = StateJump;
+		}
+	}
+}
+
+void UnityChan::StateMove()
+{
+	if (m_characterController.IsOnGround() == TRUE)
+	{
+		PadMove();
+		//移動量を見て動いているか止まっているかをチェック。
+		if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
+		{
+			m_state = StateRun;
+		}
+		else
+		{
+			m_state = StateWait_00;
+		}
+
+		//入力された値から移動量を求めて一定値を越えたら走りに遷移する。
+		if (D3DXVec3LengthSq(&m_move) > 0.6f)
+		{
+			//走り状態。
+			m_state = StateRun;
+
+			//走る時のスピード。
+			m_moveSpeed = RUNSPEED;
+
+			//走っている途中にAボタンが押されるとスライディング。
+			if (g_pad.IsTrigger(enButtonA))
+			{
+				m_state = StateSLID;
+				/*D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
+				m_param.texturePath = "image\\star.png";
+				m_param.w = 0.5f;
+				m_param.h = 0.5f;
+				m_param.intervalTime = 0.01f;
+				m_param.initSpeed = D3DXVECTOR3(-UniPos.m[2][0], 0.0f, m_move.z = -UniPos.m[2][2]);
+				m_param.position = m_position;
+				m_param.life = 1.0f;
+				CParticleEmitter* parmEmi = new CParticleEmitter;
+				parmEmi->Init(m_param);
+				m_particleEmitterList.push_back(parmEmi);*/
+
+			}
+		}
+		else
+		{
+			//歩く時のスピード。
+			m_moveSpeed = WALKSPEED;
+		}
+
+		//Bボタンを押されたらジャンプ。
+		Jump();
+	}
+	else
+	{
+		m_state = StateFall;
+	}
+}
+
+void UnityChan::Damage()
+{
+	if (m_state == StateDamage || m_state == StateDead)
+	{
+		return;
+	}
+
+	RigidBody* rb = m_characterController.GetRigidBody();
+	//どこかに発生している当たり判定を探している。
+	const DamageCollisionWorld::Collision* dmgColli = g_damageCollisionWorld->FindOverlappedDamageCollision(
+		DamageCollisionWorld::enDamageToPlayer,
+		rb->GetBody()
+		);
+
+	//HPからダメージ分を減らす。
+	if (dmgColli != NULL)
+	{
+		m_hp -= dmgColli->damage;
+		//ダメージを食らってHPが0になれば死ぬ。
+		if (m_hp <= 0.0f) {
+			m_hp = 0;
+			m_state = StateDead;
+		}
+		else
+		{
+			m_state = StateDamage;
+		}
 	}
 }

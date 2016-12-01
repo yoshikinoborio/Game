@@ -12,6 +12,10 @@
 #include "Enemy.h"
 #include "Physics.h"
 #include "EnemyManager.h"
+#include "DirectXFont.h"
+#include "Stopwatch.h"
+#include "PlayerHPBar.h"
+#include "SoundEngine.h"
 
 class Game
 {
@@ -63,6 +67,25 @@ public:
 	{
 		return &m_physicsWorld;
 	}
+	//TRUEにするとUpdateが止まる。
+	void SetStopFlag(bool Flg)
+	{
+		m_stopFlag = Flg;
+	}
+	//TRUEにするとUpdateの更新回数を減らす。
+	void SetSlowFlag(bool Flg)
+	{
+		m_slowFlag = Flg;
+	}
+	bool GetStopFlag()
+	{
+		return m_stopFlag;
+	}
+	CSoundEngine* GetsoundEngine()
+	{
+		return g_soundEngine;
+	}
+	HRESULT CreateSprite();	//スプライト生成関数
 private:
 	UnityChan m_unitychan;
 	Camera m_camera;
@@ -75,6 +98,14 @@ private:
 	Enemy			m_enemy;
 	PhysicsWorld	m_physicsWorld;
 	EnemyManager	m_enemyManager;
+	bool			m_stopFlag;
+	bool			m_slowFlag;
+	float			m_deltaTime;
+	CFont			m_font;
+	CStopwatch		m_stopWatch;
+	LPD3DXSPRITE	m_pSprite;			//スプライト
+	PlayerHPBar		m_playerHPBar;
+	CSoundEngine*	g_soundEngine;
 };
 
 //どこでも使えるようにextern。

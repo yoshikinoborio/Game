@@ -1,9 +1,9 @@
 #pragma once
 #include "Animation.h"
 #include "SkinModelData.h"
+#include "Light.h"
 
 class SkinModelData;
-class Light;
 
 	//スキンモデル。
 class SkinModel {
@@ -15,10 +15,6 @@ public:
 	//描画。
 	void Draw(D3DXMATRIX* viewMatrix, 
 		D3DXMATRIX* projMatrix, 
-		D3DXVECTOR4* diffuseLightDirection,
-		D3DXVECTOR4* diffuseLightColor,
-		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight,
 		bool isDrawToShadowMap);
 	/*!
 	*@brief	更新。
@@ -38,11 +34,9 @@ public:
 		D3DXMATRIX* rotationMatrix,
 		D3DXMATRIX* viewMatrix,
 		D3DXMATRIX* projMatrix,
-		D3DXVECTOR4* diffuseLightDirection,
-		D3DXVECTOR4* diffuseLightColor,
-		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight,
-		bool isDrawToShadowMap
+		Light*		light,
+		bool isDrawToShadowMap,
+		LPDIRECT3DTEXTURE9 normalMap
 		);
 	void DrawFrame(
 		IDirect3DDevice9* pd3dDevice,
@@ -52,11 +46,9 @@ public:
 		D3DXMATRIX* rotationMatrix,
 		D3DXMATRIX* viewMatrix,
 		D3DXMATRIX* projMatrix,
-		D3DXVECTOR4* diffuseLightDirection,
-		D3DXVECTOR4* diffuseLightColor,
-		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight,
-		bool isDrawToShadowMap
+		Light*		light,
+		bool isDrawToShadowMap,
+		LPDIRECT3DTEXTURE9 normalMap
 		);
 	//ライトの設定。
 	void SetLight(Light* light)
@@ -72,18 +64,21 @@ public:
 	{
 		return m_worldMatrix;
 	}
+	//法線マップのロード。
+	void LoadNormalMap(const char* filePath);
 
 	LPD3DXMESH GetOrgMeshFirst();
 private:
-	D3DXMATRIX				m_worldMatrix;		//ワールド行列。
-	D3DXMATRIX				m_rotationMatrix;	//回転行列。
-	SkinModelData*			m_skinModelData;	//スキンモデルデータ。
-	Animation				m_animation;		//アニメーション。
+	D3DXMATRIX				m_worldMatrix;				//ワールド行列。
+	D3DXMATRIX				m_rotationMatrix;			//回転行列。
+	SkinModelData*			m_skinModelData;			//スキンモデルデータ。
+	Animation				m_animation;				//アニメーション。
 	static const int		MAX_MATRIX_PALLET = 128;	//マトリクスパレットの最大数。
 	D3DXMATRIX				m_boneMatrixPallet[MAX_MATRIX_PALLET];	//マトリクスパレット。
-	ID3DXEffect*			m_effect;			//エフェクト。
-	ID3DXEffect*			m_shadoweffect;			//シャドウエフェクト。
-	Light*					m_light;			//ライト。
-	bool					m_isShadowReceiver;		//シャドウレシーバー。
-	D3DXMATRIX				m_LVP;					//ライトビュープロジェクション行列
+	ID3DXEffect*			m_effect;					//エフェクト。
+	ID3DXEffect*			m_shadoweffect;				//シャドウエフェクト。
+	Light*					m_light;					//ライト。
+	bool					m_isShadowReceiver;			//シャドウレシーバー。
+	D3DXMATRIX				m_LVP;						//ライトビュープロジェクション行列。
+	LPDIRECT3DTEXTURE9		m_normalMap = NULL;			//法線マップのテクスチャ。
 };

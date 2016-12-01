@@ -23,10 +23,9 @@ float4	g_ambientLight;
 int     g_ShadowReceiverFlag;		//影を落とすフラグ。
 float4x4 g_mLVP;			//ライトビュープロジェクション行列。 //環境光。
 
-//bool g_isHasNormalMap;			//法線マップ保持している？
+bool g_hasNormalMap;	//法線マップがあるかどうかのフラグ。
 
 texture g_diffuseTexture;		//ディフューズテクスチャ。
-texture g_shadowTexture;		//シャドウ用のテクスチャ。
 sampler g_diffuseTextureSampler = 
 sampler_state
 {
@@ -37,7 +36,7 @@ sampler_state
     AddressU = Wrap;
 	AddressV = Wrap;
 };
-
+texture g_shadowTexture;		//シャドウ用のテクスチャ。
 sampler g_shadowTextureSampler = 
 sampler_state
 {
@@ -49,20 +48,17 @@ sampler_state
 	AddressV = CLAMP;
 };
 
-
-//法線マップ。
-//texture g_normalTexture;		//法線マップ。
-//sampler g_normalMapSampler = 
-//sampler_state
-//{
-//	Texture = <g_normalTexture>;
-//    MipFilter = NONE;
-//    MinFilter = NONE;
-//   MagFilter = NONE;
-//    AddressU = Wrap;
-//	AddressV = Wrap;
-//};
-
+texture g_normalTexture;		//法線マップ用のテクスチャ。
+sampler g_normalMapSampler =
+sampler_state
+{
+	Texture = <g_normalTexture>;
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+	AddressU = Wrap;
+	AddressV = Wrap;
+};
 
 /*!
  * @brief	入力頂点
@@ -75,8 +71,8 @@ struct VS_INPUT
 	float4  color		: COLOR0;
 	float4  normal		: NORMAL0;
 	float2	uv		: TEXCOORD1;
-	//float3  Normal          : NORMAL;
-//  float3  Tangent	　　: TANGENT;		//接ベクトル。
+	//float3  Normal          : NORMAL1;
+	//float3  Tangent	　　: TANGENT;		//接ベクトル。
     float3  Tex0            : TEXCOORD0;
 };
 
@@ -90,9 +86,9 @@ struct VS_OUTPUT
 	float2	uv	: TEXCOORD1;
 	float3	normal	: TEXCOORD2;
 	float3  Eye	: TEXCOORD3;
-//      float3  Normal			: NORMAL;
-        float2  Tex0   			: TEXCOORD0;
-//      float3	Tangent			: TEXCOORD1;	//接ベクトル。
+	//float3  Normal			: NORMAL1;
+    float2  Tex0   			: TEXCOORD0;
+	//float3	Tangent			: TANGENT;	//接ベクトル。
 	float4  lightViewPos_1	: TEXCOORD4;
 };
 /*!
@@ -213,6 +209,24 @@ float4 PSMain( VS_OUTPUT In ) : COLOR
 			color *= tex2D(g_shadowTextureSampler, shadowMapUV);
 		}
 	}
+
+	//if (g_hasNormalMap == true)
+	//{
+	//	//タンジェントスペースの法線をロード。
+	//	float3 localNormal = tex2D(g_normalMapSampler, In.Tex0);
+	//	//頂点シェーダーから受け取った接ベクトルを正規化。
+	//	float3 tangent = normalize(In.Tangent);
+	//	//頂点法線と接ベクトルを使って従法線を求める。
+	//	float3 biNormal = normalize(cross(tangent, normal));
+
+	//	//-1.0～1.0の範囲にマッピングする。
+	//	localNormal = (localNormal*2.0f) - 1.0f;
+	//	//タンジェントスペースからワールドスペースに変換する。
+	//	normal = tangent*localNormal.x
+	//		+ biNormal*localNormal.y
+	//		+ normal*localNormal.z;
+	//}
+
 	color.xyz *= lig;
 	return color;
 }

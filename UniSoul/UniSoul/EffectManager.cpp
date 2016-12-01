@@ -1,21 +1,6 @@
 #include "stdafx.h"
 #include "EffectManager.h"
 
-namespace{
-	
-	//文字列から32bitのハッシュ値を作成。
-	//ハッシュ値を作る理由は文字列で探すより数字で探した方が処理が軽い
-	int MakeHash(const char* string)
-	{
-		int hash = 0;
-		int l = (int)strlen(string);
-		for (int i = 0; i < l; i++){
-			hash = hash * 37 + string[i];
-		}
-		return hash;
-	}
-}
-
 EffectManager::EffectManager()
 {
 
@@ -31,7 +16,7 @@ LPD3DXEFFECT EffectManager::LoadEffect(const char* filePath)
 {
 
 	LPD3DXEFFECT effect = nullptr;
-	int hash = MakeHash(filePath);
+	int hash = CUtil::MakeHash(filePath);
 
 	//findは指定したキーで要素を探す
 	auto it = m_effectDictinary.find(hash);

@@ -20,6 +20,21 @@ void Stage::Initialize()
 {
 	m_skinModelData.LoadModelData("image\\StageSabaku.X", &m_animation);
 	m_skinModel.Initialize(&m_skinModelData);
+
+	//ライトの設定。
+	m_light.SetDiffuseLightDirection(0, D3DXVECTOR4(0.707f, 0.0f, -0.707f, 1.0f));
+	m_light.SetDiffuseLightDirection(1, D3DXVECTOR4(-0.707f, 0.0f, -0.707f, 1.0f));
+	m_light.SetDiffuseLightDirection(2, D3DXVECTOR4(0.0f, 0.707f, -0.707f, 1.0f));
+	m_light.SetDiffuseLightDirection(3, D3DXVECTOR4(0.0f, -0.707f, -0.707f, 1.0f));
+
+	m_light.SetDiffuseLightColor(0, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+	m_light.SetDiffuseLightColor(1, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+
+	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+	m_skinModel.SetLight(&m_light);
+
 	//影描画するフラグをセット
 	m_skinModel.SetShadowReceiverFlag(TRUE);
 	m_skinModel.Update(m_position, m_rotation, m_scale);
@@ -50,13 +65,9 @@ void Stage::Update()
 // 描画。
 void Stage::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
-	D3DXVECTOR4* diffuseLightDirection,
-	D3DXVECTOR4* diffuseLightColor,
-	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight,
 	bool isShadowReceiver){
 
-	m_skinModel.Draw(&viewMatrix, &projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight, isShadowReceiver);
+	m_skinModel.Draw(&viewMatrix, &projMatrix,isShadowReceiver);
 }
 
 //開放。

@@ -47,14 +47,27 @@ void Camera::Update()
 	m_rStick_x = g_pad.GetRStickXF();
 	m_rStick_y = g_pad.GetRStickYF();
 
-	/*if (g_pad.IsPress(enButtonLB1) && 0.0f < m_rStick_y)
+	// 画面を止めるor再生する処理。
+	if (game->GetStopFlag() == FALSE)
 	{
-		m_toEyeptVector.z -= m_rStick_y;
+		if (g_pad.IsTrigger(enButtonStart))
+		{
+			game->SetStopFlag(TRUE);
+		}
 	}
-	if (g_pad.IsPress(enButtonLB1) && 0.0f > m_rStick_y)
+	else
 	{
-		m_toEyeptVector.z -= m_rStick_y;
-	}*/
+		if (g_pad.IsTrigger(enButtonStart))
+		{
+			game->SetStopFlag(FALSE);
+		}
+	}
+
+	//パッドのスタートボタンでゲーム終了。
+	if (g_pad.IsPress(enButtonSelect))
+	{
+		PostQuitMessage(0);
+	}
 	
 	//カメラがユニティちゃんに追従する処理。
 	D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();

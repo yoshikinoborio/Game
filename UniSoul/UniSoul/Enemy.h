@@ -1,6 +1,7 @@
 #pragma once
 #include "AnimationModel3D.h"
 #include <string.h>
+#include "Light.h"
 #define MapEnemyNum 2
 
 //マップチップの配置情報。
@@ -23,10 +24,6 @@ public:
 	//描画
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
-		D3DXVECTOR4* diffuseLightDirection,
-		D3DXVECTOR4* diffuseLightColor,
-		D3DXVECTOR4	 ambientLight,
-		int numDiffuseLight,
 		bool isShadowReceiver);
 	//解放
 	void Release();
@@ -50,4 +47,5 @@ private:
 	EnemyAnimationNo m_currentAnimSetNo1;		//アニメーション。
 	SkinModelData m_skinModelData1[MapEnemyNum];//スキンモデルデータ。
 	EnemyState     m_state1;			//エネミーの状態。
+	Light			m_light;
 };

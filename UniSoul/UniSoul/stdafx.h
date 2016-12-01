@@ -11,6 +11,13 @@
 #include <memory>
 #include <list>
 #include "Assert.h"
+#include "Util.h"
+#include "NameKey.h"
+#include "Noncopyable.h"
+#include <X3DAudio.h>
+#include <XAudio2.h>
+#include <XAudio2fx.h>
+#include <string>
 
 #define fPI 3.14159265358979323846f
 

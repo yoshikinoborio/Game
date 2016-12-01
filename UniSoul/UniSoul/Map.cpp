@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Map.h"
 #include "Game.h"
-#define  _CRT_SECURE_NO_WARNINGS
 
 //マップチップの配置情報のテーブル。
 MapLocInfo mapChipLocInfoTable[] = {
@@ -27,7 +26,23 @@ void Map::Initialize()
 		m_skinModelData[i].LoadModelData(mapChipLocInfoTable[i].modelName, &m_animation);
 		m_skinModel[i].Initialize(&m_skinModelData[i]);
 
-		m_skinModel[i].Update(mapChipLocInfoTable[i].pos, mapChipLocInfoTable[i].rotation, {1.0f, 1.0f, 1.0f}/*mapChipLocInfoTable[i].scale*/);
+		//ライトの設定。
+		m_light.SetDiffuseLightDirection(0, D3DXVECTOR4(0.707f, 0.0f, -0.707f, 1.0f));
+		m_light.SetDiffuseLightDirection(1, D3DXVECTOR4(-0.707f, 0.0f, -0.707f, 1.0f));
+		m_light.SetDiffuseLightDirection(2, D3DXVECTOR4(0.0f, 0.707f, -0.707f, 1.0f));
+		m_light.SetDiffuseLightDirection(3, D3DXVECTOR4(0.0f, -0.707f, -0.707f, 1.0f));
+
+		m_light.SetDiffuseLightColor(0, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+		m_light.SetDiffuseLightColor(1, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+		m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+		m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
+
+		m_light.SetAmbientLight(D3DXVECTOR4(0.4f, 0.4f, 0.4f, 1.0f));
+
+		m_skinModel[i].SetLight(&m_light);
+
+
+		m_skinModel[i].Update(mapChipLocInfoTable[i].pos, mapChipLocInfoTable[i].rotation, {1.0f, 1.0f, 1.0f});
 
 		//ここから衝突判定絡みの初期化。
 		//スキンモデルからメッシュコライダーを作成する。
@@ -53,23 +68,19 @@ void Map::Update()
 	for (int i = 0; i < tableSize; i++)
 	{
 		//マップオブジェクト一つ一つを更新。
-		m_skinModel[i].Update(mapChipLocInfoTable[i].pos, mapChipLocInfoTable[i].rotation, mapChipLocInfoTable[i].scale);
+		m_skinModel[i].Update(mapChipLocInfoTable[i].pos, mapChipLocInfoTable[i].rotation, {1.0f, 1.0f,1.0f });
 	}
 }
 
 void Map::Draw(
 	D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
-	D3DXVECTOR4* diffuseLightDirection,
-	D3DXVECTOR4* diffuseLightColor,
-	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight,
 	bool isShadowReceiver)
 {
 	for (int i = 0; i < tableSize; i++)
 	{
 		//マップオブジェクト一つ一つを描画
-		m_skinModel[i].Draw(&viewMatrix, &projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight, isShadowReceiver);
+		m_skinModel[i].Draw(&viewMatrix, &projMatrix,isShadowReceiver);
 	}
 }
 

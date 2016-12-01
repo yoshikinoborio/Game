@@ -18,7 +18,11 @@ SkinModel::SkinModel()
 
 SkinModel::~SkinModel()
 {
-
+	//テクスチャの解放。
+	if (m_normalMap != NULL)
+	{
+		m_normalMap->Release();
+	}
 }
 
 LPD3DXMESH SkinModel::GetOrgMeshFirst()
@@ -48,10 +52,6 @@ void SkinModel::Update(const D3DXVECTOR3& trans, const D3DXQUATERNION& rot, cons
 
 void SkinModel::Draw(D3DXMATRIX* viewMatrix,
 	D3DXMATRIX* projMatrix ,
-	D3DXVECTOR4* diffuseLightDirection,
-	D3DXVECTOR4* diffuseLightColor,
-	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight,
 	bool isDrawToShadowMap)
 {
 	if (m_skinModelData) {
@@ -63,11 +63,9 @@ void SkinModel::Draw(D3DXMATRIX* viewMatrix,
 			&m_rotationMatrix,
 			viewMatrix,
 			projMatrix,
-			diffuseLightDirection,
-			diffuseLightColor,
-			ambientLight,
-			numDiffuseLight,
-			isDrawToShadowMap
+			m_light,
+			isDrawToShadowMap,
+			m_normalMap
 			);
 	}
 }
@@ -81,11 +79,9 @@ void SkinModel::DrawMeshContainer(
 	D3DXMATRIX* rotationMatrix,
 	D3DXMATRIX* viewMatrix,
 	D3DXMATRIX* projMatrix,
-	D3DXVECTOR4* diffuseLightDirection,
-	D3DXVECTOR4* diffuseLightColor,
-	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight,
-	bool isDrawToShadowMap
+	Light*		light,
+	bool isDrawToShadowMap,
+	LPDIRECT3DTEXTURE9 normalMap
 	)
 {
 	D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
@@ -125,6 +121,19 @@ void SkinModel::DrawMeshContainer(
 			}
 		}
 
+		if (normalMap != NULL)
+		{
+			//法線マップがある場合。
+			//シェーダーに転送。
+			m_effect->SetTexture("g_normalTexture", normalMap);
+			m_effect->SetBool("g_hasNormalMap", true);
+		}
+		else
+		{
+			//法線マップがない場合。
+			m_effect->SetBool("g_hasNormalMap", false);
+		}
+
 		//ライトビュープロジェクション行列の計算。
 		m_LVP = game->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * game->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
 
@@ -139,13 +148,13 @@ void SkinModel::DrawMeshContainer(
 		//回転行列を転送。
 		m_effect->SetMatrix("g_rotationMatrix", &m_rotationMatrix);
 		//ライト
-		//m_effect->SetValue("g_light", light, sizeof(Light));
+		m_effect->SetValue("g_light", light, sizeof(Light));
 		//ライトの向きを転送。
-		m_effect->SetVectorArray("g_diffuseLightDirection", diffuseLightDirection, numDiffuseLight);
+		m_effect->SetVectorArray("g_diffuseLightDirection",light->GetDiffuseLightDirection(),light->GetLight_Num());
 		////ライトのカラーを転送。
-		m_effect->SetVectorArray("g_diffuseLightColor", diffuseLightColor, numDiffuseLight);
+		m_effect->SetVectorArray("g_diffuseLightColor", light->GetDiffuseLightColor(), light->GetLight_Num());
 		////環境光を設定。
-		m_effect->SetVector("g_ambientLight", &ambientLight);
+		m_effect->SetVector("g_ambientLight", &light->GetAmbientLight());
 		//影のフラグを転送。
 		//影を落としたいモデルでフラグをTRUEにしている
 		m_effect->SetInt("g_ShadowReceiverFlag", m_isShadowReceiver);
@@ -239,11 +248,9 @@ void SkinModel::DrawFrame(
 	D3DXMATRIX* rotationMatrix,
 	D3DXMATRIX* viewMatrix,
 	D3DXMATRIX* projMatrix,
-	D3DXVECTOR4* diffuseLightDirection,
-	D3DXVECTOR4* diffuseLightColor,
-	D3DXVECTOR4	 ambientLight,
-	int numDiffuseLight,
-	bool isDrawToShadowMap
+	Light*		light,
+	bool isDrawToShadowMap,
+	LPDIRECT3DTEXTURE9 normalMap
 	)
 {
 	LPD3DXMESHCONTAINER pMeshContainer;
@@ -260,11 +267,9 @@ void SkinModel::DrawFrame(
 			rotationMatrix,
 			viewMatrix,
 			projMatrix,
-			diffuseLightDirection,
-			diffuseLightColor,
-			ambientLight,
-			numDiffuseLight,
-			isDrawToShadowMap
+			light,
+			isDrawToShadowMap,
+			normalMap
 			);
 
 		pMeshContainer = pMeshContainer->pNextMeshContainer;
@@ -280,11 +285,9 @@ void SkinModel::DrawFrame(
 			rotationMatrix,
 			viewMatrix,
 			projMatrix,
-			diffuseLightDirection,
-			diffuseLightColor,
-			ambientLight,
-			numDiffuseLight,
-			isDrawToShadowMap
+			light,
+			isDrawToShadowMap,
+			normalMap
 			);
 	}
 
@@ -298,11 +301,28 @@ void SkinModel::DrawFrame(
 			rotationMatrix,
 			viewMatrix,
 			projMatrix,
-			diffuseLightDirection,
-			diffuseLightColor,
-			ambientLight,
-			numDiffuseLight,
-			isDrawToShadowMap
+			light,
+			isDrawToShadowMap,
+			normalMap
 			);
+	}
+}
+
+void SkinModel::LoadNormalMap(const char* filePath)
+{
+	//第二が法線マップへの相対パス。
+	//第三がテクスチャにアクセスするためのインターフェース。
+	HRESULT hr = D3DXCreateTextureFromFileA(g_pd3dDevice,
+		filePath,
+		&m_normalMap);
+
+	//テクスチャのロードが成功したかどうか。
+	if (FAILED(hr))
+	{
+		MessageBox(
+			NULL,
+			"テクスチャのロードに失敗しました。指定したパスが間違っています。",
+			"エラー表示",
+			MB_OK);
 	}
 }
