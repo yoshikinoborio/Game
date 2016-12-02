@@ -9,7 +9,7 @@ public:
 	virtual void Update() = 0;
 	void Render(LPD3DXSPRITE);
 	void SetupMatrices();
-	//画像を拡大して移動させるんではなくて移動してから拡大する事によって
+	//画像を拡大して移動させるのではなくて移動してから拡大する事によって
 	//画像の原点がスプライトの端に来る。
 	void SetupMatrices2();
 	void SetScale(D3DXVECTOR2& scale)

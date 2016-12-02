@@ -53,8 +53,9 @@ void UnityChan::Initialize()
 	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
 
-	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+	m_light.SetAmbientLight(D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
 	m_skinModel.SetLight(&m_light);
+	m_skinModel.LoadNormalMap("image\\body_01_NRM.tga");
 
 	//アニメーションの終了時間の設定。
 	m_animation.SetAnimationEndtime(AnimationRun, 0.84f);
@@ -260,6 +261,7 @@ void UnityChan::Update()
 				{
 					//地面に着地して入力をされていなかったら着地に遷移。
 					m_state = StateLanding;
+					
 				}
 
 				//着地のアニメーションが終わったら待機にする。

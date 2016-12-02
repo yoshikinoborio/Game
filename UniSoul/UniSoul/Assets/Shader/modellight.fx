@@ -2,7 +2,7 @@
  * @brief	スキンモデルシェーダー。(4ボーンスキニング)
  */
 
-//#include "LightingFunction.h"
+#include "LightingFunction.h"
 
 //スキン行列。
 #define MAX_MATRICES  26
@@ -71,9 +71,9 @@ struct VS_INPUT
 	float4  color		: COLOR0;
 	float4  normal		: NORMAL0;
 	float2	uv		: TEXCOORD1;
-	//float3  Normal          : NORMAL1;
-	//float3  Tangent	　　: TANGENT;		//接ベクトル。
-    float3  Tex0            : TEXCOORD0;
+	float3  Normal : NORMAL1;
+	float3  Tangent : TANGENT;		//接ベクトル。
+    float3  Tex0 : TEXCOORD0;
 };
 
 /*!
@@ -86,9 +86,9 @@ struct VS_OUTPUT
 	float2	uv	: TEXCOORD1;
 	float3	normal	: TEXCOORD2;
 	float3  Eye	: TEXCOORD3;
-	//float3  Normal			: NORMAL1;
+	float3  Normal			: NORMAL1;
     float2  Tex0   			: TEXCOORD0;
-	//float3	Tangent			: TANGENT;	//接ベクトル。
+	float3	Tangent			: TANGENT;	//接ベクトル。
 	float4  lightViewPos_1	: TEXCOORD4;
 };
 /*!
@@ -98,11 +98,11 @@ struct VS_OUTPUT
  *@param[out]	Normal	ワールド法線の格納先。
  *@param[out]	Tangent	ワールド接ベクトルの格納先。
  */
-void CalcWorldPosAndNormalFromSkinMatrix( VS_INPUT In, out float3 Pos)//, out float3 Normal, out float3 Tangent )
+void CalcWorldPosAndNormalFromSkinMatrix( VS_INPUT In, out float3 Pos, out float3 Normal, out float3 Tangent )
 {
 	Pos = 0.0f;
-	//Normal = 0.0f;
-	//Tangent = 0.0f;
+	Normal = 0.0f;
+	Tangent = 0.0f;
 	//ブレンドするボーンのインデックス。
 	int4 IndexVector = D3DCOLORtoUBYTE4(In.BlendIndices);
 	
@@ -115,14 +115,14 @@ void CalcWorldPosAndNormalFromSkinMatrix( VS_INPUT In, out float3 Pos)//, out fl
         LastWeight = LastWeight + BlendWeightsArray[iBone];
         
         Pos += mul(In.Pos, g_mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
-       //Normal += mul(In.Normal, g_mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
-        //Tangent += mul(In.Tangent, g_mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
+       Normal += mul(In.Normal, g_mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
+        Tangent += mul(In.Tangent, g_mWorldMatrixArray[IndexArray[iBone]]) * BlendWeightsArray[iBone];
     }
     LastWeight = 1.0f - LastWeight; 
     
 	Pos += (mul(In.Pos, g_mWorldMatrixArray[IndexArray[g_numBone-1]]) * LastWeight);
-    //Normal += (mul(In.Normal, g_mWorldMatrixArray[IndexArray[g_numBone-1]]) * LastWeight);
-    //Tangent += (mul(In.Tangent, g_mWorldMatrixArray[IndexArray[g_numBone-1]]) * LastWeight);
+    Normal += (mul(In.Normal, g_mWorldMatrixArray[IndexArray[g_numBone-1]]) * LastWeight);
+    Tangent += (mul(In.Tangent, g_mWorldMatrixArray[IndexArray[g_numBone-1]]) * LastWeight);
 }
 /*!
  *@brief	ワールド座標とワールド法線を計算。
@@ -131,11 +131,11 @@ void CalcWorldPosAndNormalFromSkinMatrix( VS_INPUT In, out float3 Pos)//, out fl
  *@param[out]	Normal	ワールド法線の格納先。
  *@param[out]	Tangent	ワールド接ベクトルの格納先。
  */
-void CalcWorldPosAndNormal( VS_INPUT In, out float3 Pos)//, out float3 Normal, out float3 Tangent )
+void CalcWorldPosAndNormal( VS_INPUT In, out float3 Pos, out float3 Normal, out float3 Tangent )
 {
 	Pos = mul(In.Pos, g_worldMatrix );
-	//Normal = mul(In.Normal, g_rotationMatrix );
-	//Tangent = mul(In.Tangent, g_rotationMatrix );
+	Normal = mul(In.Normal, g_rotationMatrix );
+	Tangent = mul(In.Tangent, g_rotationMatrix );
 }
 /*!
  *@brief	頂点シェーダー。
@@ -145,13 +145,13 @@ void CalcWorldPosAndNormal( VS_INPUT In, out float3 Pos)//, out float3 Normal, o
 VS_OUTPUT VSMain( VS_INPUT In, uniform bool hasSkin )
 {
 	VS_OUTPUT o = (VS_OUTPUT)0;
-	float3 Pos;//, Normal, Tangent;
+	float3 Pos, Normal, Tangent;
 	if(hasSkin){
 		//スキンあり。
-		CalcWorldPosAndNormalFromSkinMatrix(In, Pos);//, Normal, Tangent );
+		CalcWorldPosAndNormalFromSkinMatrix(In, Pos, Normal, Tangent );
 	}else{
 		//スキンなし。
-		CalcWorldPosAndNormal(In, Pos);//, Normal, Tangent );
+		CalcWorldPosAndNormal(In, Pos, Normal, Tangent );
 	}
   
 	float4 worldpos = mul(In.Pos,g_worldMatrix);
@@ -169,8 +169,8 @@ VS_OUTPUT VSMain( VS_INPUT In, uniform bool hasSkin )
 
     o.uv = In.uv;
     o.normal = mul(In.normal, g_rotationMatrix);	//法線を回す。
-    //o.Normal = normalize(Normal);
-    //o.Tangent = normalize(Tangent);
+    o.Normal = normalize(Normal);
+    o.Tangent = normalize(Tangent);
     o.Tex0 = In.Tex0;
 	return o;
 }
@@ -189,16 +189,16 @@ float4 PSMain( VS_OUTPUT In ) : COLOR
 	//ライトを計算。
 	float4 lig = 0.0f;
 	{
-		for (int i = 0; i < DIFFUSE_LIGHT_NUM; i++){
-			lig.xyz += max(0.0f, dot(In.normal.xyz, -g_diffuseLightDirection[i].xyz))
-				* g_diffuseLightColor[i].xyz;
-			//スペキュラを計算。
-			float3 L = -g_diffuseLightDirection[i].xyz;
-				float3 H = normalize(L + normalize(In.Eye));//ハーフベクトル。
-				float3 N = normalize(In.normal);
-				lig.xyz += pow(max(0.0f, dot(N, H)), 10.0f);
-		}
-		lig += g_ambientLight;
+		//for (int i = 0; i < DIFFUSE_LIGHT_NUM; i++){
+		//	lig.xyz += max(0.0f, dot(In.normal.xyz, -g_diffuseLightDirection[i].xyz))
+		//		* g_diffuseLightColor[i].xyz;
+		//	//スペキュラを計算。
+		//	float3 L = -g_diffuseLightDirection[i].xyz;
+		//		float3 H = normalize(L + normalize(In.Eye));//ハーフベクトル。
+		//		float3 N = normalize(In.normal);
+		//		lig.xyz += pow(max(0.0f, dot(N, H)), 10.0f);
+		//}
+		//lig += g_ambientLight;
 	}
 	float4 color = tex2D(g_diffuseTextureSampler, In.Tex0);
 
@@ -209,24 +209,24 @@ float4 PSMain( VS_OUTPUT In ) : COLOR
 			color *= tex2D(g_shadowTextureSampler, shadowMapUV);
 		}
 	}
+	float3  NORMAL = In.Normal;
+	if (g_hasNormalMap == true)
+	{
+		//タンジェントスペースの法線をロード。
+		float3 localNormal = tex2D(g_normalMapSampler, In.Tex0);
+		//頂点シェーダーから受け取った接ベクトルを正規化。
+		float3 tangent = normalize(In.Tangent);
+		//頂点法線と接ベクトルを使って従法線を求める。
+		float3 biNormal = normalize(cross(tangent, NORMAL));
 
-	//if (g_hasNormalMap == true)
-	//{
-	//	//タンジェントスペースの法線をロード。
-	//	float3 localNormal = tex2D(g_normalMapSampler, In.Tex0);
-	//	//頂点シェーダーから受け取った接ベクトルを正規化。
-	//	float3 tangent = normalize(In.Tangent);
-	//	//頂点法線と接ベクトルを使って従法線を求める。
-	//	float3 biNormal = normalize(cross(tangent, normal));
-
-	//	//-1.0～1.0の範囲にマッピングする。
-	//	localNormal = (localNormal*2.0f) - 1.0f;
-	//	//タンジェントスペースからワールドスペースに変換する。
-	//	normal = tangent*localNormal.x
-	//		+ biNormal*localNormal.y
-	//		+ normal*localNormal.z;
-	//}
-
+		//-1.0～1.0の範囲にマッピングする。
+		localNormal = (localNormal*2.0f) - 1.0f;
+		//タンジェントスペースからワールドスペースに変換する。
+		NORMAL = tangent*localNormal.x
+			+ biNormal*localNormal.y
+			+ NORMAL*localNormal.z;
+	}
+	lig = DiffuseLight(NORMAL);
 	color.xyz *= lig;
 	return color;
 }

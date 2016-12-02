@@ -5,23 +5,23 @@
 #define NUM_DIFFUSE_LIGHT	4					//ディフューズライトの数。
 
 struct SLight{
-	float4	diffuseLightDir[NUM_DIFFUSE_LIGHT];		//ディフューズライトの向き。
-	float4  diffuseLightColor[NUM_DIFFUSE_LIGHT];	//ディフューズライトのカラー。
-	float4  ambient;								//アンビエントライト。
+	float4	g_diffuseLightDirection[NUM_DIFFUSE_LIGHT];		//ディフューズライトの向き。
+	float4  g_diffuseLightColor[NUM_DIFFUSE_LIGHT];	//ディフューズライトのカラー。
+	float4  g_ambientLight;								//アンビエントライト。
 };
 SLight	g_light;		//ライト
 
 /*!
  *@brief	ディフューズライトを計算。
  */	
-float4 DiffuseLight()
+float4 DiffuseLight(float3 normal)
 {
 	float4 color = 0.0f;
-	color += max(0, -dot(g_light.diffuseLightDir[0])) * g_light.diffuseLightColor[0];
-	color += max(0, -dot(g_light.diffuseLightDir[1])) * g_light.diffuseLightColor[1];
-	color += max(0, -dot(g_light.diffuseLightDir[2])) * g_light.diffuseLightColor[2];
-	color += max(0, -dot(g_light.diffuseLightDir[3])) * g_light.diffuseLightColor[3];
-	color.xyz += g_light.ambient.xyz;
+	color += max(0, -dot(normal,g_light.g_diffuseLightDirection[0])) * g_light.g_diffuseLightColor[0];
+	color += max(0, -dot(normal,g_light.g_diffuseLightDirection[1])) * g_light.g_diffuseLightColor[1];
+	color += max(0, -dot(normal,g_light.g_diffuseLightDirection[2])) * g_light.g_diffuseLightColor[2];
+	color += max(0, -dot(normal,g_light.g_diffuseLightDirection[3])) * g_light.g_diffuseLightColor[3];
+	color.xyz += g_light.g_ambientLight.xyz;
 	color.a = 1.0f;
 	return color;
 }

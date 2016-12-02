@@ -40,9 +40,8 @@ void C2DImage::SetupMatrices2()
 	D3DXMatrixIdentity(&this->m_transformMatrix);	//ワールド行列初期化
 
 	//画像の半分ずらしている。
-	D3DXMatrixTranslation(&this->m_transformMatrix, 65.0f, 0.0f, 0.0f);
+	D3DXMatrixTranslation(&this->m_transformMatrix, this->m_texCenter.x, 0.0f, 0.0f);
 	//D3DXMatrixTransformation2D(&this->m_transformMatrix, NULL, 0.0f, &this->m_scale, NULL, D3DXToRadian(this->m_angle), this->m_position);	//変換行列作成
-
 	//ずらした値から変換行列の作成。
 	{
 		D3DXMATRIX scale;
@@ -54,5 +53,5 @@ void C2DImage::SetupMatrices2()
 		m_transformMatrix = m_transformMatrix*scale*rotation*position;
 	}
 	//ずらした分を戻す。
-	m_transformMatrix._41 -= 65.0f;
+	m_transformMatrix._41 -= this->m_texCenter.x;
 }
