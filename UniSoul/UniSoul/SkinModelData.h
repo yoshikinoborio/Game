@@ -1,9 +1,12 @@
 #pragma once
+#include <vector>
+#include <string>
 struct D3DXFRAME_DERIVED : public D3DXFRAME {
 	D3DXMATRIXA16	CombinedTransformationMatrix;	//çáê¨çœÇ›çsóÒÅB
 };
 struct D3DXMESHCONTAINER_DERIVED : public D3DXMESHCONTAINER {
 	LPDIRECT3DTEXTURE9* ppTextures;
+	std::vector<std::string> textureName;
 	LPD3DXMESH pOrigMesh;
 	LPD3DXATTRIBUTERANGE pAttributeTable;
 	DWORD NumAttributeGroups;

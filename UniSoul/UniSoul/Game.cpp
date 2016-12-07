@@ -220,6 +220,7 @@ void Game::Update()
 				//プレイヤーの体力バー更新。
 				m_playerHPBar.Update();
 			}
+			break;
 		}
 		else
 		{

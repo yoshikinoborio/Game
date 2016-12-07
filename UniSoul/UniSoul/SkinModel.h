@@ -35,8 +35,7 @@ public:
 		D3DXMATRIX* viewMatrix,
 		D3DXMATRIX* projMatrix,
 		Light*		light,
-		bool isDrawToShadowMap,
-		LPDIRECT3DTEXTURE9 normalMap
+		bool isDrawToShadowMap
 		);
 	void DrawFrame(
 		IDirect3DDevice9* pd3dDevice,
@@ -47,8 +46,7 @@ public:
 		D3DXMATRIX* viewMatrix,
 		D3DXMATRIX* projMatrix,
 		Light*		light,
-		bool isDrawToShadowMap,
-		LPDIRECT3DTEXTURE9 normalMap
+		bool isDrawToShadowMap
 		);
 	//ライトの設定。
 	void SetLight(Light* light)
@@ -65,8 +63,14 @@ public:
 		return m_worldMatrix;
 	}
 	//法線マップのロード。
+	void LoadNormalMap(const char* filePath, const char* BoneName);
 	void LoadNormalMap(const char* filePath);
 
+	//法線マップの保持フラグを設定。
+	void SetHasNormalMap(bool hasNormalMap)
+	{
+		m_hasNormalMap = hasNormalMap;
+	}
 	LPD3DXMESH GetOrgMeshFirst();
 private:
 	D3DXMATRIX				m_worldMatrix;				//ワールド行列。
@@ -81,4 +85,7 @@ private:
 	bool					m_isShadowReceiver;			//シャドウレシーバー。
 	D3DXMATRIX				m_LVP;						//ライトビュープロジェクション行列。
 	LPDIRECT3DTEXTURE9		m_normalMap = NULL;			//法線マップのテクスチャ。
+	LPDIRECT3DTEXTURE9		m_normalMap2 = NULL;		//法線マップ(ユニティちゃんの頭)のテクスチャ。
+	LPDIRECT3DTEXTURE9		m_normalMap3 = NULL;		//法線マップ(ユニティちゃんの体)のテクスチャ。
+	bool					m_hasNormalMap = FALSE;		//法線マップを保持している(フラグ)？
 };

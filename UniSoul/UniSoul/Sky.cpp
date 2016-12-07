@@ -33,6 +33,7 @@ void Sky::Initialize()
 
 	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
+	m_skinModel.SetHasNormalMap(FALSE);
 }
 
 void Sky::Update()

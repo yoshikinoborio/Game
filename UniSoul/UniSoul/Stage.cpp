@@ -34,6 +34,7 @@ void Stage::Initialize()
 
 	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
+	m_skinModel.SetHasNormalMap(FALSE);
 
 	//影描画するフラグをセット
 	m_skinModel.SetShadowReceiverFlag(TRUE);

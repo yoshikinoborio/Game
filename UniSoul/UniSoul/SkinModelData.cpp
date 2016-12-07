@@ -439,6 +439,7 @@ namespace {
 		pMeshContainer->NumMaterials = max(1, NumMaterials);
 		pMeshContainer->pMaterials = new D3DXMATERIAL[pMeshContainer->NumMaterials];
 		pMeshContainer->ppTextures = new LPDIRECT3DTEXTURE9[pMeshContainer->NumMaterials];
+		pMeshContainer->textureName.resize(pMeshContainer->NumMaterials);
 		//はある1つの三角ポリゴンに隣接する3つのポリゴンインデックス番号を格納した隣接ポリゴンインデックス。
 		pMeshContainer->pAdjacency = new DWORD[NumFaces * 3];
 		if ((pMeshContainer->pAdjacency == NULL) || (pMeshContainer->pMaterials == NULL))
@@ -475,9 +476,11 @@ namespace {
 						) {
 						pMeshContainer->ppTextures[iMaterial] = NULL;
 					}
+					pMeshContainer->textureName[iMaterial] = pMeshContainer->pMaterials[iMaterial].pTextureFilename;
 
 					// don't remember a pointer into the dynamic memory, just forget the name after loading
 					pMeshContainer->pMaterials[iMaterial].pTextureFilename = NULL;
+
 				}
 			}
 		}
@@ -535,6 +538,7 @@ namespace {
 				pd3dDevice, &pOutMesh);
 			if (FAILED(hr))
 				goto e_Exit;
+			//D3DXComputeNormals(pOutMesh, NULL);
 			//D3DXComputeTangentFrameExはメッシュの接線フレームの計算を実行し、接線ベクトル(ポリゴンの向きに直行するベクトル)、従法線ベクトル(ポリゴンの向きとポリゴンの向きに直行するベクトルに直行するベクトル)、および必要に応じて法線ベクトル(ポリゴンの向き)が生成される。
 			hr = D3DXComputeTangentFrameEx(
 				pOutMesh,				// ID3DXMeshメッシュオブジェクトへのポインタ。

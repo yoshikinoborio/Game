@@ -41,6 +41,8 @@ void Map::Initialize()
 
 		m_skinModel[i].SetLight(&m_light);
 
+		m_skinModel[i].SetHasNormalMap(FALSE);
+
 
 		m_skinModel[i].Update(mapChipLocInfoTable[i].pos, mapChipLocInfoTable[i].rotation, {1.0f, 1.0f, 1.0f});
 

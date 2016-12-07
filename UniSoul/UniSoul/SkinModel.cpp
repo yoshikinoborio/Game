@@ -64,9 +64,7 @@ void SkinModel::Draw(D3DXMATRIX* viewMatrix,
 			viewMatrix,
 			projMatrix,
 			m_light,
-			isDrawToShadowMap,
-			m_normalMap
-			);
+			isDrawToShadowMap);
 	}
 }
 
@@ -80,8 +78,7 @@ void SkinModel::DrawMeshContainer(
 	D3DXMATRIX* viewMatrix,
 	D3DXMATRIX* projMatrix,
 	Light*		light,
-	bool isDrawToShadowMap,
-	LPDIRECT3DTEXTURE9 normalMap
+	bool isDrawToShadowMap
 	)
 {
 	D3DXMESHCONTAINER_DERIVED* pMeshContainer = (D3DXMESHCONTAINER_DERIVED*)pMeshContainerBase;
@@ -121,18 +118,6 @@ void SkinModel::DrawMeshContainer(
 			}
 		}
 
-		if (normalMap != NULL)
-		{
-			//法線マップがある場合。
-			//シェーダーに転送。
-			m_effect->SetTexture("g_normalTexture", normalMap);
-			m_effect->SetBool("g_hasNormalMap", true);
-		}
-		else
-		{
-			//法線マップがない場合。
-			m_effect->SetBool("g_hasNormalMap", false);
-		}
 
 		//ライトビュープロジェクション行列の計算。
 		m_LVP = game->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * game->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
@@ -196,6 +181,27 @@ void SkinModel::DrawMeshContainer(
 				// ディフューズテクスチャ。
 				m_effect->SetTexture("g_diffuseTexture", pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
 
+				//ユニティちゃんの頭の法線。
+				if (!strcmp("hair_01.tga",pMeshContainer->textureName[pBoneComb[iAttrib].AttribId].c_str()))
+				{
+					m_effect->SetTexture("g_normalTexture", m_normalMap2);
+					m_effect->SetInt("g_hasNormalMap", 1);
+				}//ユニティちゃんの体の法線。
+				else if (!strcmp("body_01.tga",pMeshContainer->textureName[pBoneComb[iAttrib].AttribId].c_str()))
+				{
+					m_effect->SetTexture("g_normalTexture", m_normalMap3);
+					m_effect->SetInt("g_hasNormalMap", 1);
+				}
+				else if (m_normalMap != NULL)
+				{
+					m_effect->SetTexture("g_normalTexture", m_normalMap);
+					m_effect->SetInt("g_hasNormalMap", 1);
+				}
+				else
+				{
+					m_effect->SetInt("g_hasNormalMap", 0);
+				}
+
 				// ボーン数。
 				m_effect->SetInt("CurNumBones", pMeshContainer->NumInfl - 1);
 				D3DXMATRIX viewRotInv;
@@ -231,6 +237,10 @@ void SkinModel::DrawMeshContainer(
 			m_effect->BeginPass(0);
 			for (DWORD i = 0; i < pMeshContainer->NumMaterials; i++) {
 
+				//ユニティちゃんの頭の法線。
+				
+					m_effect->SetInt("g_hasNormalMap", 0);
+				
 				m_effect->SetTexture("g_diffuseTexture", pMeshContainer->ppTextures[i]);
 				m_effect->CommitChanges();
 				pMeshContainer->MeshData.pMesh->DrawSubset(i);
@@ -249,8 +259,7 @@ void SkinModel::DrawFrame(
 	D3DXMATRIX* viewMatrix,
 	D3DXMATRIX* projMatrix,
 	Light*		light,
-	bool isDrawToShadowMap,
-	LPDIRECT3DTEXTURE9 normalMap
+	bool isDrawToShadowMap
 	)
 {
 	LPD3DXMESHCONTAINER pMeshContainer;
@@ -268,8 +277,7 @@ void SkinModel::DrawFrame(
 			viewMatrix,
 			projMatrix,
 			light,
-			isDrawToShadowMap,
-			normalMap
+			isDrawToShadowMap
 			);
 
 		pMeshContainer = pMeshContainer->pNextMeshContainer;
@@ -286,8 +294,7 @@ void SkinModel::DrawFrame(
 			viewMatrix,
 			projMatrix,
 			light,
-			isDrawToShadowMap,
-			normalMap
+			isDrawToShadowMap
 			);
 	}
 
@@ -302,8 +309,7 @@ void SkinModel::DrawFrame(
 			viewMatrix,
 			projMatrix,
 			light,
-			isDrawToShadowMap,
-			normalMap
+			isDrawToShadowMap
 			);
 	}
 }
@@ -316,6 +322,34 @@ void SkinModel::LoadNormalMap(const char* filePath)
 		filePath,
 		&m_normalMap);
 
+	//テクスチャのロードが成功したかどうか。
+	if (FAILED(hr))
+	{
+		MessageBox(
+			NULL,
+			"テクスチャのロードに失敗しました。指定したパスが間違っています。",
+			"エラー表示",
+			MB_OK);
+	}
+}
+
+void SkinModel::LoadNormalMap(const char* filePath,const char* BoneName)
+{
+	HRESULT hr; 
+
+	if(!strcmp("tail",BoneName))
+	{
+		hr = D3DXCreateTextureFromFileA(g_pd3dDevice,
+			filePath,
+			&m_normalMap2);
+	}
+	else if(!strcmp("Plane001",BoneName))
+	{
+		hr = D3DXCreateTextureFromFileA(g_pd3dDevice,
+			filePath,
+			&m_normalMap3);
+	}
+	
 	//テクスチャのロードが成功したかどうか。
 	if (FAILED(hr))
 	{

@@ -46,6 +46,7 @@ void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATE
 
 	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
+	m_skinModel.SetHasNormalMap(FALSE);
 
 	//アニメーションの設定。
 	m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
