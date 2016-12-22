@@ -71,7 +71,7 @@ void Camera::Update()
 	
 	//カメラがユニティちゃんに追従する処理。
 	D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
-	V.y += 1.0f;
+	V.y += 2.0f;
 	m_lookatPt = V;	//注視点をユニティちゃんの少し上に設定。
 	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
 
@@ -79,7 +79,7 @@ void Camera::Update()
 	if (fabsf(m_rStick_y) > 0.0f) {
 		D3DXVECTOR3 Cross;
 		D3DXVec3Cross(&Cross, &m_upVec, &m_toEyeptVector);//上方向と横方向に直行するベクトルを求める。
-		D3DXQuaternionRotationAxis(&m_zAxis, &Cross, 0.1f*m_rStick_y);//上で求めたベクトルを回転軸にしてクォータニオンを回転。
+		D3DXQuaternionRotationAxis(&m_zAxis, &Cross, 0.03f*m_rStick_y);//上で求めたベクトルを回転軸にしてクォータニオンを回転。
 		D3DXMatrixRotationQuaternion(&m_rot, &m_zAxis);//クォータニオンから回転行列を作成。
 		D3DXVec3Transform(&m_v4, &m_toEyeptVector, &m_rot);//回転行列を使ってm_toEyeptVectorを回転。
 		D3DXVECTOR3 m_toEyeptVectorOld = m_toEyeptVector;
@@ -101,7 +101,7 @@ void Camera::Update()
 	//右スティックを使った横のカメラ移動。
 	if (fabsf(m_rStick_x) > 0.0f) {
 		//Y軸周りの回転を計算。
-		D3DXQuaternionRotationAxis(&m_yAxis, &m_upVec,0.1f * m_rStick_x);//Y軸を任意の回転軸にしてクォータニオンを回転。
+		D3DXQuaternionRotationAxis(&m_yAxis, &m_upVec, 0.03f * m_rStick_x);//Y軸を任意の回転軸にしてクォータニオンを回転。
 		D3DXMatrixRotationQuaternion(&m_rot, &m_yAxis);//クォータニオンから回転行列を作成。
 		D3DXVec3Transform(&m_v4, &m_toEyeptVector, &m_rot);//回転行列を使ってm_toEyeptVectorを回転。
 		m_toEyeptVector.x = m_v4.x;

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: fc76bee203e4ad043be8ce49a6b703c4
-timeCreated: 1482401620
+guid: 5699873bdea331941868e5e870773f8d
+timeCreated: 1482398122
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Lantern_post
+    4300000: Well
     7400000: Take 001
     9500000: //RootNode
   materials:

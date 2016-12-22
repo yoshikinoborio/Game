@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 529f5ee5483cf0343b3977121cff74c4
-timeCreated: 1475999625
+guid: ab7579d9c2df9f5428546af769a67abe
+timeCreated: 1482400589
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -10,7 +10,7 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Tent
-    7400000: Default Take
+    7400000: Take 001
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -19,7 +19,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 

@@ -270,7 +270,8 @@ void EnemySkeleton::FindMove()
 	
 	//“G‚ðƒ†ƒjƒeƒB‚¿‚á‚ñ‚ÌŒü‚«‚Éi‚Ü‚¹‚éB
 	//m_movesSpeed‚ÉŠ|‚¯‚é’l‚ðDir‚É‚·‚é‚Ææ“Ç‚ÝŒ^‚É‚È‚éB
-	m_move = m_moveSpeed*m_posDifference;
+	m_move.x= m_moveSpeed*m_posDifference.x;
+	m_move.z = m_moveSpeed*m_posDifference.z;
 
 	//‰ñ“]‚Ìˆ—B
 	if (D3DXVec3Length(&m_posDifference) > 0.0f)
