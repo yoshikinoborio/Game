@@ -73,10 +73,10 @@ public:
 		m_stopFlag = Flg;
 	}
 	//TRUEにするとUpdateの更新回数を減らす。
-	void SetSlowFlag(bool Flg)
+	/*void SetSlowFlag(bool Flg)
 	{
 		m_slowFlag = Flg;
-	}
+	}*/
 	bool GetStopFlag()
 	{
 		return m_stopFlag;
@@ -98,9 +98,9 @@ private:
 	Enemy			m_enemy;
 	PhysicsWorld	m_physicsWorld;
 	EnemyManager	m_enemyManager;
-	bool			m_stopFlag;
-	bool			m_slowFlag;
-	float			m_deltaTime;
+	bool			m_stopFlag;			//スタートボタンを押したらカメラ以外の処理を止まるフラグ。
+	//bool			m_slowFlag;         //ヒットストップかどうかのフラグ。
+	//float			m_deltaTime;
 	CFont			m_font;
 	CStopwatch		m_stopWatch;
 	LPD3DXSPRITE	m_pSprite;			//スプライト

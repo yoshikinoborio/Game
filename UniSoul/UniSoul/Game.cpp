@@ -14,8 +14,8 @@ Game::~Game()
 {
 	Game::Terminate();
 	m_stopFlag = FALSE;
-	m_slowFlag = FALSE;
-	m_deltaTime = 0.0f;
+	//m_slowFlag = FALSE;
+	//m_deltaTime = 0.0f;
 	delete g_soundEngine;
 }
 
@@ -181,7 +181,7 @@ void Game::Update()
 {
 	m_stopWatch.Start();
 
-	m_deltaTime += 1.0f / 60.0f;
+	//m_deltaTime += 1.0f / 60.0f;
 
 	//パッドの更新。
 	g_pad.Update();
@@ -193,61 +193,26 @@ void Game::Update()
 		m_camera.Update();
 		break;
 	case FALSE:
-		if (m_slowFlag == TRUE)
-		{
-			if (0.0f == m_deltaTime / 2.0f)
-			{
-				//物理ワールドの更新。
-				m_physicsWorld.Update();
-				//サウンドエンジンの更新。
-				g_soundEngine->Update();
-				//ライトの更新。
-				//m_light.Update();
-				//ステージの更新。
-				m_stage.Update();
-				//ユニティちゃんの更新。
-				m_unitychan.Update();
-				//マップにあるオブジェクトの更新。
-				m_map.Update();
-				//エネミーマネージャーの更新。
-				m_enemyManager.Update();
-				//空の更新。
-				m_sky.Update();
-				//カメラの更新。
-				m_camera.Update();
-				//シャドウカメラの更新。
-				m_shadowmapcamera.Update();
-				//プレイヤーの体力バー更新。
-				m_playerHPBar.Update();
-			}
-			break;
-		}
-		else
-		{
-			//物理ワールドの更新。
-			m_physicsWorld.Update();
-			//サウンドエンジンの更新。
-			g_soundEngine->Update();
-			//ライトの更新。
-			//m_light.Update();
-			//ステージの更新。
-			m_stage.Update();
-			//ユニティちゃんの更新。
-			m_unitychan.Update();
-			//マップにあるオブジェクトの更新。
-			m_map.Update();
-			//エネミーマネージャーの更新。
-			m_enemyManager.Update();
-			//空の更新。
-			m_sky.Update();
-			//カメラの更新。
-			m_camera.Update();
-			//シャドウカメラの更新。
-			m_shadowmapcamera.Update();
-			//プレイヤーの体力バー更新。
-			m_playerHPBar.Update();
-		}
-		break;
+		//物理ワールドの更新。
+		m_physicsWorld.Update();
+		//サウンドエンジンの更新。
+		g_soundEngine->Update();
+		//ステージの更新。
+		m_stage.Update();
+		//ユニティちゃんの更新。
+		m_unitychan.Update();
+		//マップにあるオブジェクトの更新。
+		m_map.Update();
+		//エネミーマネージャーの更新。
+		m_enemyManager.Update();
+		//空の更新。
+		m_sky.Update();
+		//カメラの更新。
+		m_camera.Update();
+		//シャドウカメラの更新。
+		m_shadowmapcamera.Update();
+		//プレイヤーの体力バー更新。
+		m_playerHPBar.Update();
 	}
 }
 //-----------------------------------------------------------------------------

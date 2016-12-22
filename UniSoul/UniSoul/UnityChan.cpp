@@ -55,6 +55,7 @@ void UnityChan::Initialize()
 
 	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
+	//ユニティちゃんの法線マップのロード。
 	m_skinModel.LoadNormalMap("image\\body_01_NRM.tga","Plane001");
 	m_skinModel.LoadNormalMap("image\\hair_01_NRM.tga","tail");
 	m_skinModel.SetHasNormalMap(TRUE);

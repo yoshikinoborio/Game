@@ -13,9 +13,6 @@ public:
 	//ライトを初期化。
 	void Initialize();
 
-	//ライトの更新
-	void Update();
-
 	//ライトの方向取得
 	D3DXVECTOR4* GetDiffuseLightDirection()
 	{

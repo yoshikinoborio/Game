@@ -63,7 +63,9 @@ public:
 		return m_worldMatrix;
 	}
 	//法線マップのロード。
+	//ユニティちゃんの法線マップを読み込む用の関数。
 	void LoadNormalMap(const char* filePath, const char* BoneName);
+	//ユニティちゃん以外の時に使うよう。
 	void LoadNormalMap(const char* filePath);
 
 	//法線マップの保持フラグを設定。

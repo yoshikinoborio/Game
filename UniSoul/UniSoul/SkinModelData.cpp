@@ -781,7 +781,12 @@ void SkinModelData::CloneSkeleton(LPD3DXFRAME& dstFrame, LPD3DXFRAME srcFrame)
 	//メッシュコンテナをコピー。メッシュは使いまわす。
 	if (srcFrame->pMeshContainer) {
 		dstFrame->pMeshContainer = new D3DXMESHCONTAINER_DERIVED;
-		memcpy(dstFrame->pMeshContainer, srcFrame->pMeshContainer, sizeof(D3DXMESHCONTAINER_DERIVED));
+		((D3DXMESHCONTAINER_DERIVED*)dstFrame->pMeshContainer)->Clone(((D3DXMESHCONTAINER_DERIVED*)(srcFrame->pMeshContainer)));
+		//memcpyをするとオリジナルのメッシュコンテナーのtextureNameが保持しているポインターとクローンしたメッシュコンテナーのtextureNameが保持しているポインターが
+		//同じ所を指しているので複数回、削除を行うと一回目で削除された所を二回目でも削除しようとしてプログラムが落ちる。
+		//なので新しくクローン関数を作ってオリジナルのtextureName分のメモリを新しく確保してクローンがその新しく作った方を指すようにして回避した。
+		//新しくメモリを確保しているので重い。
+		//memcpy(dstFrame->pMeshContainer, srcFrame->pMeshContainer, sizeof(D3DXMESHCONTAINER_DERIVED));
 	}
 	else {
 		dstFrame->pMeshContainer = NULL;

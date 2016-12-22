@@ -17,6 +17,24 @@ struct D3DXMESHCONTAINER_DERIVED : public D3DXMESHCONTAINER {
 	DWORD NumPaletteEntries;
 	bool UseSoftwareVP;
 	DWORD iAttributeSW;
+	void Clone(D3DXMESHCONTAINER_DERIVED* original)
+	{
+		memcpy(this, original, sizeof(D3DXMESHCONTAINER));
+		ppTextures = original->ppTextures;
+		textureName = original->textureName;
+		pOrigMesh = original->pOrigMesh;
+		pAttributeTable = original->pAttributeTable;
+		NumAttributeGroups = original->NumAttributeGroups;
+		NumInfl = original->NumInfl;
+		pBoneCombinationBuf = original->pBoneCombinationBuf;
+		ppBoneMatrixPtrs = original->ppBoneMatrixPtrs;
+		pBoneOffsetMatrices = original->pBoneOffsetMatrices;
+		NumPaletteEntries = original->NumPaletteEntries;
+		UseSoftwareVP = original->UseSoftwareVP;
+		iAttributeSW = original->iAttributeSW;
+
+
+	}
 };
 class Animation;
 

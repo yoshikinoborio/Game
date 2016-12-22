@@ -44,23 +44,25 @@ void EnemyManager::Initialize()
 void EnemyManager::Update()
 {
 	////エネミーの先頭を確保。
-	//auto it = enemyskeletonList.begin();
-	////エネミーのリストの最後まで。
-	//while (it != enemyskeletonList.end())
-	//{
-	//	//エネミーがfalseを返して来たら削除。
-	//	if ((*it)->GetDead()) {
-	//		//エネミーの解放。
-	//		delete *it;
-	//		//解放した次のエネミーを確保。
-	//		it = enemyskeletonList.erase(it);
-	//	}
-	//	else
-	//	{
-	//		//次に進む処理。
-	//		it++;
-	//	}
-	//}
+	auto it = enemyskeletonList.begin();
+	//エネミーのリストの最後まで。
+	while (it != enemyskeletonList.end())
+	{
+		//エネミーがTRUEを返して来たら削除。
+		if (TRUE == (*it)->GetDead()) {
+			//エネミーの解放。
+			(*it)->Release();
+			delete *it;
+			//解放した次のエネミーを確保。
+			//erase関数が返り値が有効なイテレータを返してくれる。
+			it = enemyskeletonList.erase(it);
+		}
+		else
+		{
+			//次に進む処理。
+			it++;
+		}
+	}
 	for (auto enemy: enemyskeletonList) {
 		enemy->Update();
 	}

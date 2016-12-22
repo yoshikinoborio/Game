@@ -63,8 +63,9 @@ void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATE
 	m_state = SkeletonStateSearch;
 
 	//スケルトンの半径と高さ。
-	m_radius = 0.6f;
 	m_height = 1.0f;
+	m_radius = 0.6f;
+	
 
 	m_hp = 10;
 
@@ -239,15 +240,20 @@ void EnemySkeleton::FindMove()
 
 	m_posDifference.y = 0.0f;
 
+	//プレイヤーが移動する先を読み迎撃する処理。
 	m_SkeDir = m_posDifference;
 
+	//プレイヤーと敵の相対速度を求める。
 	D3DXVECTOR3 Vr = m_unitytyan->GetUniDir() - m_SkeDir;
+	//プレイヤーと敵の相対距離を求める。
 	D3DXVECTOR3 Sr = m_unitytyan->GetUnityChanPos() - m_position;
+	//接近時間を求める。
 	D3DXVECTOR3 Tc;
 	Tc.x = abs(Sr.x) / abs(Vr.x);
 	Tc.y = abs(Sr.y) / abs(Vr.y);
 	Tc.z = abs(Sr.z) / abs(Vr.z);
 
+	//迎撃ポイント。
 	D3DXVECTOR3 GeigekiPos;
 	GeigekiPos.x = m_unitytyan->GetUnityChanPos().x + m_unitytyan->GetUniDir().x * Tc.x;
 	GeigekiPos.y = m_unitytyan->GetUnityChanPos().y +m_unitytyan->GetUniDir().y * Tc.y;
@@ -255,6 +261,7 @@ void EnemySkeleton::FindMove()
 	GeigekiPos.z = m_unitytyan->GetUnityChanPos().z + m_unitytyan->GetUniDir().z * Tc.z;
 
 	D3DXVECTOR3 Dir;
+	//撃移動量＝||迎撃ポイント－敵座標||×移動量。
 	Dir = GeigekiPos - m_position;
 	D3DXVec3Normalize(&Dir, &Dir);
 
@@ -262,7 +269,8 @@ void EnemySkeleton::FindMove()
 	D3DXVec3Normalize(&m_posDifference, &m_posDifference);
 	
 	//敵をユニティちゃんの向きに進ませる。
-	m_move = m_moveSpeed*Dir;
+	//m_movesSpeedに掛ける値をDirにすると先読み型になる。
+	m_move = m_moveSpeed*m_posDifference;
 
 	//回転の処理。
 	if (D3DXVec3Length(&m_posDifference) > 0.0f)

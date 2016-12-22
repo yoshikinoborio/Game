@@ -29,9 +29,3 @@ void Light::Initialize()
 	//ŠÂ‹«ŒõB
 	m_ambientLight = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 }
-
-
-void Light::Update()
-{
-	
-}
