@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: ba4346cbb5c2fdb43833ba12707bc94d
-timeCreated: 1480323807
+guid: 433b29754d386224caa7a7f5c5eb634f
+timeCreated: 1482649006
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Building_a
+    4300000: palmera low
     7400000: Take 001
     9500000: //RootNode
   materials:

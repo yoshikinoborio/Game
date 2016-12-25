@@ -4,7 +4,7 @@
 #include "RigidBody.h"
 #include "MeshCollider.h"
 #include "Light.h"
-#define MapObjectNum 43
+#define MapObjectNum 198
 
 //マップチップの配置情報。
 struct MapLocInfo {
