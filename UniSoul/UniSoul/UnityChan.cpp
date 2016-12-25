@@ -321,9 +321,9 @@ void UnityChan::Update()
 			m_atrTime += DeltaTime;
 			//ユニティちゃんのワールド行列を取得。
 			D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
-			if (m_atrTime > 1.0f)
+			if (m_atrTime > 0.9f)
 			{
-				g_damageCollisionWorld->Add(20.0f, D3DXVECTOR3(UniPos.m[3][0], UniPos.m[3][1], UniPos.m[3][2]), 0.05f, 10, DamageCollisionWorld::enDamageToEnemy, 0);
+				g_damageCollisionWorld->Add(1.5f, D3DXVECTOR3(UniPos.m[3][0], UniPos.m[3][1], UniPos.m[3][2]), 0.05f, 10, DamageCollisionWorld::enDamageToEnemy, 0);
 				m_atrTime = 0.0f;
 			}
 			if (!m_animation.IsPlay())

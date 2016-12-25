@@ -66,6 +66,7 @@ void EnemyManager::Update()
 	for (auto enemy: enemyskeletonList) {
 		enemy->Update();
 	}
+	g_damageCollisionWorld->Update();
 }
 
 void EnemyManager::Draw(D3DXMATRIX viewMatrix,

@@ -74,8 +74,6 @@ void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATE
 	m_characterController.Initialize(m_radius, m_height, m_position);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
 
-	g_damageCollisionWorld = new DamageCollisionWorld;
-	g_damageCollisionWorld->Start();
 }
 
 void EnemySkeleton::Update()
@@ -213,8 +211,6 @@ void EnemySkeleton::Update()
 
 		//向きたい方向と上方向から軸を作りその軸を回転軸としてクォータニオンを回転。
 		D3DXQuaternionRotationAxis(&m_rotation, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), m_targetAngleY);
-
-		g_damageCollisionWorld->Update();
 
 		m_animation.PlayAnimation(m_currentAnimSetNo, 0.1f);
 

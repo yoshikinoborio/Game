@@ -26,9 +26,11 @@ void Game::Initialize()
 {
 	g_effectManager = new EffectManager;
 	g_soundEngine = new CSoundEngine;
-
+	g_damageCollisionWorld = new DamageCollisionWorld;
+	
 	this->CreateSprite();
-
+	//ダメージコリジョンの初期化。
+	g_damageCollisionWorld->Start();
 	//サウンドエンジンの初期化。
 	g_soundEngine->Init();
 	//物理ワールドを初期化。
@@ -193,6 +195,8 @@ void Game::Update()
 		m_camera.Update();
 		break;
 	case FALSE:
+		//ダーメンコリジョンの更新。
+		g_damageCollisionWorld->Update();
 		//物理ワールドの更新。
 		m_physicsWorld.Update();
 		//サウンドエンジンの更新。
