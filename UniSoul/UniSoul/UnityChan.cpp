@@ -208,8 +208,8 @@ void UnityChan::Update()
 				double AnimTime = m_animation.GetlocalAnimationTime();
 				if (AnimTime > 0.5f)
 				{
-					m_characterController.SetRadius(0.2f);
-					m_characterController.SetHeight(0.3f);
+					//m_characterController.SetRadius(0.5f);
+					//m_characterController.SetHeight(0.3f);
 				}
 
 				//スライディンが終了したら待機に遷移。
