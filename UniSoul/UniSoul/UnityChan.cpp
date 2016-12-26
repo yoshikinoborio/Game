@@ -105,8 +105,8 @@ void UnityChan::Initialize()
 	m_characterController.SetGravity(-20.0f);	//重力強め。
 
 	//ポインタなのでnew。
-	g_damageCollisionWorld = new DamageCollisionWorld;
-	g_damageCollisionWorld->Start();
+	//g_damageCollisionWorld = new DamageCollisionWorld;
+	//g_damageCollisionWorld->Start();
 
 	m_lv = 1;
 	m_lvUpEXP = 10;
@@ -148,9 +148,12 @@ void UnityChan::Update()
 	
 	m_isTurn = FALSE;
 
-	if (g_pad.IsTrigger(enButtonX))
+	if (m_state!=StateDead)
 	{
-		m_state = StateAttack;
+		if (g_pad.IsTrigger(enButtonX))
+		{
+			m_state = StateAttack;
+		}
 	}
 
 	Damage();
@@ -438,7 +441,7 @@ void UnityChan::Update()
 	m_soundSource.Update();
 	m_soundSource2.Update();
 
-	g_damageCollisionWorld->Update();
+	//g_damageCollisionWorld->Update();
 
 	m_currentAngleY = m_turn.Update(m_isTurn, m_targetAngleY);
 
