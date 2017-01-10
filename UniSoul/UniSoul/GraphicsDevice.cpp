@@ -18,11 +18,11 @@ void InitD3D(HWND hWnd)
 
 	// D3Dデバイスを作成するためのパラメータを設定する。
 	D3DPRESENT_PARAMETERS d3dpp;
-	ZeroMemory(&d3dpp, sizeof(d3dpp));			//構造体全体の初期化
-	d3dpp.Windowed = TRUE;						//TRUEの場合はウィンドウモード、FALSEはフルスクリーンモード
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;	//フロントバッファとバックバッファの切り替え方法を定義する部分
-	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;	//D3DFMT_UNKNOWNにすると動作環境に合わせてフォーマットを変えてくれる。
-	d3dpp.EnableAutoDepthStencil = TRUE;		//深度ステンシルバッファ(Zバッファなどの3D空間におけるオブジェクトの奥行きを保持するバッファ+ステンシルバッファという画面にマスクをかけて描画領域を制限する(重なって描画されている所を透過させたり描画しないようにする)バッファ)、3Dを扱うならTRUE
+	ZeroMemory(&d3dpp, sizeof(d3dpp));				//構造体全体の初期化
+	d3dpp.Windowed = TRUE;							//TRUEの場合はウィンドウモード、FALSEはフルスクリーンモード
+	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;		//フロントバッファとバックバッファの切り替え方法を定義する部分
+	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;		//D3DFMT_UNKNOWNにすると動作環境に合わせてフォーマットを変えてくれる。
+	d3dpp.EnableAutoDepthStencil = TRUE;			//深度ステンシルバッファ(Zバッファなどの3D空間におけるオブジェクトの奥行きを保持するバッファ+ステンシルバッファという画面にマスクをかけて描画領域を制限する(重なって描画されている所を透過させたり描画しないようにする)バッファ)、3Dを扱うならTRUE
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24X8;	//ステンシルバッファのフォーマットを指定(ステンシルバッファを使うならTRUE、使わないならFALSE、D3DFMT_D16はエラーを起こしにくい)
 
 	//D3Dデバイスを作成する。
@@ -81,13 +81,13 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
 	RegisterClassEx(&wc);
 
 	// ウィンドウを作成。
-	HWND hWnd = CreateWindow("UniSoul",			//RegisterClassEx()で登録したクラスの名前
+	HWND hWnd = CreateWindow("UniSoul",			    //RegisterClassEx()で登録したクラスの名前
 		"UniSoul",									//タイトルバーとかに表示する文字列
 		WS_OVERLAPPEDWINDOW,						//ウインドウスタイル(dwStyle)
-		0,											//ウインドウ左上x座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
-		0,											//ウインドウ左上y座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
-		1920,										//ウインドウ幅．適当でいい時はCW_USEDEFAULT
-		1080,										//ウインドウ高さ．適当でいい時はCW_USEDEFAULT
+		-5,											//ウインドウ左上x座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
+		-1,											//ウインドウ左上y座標(画面左上が0)．適当でいい時はCW_USEDEFAULT
+		FRAME_BUFFER_WITDH,							//ウインドウ幅．適当でいい時はCW_USEDEFAULT
+		FRAME_BUFFER_HEIGHT,						//ウインドウ高さ．適当でいい時はCW_USEDEFAULT
 		NULL,										//親ウインドウのハンドル．なければNULL．dwStyleでDW_CHILDを指定したときは必須．
 		NULL,										//メニューのハンドル．デフォルト(WNDCLASS.lpszMenuName)を使う場合はNULL
 		wc.hInstance,								//WM_CREATEでLPARAMに渡したい値．だいたいNULL

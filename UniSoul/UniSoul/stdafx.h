@@ -23,6 +23,9 @@
 
 const float g_cTurnSpeed D3DXToRadian(10.0f);
 
+static const int FRAME_BUFFER_WITDH = 1920;		//フレームバッファのサイズ。
+static const int FRAME_BUFFER_HEIGHT = 1080;		//フレームバッファのサイズ。
+
 /*!
 *@brief	仮想ボタン定義。
 */

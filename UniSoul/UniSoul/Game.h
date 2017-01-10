@@ -16,6 +16,7 @@
 #include "Stopwatch.h"
 #include "PlayerHPBar.h"
 #include "SoundEngine.h"
+#include "Primitive.h"
 
 class Game
 {
@@ -32,6 +33,14 @@ public:
 	void Draw();
 	//解放。
 	void Terminate();
+	//メインレンダリングターゲットを初期化。
+	void InitMainRenderTarget();
+	//板ポリの初期化。
+	void InitQuadPrimitive();
+	//メインレンダリングターゲットの内容を現在のレンダリングターゲットにコピー。
+	void CopyMainRTToCurrentRT();
+	//ポストエフェクトに使う専用のシェーダーをロード。
+	void LoadShaders();
 	//ユニティちゃんのインスタンス取得。
 	UnityChan* GetUnityChan()
 	{
@@ -106,6 +115,11 @@ private:
 	LPD3DXSPRITE	m_pSprite;			//スプライト
 	PlayerHPBar		m_playerHPBar;
 	CSoundEngine*	g_soundEngine;
+	//ポストエフェクトを使うための変数たち。
+	RenderTarget* m_mainRenderTarget;		//メインレンダリングターゲット。
+	CPrimitive*	m_quadPrimitive;			//四角形の板ポリプリミティブ。
+	LPD3DXEFFECT m_copyEffect;			//コピーを行うシェーダー。
+	LPD3DXEFFECT m_monochromeEffect;		//モノクロフィルターをかけるシェーダー。
 };
 
 //どこでも使えるようにextern。
