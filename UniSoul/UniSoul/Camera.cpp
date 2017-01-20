@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Game.h"
+#include "SceneManager.h"
 #include "Camera.h"
 
 Camera::Camera()
@@ -33,7 +33,8 @@ void Camera::Initialize()
 	m_upVec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 	//ユニティちゃんのインスタンスの取得。
-	m_unitychan = game->GetUnityChan();
+	m_unitychan = g_pScenes->GetUnityChan();
+	
 	
 	//注視点から視点に向かうベクトルの算出。
 	m_toEyeptVector = m_eyePt - m_lookatPt;
@@ -48,18 +49,19 @@ void Camera::Update()
 	m_rStick_y = g_pad.GetRStickYF();
 
 	// 画面を止めるor再生する処理。
-	if (game->GetStopFlag() == FALSE)
+	//ゲームでしか使わないのでキャストゲームシーンクラスにキャスト。
+	if (static_cast<GameScene*>(g_pScenes)->GetStopFlag() == FALSE)
 	{
 		if (g_pad.IsTrigger(enButtonStart))
 		{
-			game->SetStopFlag(TRUE);
+			static_cast<GameScene*>(g_pScenes)->SetStopFlag(TRUE);
 		}
 	}
 	else
 	{
 		if (g_pad.IsTrigger(enButtonStart))
 		{
-			game->SetStopFlag(FALSE);
+			static_cast<GameScene*>(g_pScenes)->SetStopFlag(FALSE);
 		}
 	}
 

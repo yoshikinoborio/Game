@@ -15,7 +15,7 @@ enum SkeletonState {
 	SkeletonStateFind,		//発見。
 	SkeletonStateAttack,	//攻撃。
 	SkeletonStateDamage,	//ダメージを受けている。
-	SkeletonStateDead,	//死。
+	SkeletonStateDead,		//死。
 };
 
 //エネミー(スケルトン)クラス。
@@ -29,7 +29,6 @@ public:
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		bool isShadowReceiver);
-	void Release();
 	//スケルトンが発見状態の時の回転と移動の処理。
 	void FindMove();
 	//スケルトンが索敵中の時の回転と移動の処理。
@@ -45,8 +44,6 @@ private:
 	D3DXVECTOR3 m_initPos;						//骨の初期位置。
 	SkeletonState     m_state;					//骨の敵の状態。
 	CharacterController	m_characterController;	//骨の敵のキャラクタコントローラ。
-	float			m_height;					//骨の敵の高さ。
-	float			m_radius;					//骨の敵の半径。
 	D3DXVECTOR3     m_move;						//移動量。
 	UnityChan*		m_unitytyan;				//ユニティちゃんのインスタンス。
 	D3DXVECTOR3		m_unityPos;					//ユニティちゃんの位置。

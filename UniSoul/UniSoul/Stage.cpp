@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "Game.h"
 #include "Stage.h"
+#include "SceneManager.h"
 
 Stage::Stage()
 {
@@ -12,7 +12,7 @@ Stage::Stage()
 
 Stage::~Stage()
 {
-	Release();
+
 }
 
 //初期化。
@@ -53,8 +53,7 @@ void Stage::Initialize()
 	//剛体を作成。
 	m_rigidBody.Create(rbInfo);
 	//作成した剛体を物理ワールドに追加。
-	game->GetPhysicsWorld()->AddRigidBody(&m_rigidBody);
-	
+	static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->AddRigidBody(&m_rigidBody);
 }
 
 //更新。
@@ -69,10 +68,4 @@ void Stage::Draw(D3DXMATRIX viewMatrix,
 	bool isShadowReceiver){
 
 	m_skinModel.Draw(&viewMatrix, &projMatrix,isShadowReceiver);
-}
-
-//開放。
-void Stage::Release()
-{
-	m_skinModelData.Release();
 }

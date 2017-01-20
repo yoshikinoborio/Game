@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Game.h"
+#include "SceneManager.h"
 #include "Model3D.h"
 
 Model3D::Model3D()
@@ -85,7 +85,7 @@ void Model3D::Draw(D3DXMATRIX viewMatrix,
 	m_effect->BeginPass(0);
 
 	//ライトビュープロジェクション行列の計算。
-	m_LVP = game->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * game->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
+	m_LVP = g_pScenes->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * g_pScenes->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
 
 	//定数レジスタに設定するカラー。
 	D3DXVECTOR4 color(1.0f, 0.0f, 0.0f, 1.0f);
@@ -114,7 +114,7 @@ void Model3D::Draw(D3DXMATRIX viewMatrix,
 	//影を描画しているレンダーターゲットのテクスチャを取得。
 	if (m_isShadowReceiver == TRUE)
 	{
-		m_effect->SetTexture("g_shadowTexture", game->GetRenderTarget()->GetTexture());
+		m_effect->SetTexture("g_shadowTexture", g_pScenes->GetRenderTarget()->GetTexture());
 	}
 
 	

@@ -17,6 +17,7 @@ public:
 	PhysicsWorld();
 	~PhysicsWorld();
 	void Initialize();
+	void Release();
 	void Update() ;
 	/*!
 	* @brief	ダイナミックワールドを取得。

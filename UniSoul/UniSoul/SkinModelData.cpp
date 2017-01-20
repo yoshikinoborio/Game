@@ -531,13 +531,15 @@ namespace {
 			if (FAILED(hr))
 				goto e_Exit;
 
-			LPD3DXMESH pOutMesh;
+			LPD3DXMESH pOutMesh, pTmpMesh;
 			hr = pMeshContainer->MeshData.pMesh->CloneMesh(
 				pMeshContainer->MeshData.pMesh->GetOptions(),
 				decl,
 				pd3dDevice, &pOutMesh);
 			if (FAILED(hr))
 				goto e_Exit;
+
+			pTmpMesh = pOutMesh;
 			//D3DXComputeNormals(pOutMesh, NULL);
 			//D3DXComputeTangentFrameExはメッシュの接線フレームの計算を実行し、接線ベクトル(ポリゴンの向きに直行するベクトル)、従法線ベクトル(ポリゴンの向きとポリゴンの向きに直行するベクトルに直行するベクトル)、および必要に応じて法線ベクトル(ポリゴンの向き)が生成される。
 			hr = D3DXComputeTangentFrameEx(
@@ -552,12 +554,13 @@ namespace {
 				0,						//頂点ごとの法線ベクトルを格納するセマンティクス インデックスを指定する。
 				0,						//接線フレームの計算のオプションを指定する。
 				NULL,					//面ごとの3つの WORD値を格納する配列へのポインター。
-				0.01f,    //ボケ具合.値をおおきくするとぼけなくなる。
+				0.01f,					//ボケ具合.値をおおきくするとぼけなくなる。
 				0.25f,
 				0.01f,
-				&pOutMesh,	//算出された接線ベクトル、従法線ベクトル、および法線ベクトルのデータを受け取る出力ID3DXMeshメッシュオブジェクトへのポインターのアドレス。
-				NULL		//このメソッドで計算した新しい頂点から元の頂点へのマッピングを受け取る出力ID3DXBufferバッファーオブジェクトへのポインターのアドレス、バッファーは DWORDの配列であり、配列のサイズはppMeshOutの頂点の数として定義される。
+				&pOutMesh,				//算出された接線ベクトル、従法線ベクトル、および法線ベクトルのデータを受け取る出力ID3DXMeshメッシュオブジェクトへのポインターのアドレス。
+				NULL					//このメソッドで計算した新しい頂点から元の頂点へのマッピングを受け取る出力ID3DXBufferバッファーオブジェクトへのポインターのアドレス、バッファーは DWORDの配列であり、配列のサイズはppMeshOutの頂点の数として定義される。
 				);
+			pTmpMesh->Release();
 			pMeshContainer->MeshData.pMesh->Release();
 			pMeshContainer->MeshData.pMesh = pOutMesh;
 

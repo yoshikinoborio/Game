@@ -2,7 +2,7 @@
 * @brief	キャラクタのコリジョンコントロール。
 */
 #include "stdafx.h"
-#include "game.h"
+#include "SceneManager.h"
 #include "CharacterController.h"
 #include "CollisionAttr.h"
 
@@ -122,18 +122,18 @@ void CharacterController::Initialize(float radius, float height, const D3DXVECTO
 	//@todo 未対応。trans.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z));
 	m_rigidBody.GetBody()->setUserIndex(enCollisionAttr_Character);
 	m_rigidBody.GetBody()->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
-	game->GetPhysicsWorld()->AddRigidBody(&m_rigidBody);
+	static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->AddRigidBody(&m_rigidBody);
 
 }
-void CharacterController::Execute()
+void CharacterController::Execute(float deltaTime)
 {
 	//速度に重力加速度を加える。
-	m_moveSpeed.y += m_gravity * (1.0f / 60.0f);
+	m_moveSpeed.y += m_gravity * deltaTime;
 	//次の移動先となる座標を計算する。
 	D3DXVECTOR3 nextPosition = m_position;
 	//速度からこのフレームでの移動量を求める。オイラー積分。
 	D3DXVECTOR3 addPos = m_moveSpeed;
-	addPos *= 1.0f/60.0f;
+	addPos *= deltaTime;
 	nextPosition += addPos;
 	D3DXVECTOR3 originalXZDir = addPos;
 	originalXZDir.y = 0.0f;
@@ -170,7 +170,7 @@ void CharacterController::Execute()
 			callback.me = m_rigidBody.GetBody();
 			callback.startPos = posTmp;
 			//衝突検出。
-			game->GetPhysicsWorld()->ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);
+			static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);
 
 			if (callback.isHit) {
 				//当たった。
@@ -259,7 +259,7 @@ void CharacterController::Execute()
 		callback.startPos = { start.getOrigin().x(), start.getOrigin().y(), start.getOrigin().z() };
 		//衝突検出。
 		if (fabsf(addPos.y) > FLT_EPSILON) {
-			game->GetPhysicsWorld()->ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);
+			static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);
 		}
 		if (callback.isHit) {
 			//当たった。
@@ -288,6 +288,6 @@ void CharacterController::Execute()
 */
 void CharacterController::RemoveRigidBoby()
 {
-	game->GetPhysicsWorld()->RemoveRigidBody(&m_rigidBody);
+	static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->RemoveRigidBody(&m_rigidBody);
 }
 

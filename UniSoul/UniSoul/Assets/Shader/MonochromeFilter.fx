@@ -39,7 +39,7 @@ float4 PSMain( VS_OUTPUT In ) : COLOR0
 	color.r = Y + 1.402f*Cr;
 	color.g = Y - 0.34414f*Cb - 0.71414f*Cr;
 	color.b = Y + 1.772f*Cb;
-	return color;
+	return Y;
 }
 
 technique Default

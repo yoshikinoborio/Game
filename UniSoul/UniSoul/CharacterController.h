@@ -27,7 +27,7 @@ public:
 	/*!
 		* @brief	実行。
 		*/
-	void Execute();
+	void Execute(float deltaTime);
 	/*!
 		* @brief	座標を取得。
 		*/

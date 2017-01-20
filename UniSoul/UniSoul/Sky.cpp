@@ -12,7 +12,7 @@ Sky::Sky()
 
 Sky::~Sky()
 {
-	Release();
+
 }
 
 void Sky::Initialize()
@@ -46,9 +46,4 @@ void Sky::Draw(D3DXMATRIX viewMatrix,
 	bool isShadowReceiver)
 {
 	m_skinModel.Draw(&viewMatrix, &projMatrix,isShadowReceiver);
-}
-
-void Sky::Release()
-{
-	m_skinModelData.Release();
 }

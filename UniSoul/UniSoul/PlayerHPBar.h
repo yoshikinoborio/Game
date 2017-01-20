@@ -7,8 +7,8 @@ class PlayerHPBar:public C2DImage
 public:
 	PlayerHPBar();
 	~PlayerHPBar();
-	void Initialize()override;
-	void Update()override;
+	void Initialize();
+	void Update();
 private:
 	UnityChan*	m_unityChan;
 };

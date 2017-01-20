@@ -16,8 +16,6 @@ public:
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		bool isShadowReceiver);
-	//解放。
-	void Release();
 private:
 	D3DXVECTOR3		m_position;			//座標。
 	D3DXVECTOR3     m_scale;			//スケール。

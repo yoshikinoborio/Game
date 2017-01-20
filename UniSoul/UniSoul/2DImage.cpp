@@ -13,6 +13,8 @@ C2DImage::~C2DImage()
 
 void C2DImage::Initialize()
 {
+
+	CreateSprite();
 	D3DXIMAGE_INFO imgInfo;										//画像情報格納用構造体
 	D3DXCreateTextureFromFileEx(g_pd3dDevice, this->m_texFileName, 0, 0, 0, 0, D3DFMT_UNKNOWN,
 		D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_DEFAULT, 0, &imgInfo, NULL, &this->m_pTexture);	//テクスチャ読込
@@ -21,18 +23,32 @@ void C2DImage::Initialize()
 	memcpy(&this->m_rect, &rec, sizeof(RECT));					//描画領域セット
 }
 
-void C2DImage::Render(LPD3DXSPRITE pSprite)
+void C2DImage::Render()
 {
-	pSprite->Begin(D3DXSPRITE_ALPHABLEND);		//スプライト描画開始
-	pSprite->SetTransform(&this->m_transformMatrix);	//変換行列セット
-	pSprite->Draw(this->m_pTexture, &this->m_rect, &D3DXVECTOR3(this->m_texCenter.x, this->m_texCenter.y, 0.0f), NULL, this->m_backColor);	//スプライトにテクスチャ貼付け
-	pSprite->End();	//スプライト描画終了
+	m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);		//スプライト描画開始
+	m_pSprite->SetTransform(&this->m_transformMatrix);	//変換行列セット
+	m_pSprite->Draw(this->m_pTexture, &this->m_rect, &D3DXVECTOR3(this->m_texCenter.x, this->m_texCenter.y, 0.0f), NULL, this->m_backColor);	//スプライトにテクスチャ貼付け
+	m_pSprite->End();	//スプライト描画終了
 }
 
 void C2DImage::SetupMatrices()
 {
 	D3DXMatrixIdentity(&this->m_transformMatrix);	//ワールド行列初期化
 	D3DXMatrixTransformation2D(&this->m_transformMatrix, NULL, 0.0f, &this->m_scale, NULL, D3DXToRadian(this->m_angle), &this->m_position);	//変換行列作成
+}
+
+HRESULT C2DImage::CreateSprite()
+{
+	//特定のデバイスと関連付けられているスプライトオブジェクトを作成する。
+	if (FAILED(D3DXCreateSprite(
+		g_pd3dDevice,	//インターフェイスへのポインタ。スプライトに関連付けられるデバイス。
+		&m_pSprite		//インターフェイスへのポインタのアドレス。このインターフェイスを使ってスプライト関数にアクセスする。
+	)))
+	{
+		MessageBox(0, TEXT("スプライト作成失敗"), NULL, MB_OK);
+		return E_FAIL;//失敗返却
+	}
+	return S_OK;
 }
 
 void C2DImage::SetupMatrices2()

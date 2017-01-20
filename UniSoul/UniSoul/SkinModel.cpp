@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Game.h"
+#include "SceneManager.h"
 #include "SkinModel.h"
 #include "SkinModelData.h"
 #include "Light.h"
@@ -120,7 +120,7 @@ void SkinModel::DrawMeshContainer(
 
 
 		//ライトビュープロジェクション行列の計算。
-		m_LVP = game->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * game->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
+		m_LVP = g_pScenes->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * g_pScenes->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
 
 		//定数レジスタに設定するカラー。
 		D3DXVECTOR4 color(1.0f, 0.0f, 0.0f, 1.0f);
@@ -148,11 +148,11 @@ void SkinModel::DrawMeshContainer(
 		//ビュープロジェクション。
 		m_effect->SetMatrix("g_mViewProj", &viewProj);
 		//視点。
-		m_effect->SetVector("vEyePos", &(D3DXVECTOR4)game->GetCamera()->GetEyePt());
+		m_effect->SetVector("vEyePos", &(D3DXVECTOR4)g_pScenes->GetCamera()->GetEyePt());
 		//影を描画しているレンダーターゲットのテクスチャを取得。
 		if (m_isShadowReceiver == TRUE)
 		{
-			m_effect->SetTexture("g_shadowTexture", game->GetRenderTarget()->GetTexture());
+			m_effect->SetTexture("g_shadowTexture", g_pScenes->GetRenderTarget()->GetTexture());
 		}
 
 		if (pMeshContainer->pSkinInfo != NULL)

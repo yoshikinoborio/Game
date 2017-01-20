@@ -26,8 +26,6 @@ public:
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		bool isShadowReceiver);
-	//解放
-	void Release();
 private:
 	int tableSize;					//位置情報のテーブル数
 	SkinModel m_skinModel[MapObjectNum];	//スキンモデル。

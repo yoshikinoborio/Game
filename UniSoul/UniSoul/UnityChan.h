@@ -25,8 +25,6 @@ public:
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		bool isShadowReceiver);
-	//解放。
-	void Release();
 	//パッドによるカメラの奥に移動する処理。
 	void PadMove();
 	//動いている状態での処理。
@@ -74,27 +72,41 @@ public:
 		return m_lv;
 	}
 	void Damage();
+	//ローカル⊿タイムを取得。
+	float GetLocalFrameDeltaTime() const
+	{
+		return  m_frameDeltaTime* m_deltaTimeMul;
+	}
+	/*!
+	* @brief	⊿タイムに乗算される値を設定。
+	*@param[in]	mul		グローバル⊿タイムに乗算される値。この値に0.5を設定するとエネミーの挙動が0.5倍速になる。
+	*/
+	void SetFrameDeltaTimeMul(float mul)
+	{
+		m_deltaTimeMul = mul;
+	}
+
 	//プレイヤーで再生されるアニメーションの種類。
 	enum PlayerAnimationNo {
 		AnimationWait_00 = 0,	//待機(立ち)。
-		AnimationWalk,		//歩き。
-		AnimationRun,		//走り。
-		AnimationWait_01,	//待機(腕伸ばし)。
-		AnimationWait_02,	//待機(クルクル)。
-		AnimationSLID,		//スライディング。
-		AnimationBackStep,	//バックステップ。
-		AnimationFall,		//落下中。
-		AnimationLanding,	//着地。
-		AnimationJump,		//ジャンプ。
-		AnimationPunch,		//パンチ。
-		AnimationRKick,		//右上段蹴り。
-		AnimationRotationKick,//回し蹴り。
-		AnimationSomersault,//サマーソルト。
-		AnimationFightingPause,//戦闘での待機。
-		AnimationFightingRun,//戦闘での走り。
-		AnimationDaiLanding,//高所からの着地。
-		AnimationDownFly,	//吹っ飛び。
-		AnimationDamage_00,//ダメージ。
+		AnimationWalk,			//歩き。
+		AnimationRun,			//走り。
+		AnimationWait_01,		//待機(腕伸ばし)。
+		AnimationWait_02,		//待機(クルクル)。
+		AnimationSLID,			//スライディング。
+		AnimationBackStep,		//バックステップ。
+		AnimationFall,			//落下中。
+		AnimationLanding,		//着地。
+		AnimationJump,			//ジャンプ。
+		AnimationPunch,			//パンチ。
+		AnimationRKick,			//右上段蹴り。
+		AnimationRotationKick,	//回し蹴り。
+		AnimationSomersault,	//サマーソルト。
+		AnimationFightingPause,	//戦闘での待機。
+		AnimationFightingRun,	//戦闘での走り。
+		AnimationDaiLanding,	//高所からの着地。
+		AnimationDownFly,		//吹っ飛び。
+		AnimationDamage_00,		//ダメージ。
 	};
 
 	//プレイヤーの状態遷移の種類。
@@ -151,4 +163,6 @@ private:
 	SParicleEmitParameter m_param;
 	std::list<CParticleEmitter*>	m_particleEmitterList;
 	Light			m_light;
+	float			m_frameDeltaTime = 1.0f / 60.0f;		//1フレームの経過時間。
+	float			m_deltaTimeMul = 1.0f;					//⊿タイムに乗算される値。
 };

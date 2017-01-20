@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "EnemySkeleton.h"
-#include "Game.h"
+#include "SceneManager.h"
 
 EnemySkeleton::EnemySkeleton()
 {
@@ -18,12 +18,12 @@ EnemySkeleton::EnemySkeleton()
 	m_hp = 0;
 	m_atrTime = 0.0f;
 	m_isDead = FALSE;
-	m_unitytyan = game->GetUnityChan();
+	m_unitytyan = g_pScenes->GetUnityChan();
 }
 
 EnemySkeleton::~EnemySkeleton()
 {
-	Release();
+	
 }
 
 void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION rotation, D3DXVECTOR3 scale)
@@ -80,7 +80,7 @@ void EnemySkeleton::Update()
 {
 	if (m_isDead != TRUE)
 	{
-		m_animation.Update(1.0f / 60.0f);
+		m_animation.Update(GetLocalFrameDeltaTime());
 
 		m_move = m_characterController.GetMoveSpeed();
 
@@ -127,6 +127,11 @@ void EnemySkeleton::Update()
 			if (D3DXVec3LengthSq(&PosDiff) < 10.0f)
 			{
 				m_state = SkeletonStateAttack;
+			}
+			if (D3DXVec3LengthSq(&PosDiff) > 250.0f)
+			{
+				m_state = SkeletonStateSearch;
+				m_moveSpeed = SKELETONWAITTIME;
 			}
 			FindMove();
 			break;
@@ -205,10 +210,9 @@ void EnemySkeleton::Update()
 		//キャラクタが動く速度を設定。
 		m_characterController.SetMoveSpeed(m_move);
 		//キャラクタコントローラーを実行。
-		m_characterController.Execute();
+		m_characterController.Execute(GetLocalFrameDeltaTime());
 		//キャラクターコントロールで計算した位置をエネミーの位置に反映。
 		m_position = m_characterController.GetPosition();
-
 		//向きたい方向と上方向から軸を作りその軸を回転軸としてクォータニオンを回転。
 		D3DXQuaternionRotationAxis(&m_rotation, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), m_targetAngleY);
 
@@ -225,10 +229,6 @@ void EnemySkeleton::Draw(D3DXMATRIX viewMatrix,
 	m_skinModel.Draw(&viewMatrix, &projMatrix,isShadowReceiver);
 }
 
-void EnemySkeleton::Release()
-{
-	m_skinModelData.Release();
-}
 
 void EnemySkeleton::FindMove()
 {

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Map.h"
-#include "Game.h"
+#include "SceneManager.h"
 
 //マップチップの配置情報のテーブル。
 MapLocInfo mapChipLocInfoTable[] = {
@@ -15,7 +15,6 @@ Map::Map()
 
 Map::~Map()
 {
-	Release();
 }
 
 void Map::Initialize()
@@ -60,7 +59,7 @@ void Map::Initialize()
 		//剛体を作成。
 		m_rigidBody[i].Create(rbInfo);
 		//作成した剛体を物理ワールドに追加。
-		game->GetPhysicsWorld()->AddRigidBody(&m_rigidBody[i]);
+		static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->AddRigidBody(&m_rigidBody[i]);
 	}
 	
 }
@@ -83,14 +82,5 @@ void Map::Draw(
 	{
 		//マップオブジェクト一つ一つを描画
 		m_skinModel[i].Draw(&viewMatrix, &projMatrix,isShadowReceiver);
-	}
-}
-
-void Map::Release()
-{
-	for (int i = 0; i < tableSize; i++)
-	{
-		//オブジェクト一つ一つを解放
-		m_skinModelData[i].Release();
 	}
 }

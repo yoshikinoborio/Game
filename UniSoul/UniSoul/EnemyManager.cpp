@@ -4,9 +4,6 @@
 
 SkinModelData g_orginSkinModelData;
 
-//エネミー型の可変長配列。
-std::vector< EnemySkeleton*> enemyskeletonList;
-
 //エネミーの配置情報。
 struct EnemyManagerLocInfo {
 	const char* modelName;		//モデルのパス。
@@ -26,7 +23,10 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
-	Release();
+	for (auto enemy : enemyskeletonList)
+	{
+		delete enemy;
+	}
 }
 
 void EnemyManager::Initialize()
@@ -51,7 +51,6 @@ void EnemyManager::Update()
 		//エネミーがTRUEを返して来たら削除。
 		if (TRUE == (*it)->GetDead()) {
 			//エネミーの解放。
-			(*it)->Release();
 			delete *it;
 			//解放した次のエネミーを確保。
 			//erase関数が返り値が有効なイテレータを返してくれる。
@@ -82,14 +81,9 @@ void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	//}
 }
 
-void EnemyManager::Release()
+void EnemyManager::SetFrameDeltaTimeMul(float mul)
 {
-	for (auto enemy : enemyskeletonList)
-	{
-		enemy->Release();
+	for (auto enemy : enemyskeletonList) {
+		enemy->SetFrameDeltaTimeMul(mul);
 	}
-
-	//for (EnemyManagerLocInfo& enemyinfo : EnemyChipLocInfoTable) {
-	//	enemyskeleton->Release();
-	//}
 }

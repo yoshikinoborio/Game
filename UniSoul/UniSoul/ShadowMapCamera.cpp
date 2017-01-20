@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Game.h"
+#include "SceneManager.h"
 #include "ShadowMapCamera.h"
 
 ShadowMapCamera::ShadowMapCamera()
@@ -27,7 +27,7 @@ void ShadowMapCamera::Initialize()
 	m_shadowmapcameraupvec = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 
 	//ユニティちゃんのインスタンスの取得。
-	m_unitychan = game->GetUnityChan();
+	m_unitychan = g_pScenes->GetUnityChan();
 
 }
 

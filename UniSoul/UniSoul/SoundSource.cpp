@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SoundSource.h"
 #include "SoundEngine.h"
-#include "Game.h"
+#include "SceneManager.h"
 
 #define DeltaTime 1.0f/60.0f
 
@@ -20,7 +20,7 @@ CSoundSource::~CSoundSource()
 void CSoundSource::InitCommon()
 {
 	m_dspSettings.SrcChannelCount = INPUTCHANNELS;
-	m_dspSettings.DstChannelCount = game->GetsoundEngine()->GetNumChannel();
+	m_dspSettings.DstChannelCount = g_pScenes->GetsoundEngine()->GetNumChannel();
 	m_dspSettings.pMatrixCoefficients = m_matrixCoefficients;
 	m_dspSettings.pDelayTimes = nullptr;
 	m_dspSettings.DopplerFactor = 1.0f;
@@ -34,12 +34,12 @@ void CSoundSource::InitCommon()
 }
 void CSoundSource::Init(char* filePath, bool is3DSound)
 {
-	m_waveFile = game->GetsoundEngine()->GetWaveFileBank().FindWaveFile(0, filePath);
+	m_waveFile = g_pScenes->GetsoundEngine()->GetWaveFileBank().FindWaveFile(0, filePath);
 	if (!m_waveFile) {
 		m_waveFile.reset(new CWaveFile);
 		m_waveFile->Open(filePath);
 		m_waveFile->AllocReadBuffer(m_waveFile->GetSize());	//waveファイルのサイズ分の読み込みバッファを確保する。
-		game->GetsoundEngine()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
+		g_pScenes->GetsoundEngine()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
 		unsigned int dummy;
 		m_waveFile->Read(m_waveFile->GetReadBuffer(), m_waveFile->GetSize(), &dummy);
 		m_waveFile->ResetFile();
@@ -47,9 +47,9 @@ void CSoundSource::Init(char* filePath, bool is3DSound)
 	}
 
 	//サウンドボイスソースを作成。
-	m_sourceVoice = game->GetsoundEngine()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
+	m_sourceVoice = g_pScenes->GetsoundEngine()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
 	if (is3DSound) {
-		game->GetsoundEngine()->Add3DSoundSource(this);
+		g_pScenes->GetsoundEngine()->Add3DSoundSource(this);
 	}
 	InitCommon();
 
@@ -58,21 +58,21 @@ void CSoundSource::Init(char* filePath, bool is3DSound)
 }
 void CSoundSource::Init(const NameKey& nameKey, bool is3DSound)
 {
-	m_waveFile = game->GetsoundEngine()->GetWaveFileBank().FindWaveFile(0, nameKey);
+	m_waveFile = g_pScenes->GetsoundEngine()->GetWaveFileBank().FindWaveFile(0, nameKey);
 	if (!m_waveFile) {
 		m_waveFile.reset(new CWaveFile);
 		m_waveFile->Open(nameKey.GetName());
-		game->GetsoundEngine()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
+		g_pScenes->GetsoundEngine()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
 		m_waveFile->AllocReadBuffer(m_waveFile->GetSize());	//waveファイルのサイズ分の読み込みバッファを確保する。
-		game->GetsoundEngine()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
+		g_pScenes->GetsoundEngine()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
 		unsigned int dummy;
 		m_waveFile->Read(m_waveFile->GetReadBuffer(), m_waveFile->GetSize(), &dummy);
 		m_waveFile->ResetFile();
 	}
 	//サウンドボイスソースを作成。
-	m_sourceVoice = game->GetsoundEngine()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
+	m_sourceVoice = g_pScenes->GetsoundEngine()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
 	if (is3DSound) {
-		game->GetsoundEngine()->Add3DSoundSource(this);
+		g_pScenes->GetsoundEngine()->Add3DSoundSource(this);
 	}
 	InitCommon();
 	m_is3DSound = is3DSound;
@@ -91,10 +91,10 @@ void CSoundSource::InitStreaming(char* filePath, bool is3DSound, unsigned int ri
 	m_readStartPos = 0;
 	m_currentBufferingSize = 0;
 	//サウンドボイスソースを作成。
-	m_sourceVoice = game->GetsoundEngine()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
+	m_sourceVoice = g_pScenes->GetsoundEngine()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
 	m_sourceVoice->Start(0, 0);
 	if (is3DSound) {
-		game->GetsoundEngine()->Add3DSoundSource(this);
+		g_pScenes->GetsoundEngine()->Add3DSoundSource(this);
 	}
 	InitCommon();
 
@@ -111,6 +111,7 @@ void CSoundSource::Release()
 	}
 	Remove3DSound();
 	//DeleteGO(this);
+	//delete this;
 	m_isDestroy = true;
 }
 void CSoundSource::Play(char* buff, unsigned int bufferSize)
@@ -210,7 +211,7 @@ void CSoundSource::UpdateStreaming()
 void CSoundSource::Remove3DSound()
 {
 	if (m_is3DSound) {
-		game->GetsoundEngine()->Remove3DSoundSource(this);
+		g_pScenes->GetsoundEngine()->Remove3DSoundSource(this);
 		m_is3DSound = false;
 	}
 }

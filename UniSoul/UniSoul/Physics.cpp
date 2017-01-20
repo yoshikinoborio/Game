@@ -14,11 +14,20 @@ PhysicsWorld::PhysicsWorld()
 
 PhysicsWorld::~PhysicsWorld()
 {
+	Release();
+}
+void PhysicsWorld::Release()
+{
 	delete dynamicWorld;
 	delete constraintSolver;
 	delete overlappingPairCache;
 	delete collisionDispatcher;
 	delete collisionConfig;
+	dynamicWorld = NULL;
+	constraintSolver = NULL;
+	overlappingPairCache = NULL;
+	collisionDispatcher = NULL;
+	collisionConfig = NULL;
 }
 void PhysicsWorld::Initialize()
 {

@@ -1,8 +1,7 @@
 #include "stdafx.h"
-#include "Game.h"
 #include "UnityChan.h"
 #include "DamageCollisionWorld.h"
-#include "SoundSource.h"
+#include "SceneManager.h"
 
 UnityChan::UnityChan()
 {
@@ -33,7 +32,7 @@ UnityChan::UnityChan()
 
 UnityChan::~UnityChan()
 {
-	Release();
+
 }
 
 void UnityChan::Initialize()
@@ -93,7 +92,7 @@ void UnityChan::Initialize()
 	m_turn.Initialize();
 
 	//カメラのインスタンスの取得。
-	m_camera = game->GetCamera();
+	m_camera = g_pScenes->GetCamera();
 
 	//ユニティちゃんの高さと半径。
 	m_height = 1.0f;
@@ -126,7 +125,7 @@ void UnityChan::Initialize()
 }
 void UnityChan::Update()
 {
-	m_animation.Update(1.0f / 60.0f);
+	m_animation.Update(GetLocalFrameDeltaTime());
 
 	//累積経験値への加算。
 	m_holdEXP += m_getEXP;
@@ -156,6 +155,20 @@ void UnityChan::Update()
 		}
 	}
 
+	if (g_pad.IsTrigger(enButtonLB1))
+	{
+		g_enemyManager->SetFrameDeltaTimeMul(0.0f);
+	}
+	if (g_pad.IsTrigger(enButtonRB1))
+	{
+		g_enemyManager->SetFrameDeltaTimeMul(1.0f);
+	}
+
+	if (g_pad.IsTrigger(enButtonX))
+	{
+		g_sceneManager->ChangeScene(1);
+	}
+	
 	Damage();
 
 	switch (m_battleFlag)
@@ -316,8 +329,7 @@ void UnityChan::Update()
 			m_move.y = 10.0f;
 			if (!m_animation.IsPlay())
 			{
-				MessageBox(0, "ゲームオーバー", "ゲームオーバー", MB_OKCANCEL);
-				PostQuitMessage(0);
+				g_sceneManager->ChangeScene(1);
 			}
 			break;
 		case StateAttack:
@@ -434,7 +446,7 @@ void UnityChan::Update()
 	//キャラクタが動く速度を設定。
 	m_characterController.SetMoveSpeed(m_move);
 	//キャラクタコントローラーを実行。
-	m_characterController.Execute();
+	m_characterController.Execute(GetLocalFrameDeltaTime());
 	//キャラクターコントロールで計算した位置をプレイヤーの位置に反映。
 	m_position = m_characterController.GetPosition();
 
@@ -461,10 +473,6 @@ void UnityChan::Draw(D3DXMATRIX viewMatrix,
 	}*/
 }
 
-void UnityChan::Release()
-{
-	m_skinModelData.Release();
-}
 
 void UnityChan::PadMove()
 {

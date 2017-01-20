@@ -173,6 +173,7 @@
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="EnemySkeleton.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -189,6 +190,8 @@
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="SceneBase.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ShadowMapCamera.cpp" />
     <ClCompile Include="SkinModel.cpp" />
     <ClCompile Include="SkinModelData.cpp" />
@@ -198,6 +201,8 @@
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Title.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="UnityChan.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -222,6 +227,7 @@
     <ClInclude Include="EnemySkeleton.h" />
     <ClInclude Include="DirectXFont.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="ICollider.h" />
     <ClInclude Include="IndexBuffer.h" />
@@ -242,6 +248,8 @@
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="SceneBase.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShadowMapCamera.h" />
     <ClInclude Include="SkinModel.h" />
     <ClInclude Include="SkinModelData.h" />
@@ -252,6 +260,8 @@
     <ClInclude Include="Stage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Stopwatch.h" />
+    <ClInclude Include="Title.h" />
+    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Turn.h" />
     <ClInclude Include="UnityChan.h" />
     <ClInclude Include="Util.h" />

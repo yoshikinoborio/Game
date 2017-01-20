@@ -24,7 +24,7 @@ void InitD3D(HWND hWnd)
 	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;		//D3DFMT_UNKNOWNにすると動作環境に合わせてフォーマットを変えてくれる。
 	d3dpp.EnableAutoDepthStencil = TRUE;			//深度ステンシルバッファ(Zバッファなどの3D空間におけるオブジェクトの奥行きを保持するバッファ+ステンシルバッファという画面にマスクをかけて描画領域を制限する(重なって描画されている所を透過させたり描画しないようにする)バッファ)、3Dを扱うならTRUE
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24X8;	//ステンシルバッファのフォーマットを指定(ステンシルバッファを使うならTRUE、使わないならFALSE、D3DFMT_D16はエラーを起こしにくい)
-
+	
 	//D3Dデバイスを作成する。
 	g_pD3D->CreateDevice(D3DADAPTER_DEFAULT,	//D3DADAPTER_DEFAULT以外を指定する事はまず無い
 		D3DDEVTYPE_HAL,							//D3DDEVTYPE_HALを指定すると、ハードウェアを最大限に使用したパフォーマンスを得る事が出来る、D3DDEVTYPE_REFを指定すると、描画等の処理をソフトウェアで行う
