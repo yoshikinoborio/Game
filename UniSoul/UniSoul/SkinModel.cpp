@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "SceneManager.h"
 #include "SkinModel.h"
-#include "SkinModelData.h"
 #include "Light.h"
 
 

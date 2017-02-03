@@ -8,7 +8,8 @@ using namespace std;
 
 CParticleEmitter::CParticleEmitter()
 {
-
+	param = nullptr;
+	timer = 0.0f;
 }
 
 CParticleEmitter::~CParticleEmitter()
@@ -16,18 +17,18 @@ CParticleEmitter::~CParticleEmitter()
 
 }
 
-void CParticleEmitter::Init(const SParicleEmitParameter& param)
+void CParticleEmitter::Init()
 {
-	this->param = param;
+	strcpy(m_ParticleName, param->texturePath);
 	timer = 1.0f;
 }
 
 void CParticleEmitter::Update()
 {
-	if (timer >= param.intervalTime) {
+	if (timer >= param->intervalTime) {
 		//パーティクルを生成。
 		CParticle* p = new CParticle;
-		p->Init(param);
+		p->Init(*param, param->initSpeed, param->position);
 		timer = 0.0f;
 		particleList.push_back(p);
 	}
@@ -54,9 +55,9 @@ void CParticleEmitter::Update()
 		p->Update();
 	}
 }
-void CParticleEmitter::Render(const D3DXMATRIX& viewMatrix, const D3DXMATRIX& projMatrix)
+void CParticleEmitter::Render(const D3DXMATRIX* viewMatrix, const D3DXMATRIX* projMatrix)
 {
 	for (auto p : particleList) {
-		p->Render(viewMatrix, projMatrix);
+		p->Render(*viewMatrix, *projMatrix);
 	}
 }

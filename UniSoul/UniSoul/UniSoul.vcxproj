@@ -163,6 +163,7 @@
     <ClCompile Include="2DImage.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationModel3D.cpp" />
+    <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="CharacterController.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationModel3D.h" />
     <ClInclude Include="Assert.h" />
+    <ClInclude Include="Bloom.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="CharacterController.h" />
@@ -242,6 +244,7 @@
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="ParticleParameterTable.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PlayerHPBar.h" />
     <ClInclude Include="PreCompile.h" />

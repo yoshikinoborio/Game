@@ -17,11 +17,11 @@ class CParticle {
 	ID3DXEffect*		shaderEffect;		//!<シェーダーエフェクト。
 	D3DXVECTOR3			moveSpeed;			//!<速度。
 	D3DXVECTOR3			position;			//!<座標。
-	float				life;			//!<タイマー
+	float				life;				//!<タイマー
 public:
 	CParticle();
 	~CParticle();
-	void Init(const SParicleEmitParameter& param);
+	void Init(const SParicleEmitParameter& paramconst, D3DXVECTOR3 initSpeed, D3DXVECTOR3 pos);
 	bool Update();
 	void Render(const D3DXMATRIX& viewMatrix, const D3DXMATRIX& projMatrix);
 };

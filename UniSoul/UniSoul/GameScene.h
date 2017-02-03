@@ -11,6 +11,7 @@
 #include "PlayerHPBar.h"
 #include "Primitive.h"
 #include "Physics.h"
+#include "Bloom.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -32,6 +33,8 @@ public:
 	void InitMainRenderTarget();
 	//板ポリの初期化。
 	void InitQuadPrimitive();
+	//板ポリの描画。
+	void DrawQuadPrimitive();
 	//メインレンダリングターゲットの内容を現在のレンダリングターゲットにコピー。
 	void CopyMainRTToCurrentRT();
 	//ポストエフェクトに使う専用のシェーダーをロード。
@@ -65,6 +68,10 @@ public:
 	{
 		return &m_physicsWorld;
 	}
+	RenderTarget* GetMainRenderTarget()
+	{
+		return m_mainRenderTarget;
+	}
 private:
 	Stage			m_stage;
 	Light			m_light;
@@ -80,7 +87,8 @@ private:
 	PhysicsWorld	m_physicsWorld;
 	//ポストエフェクトを使うための変数たち。
 	RenderTarget* m_mainRenderTarget;		//メインレンダリングターゲット。
-	CPrimitive*	m_quadPrimitive;			//四角形の板ポリプリミティブ。
+	CPrimitive*	 m_quadPrimitive;
 	LPD3DXEFFECT m_copyEffect;				//コピーを行うシェーダー。
 	LPD3DXEFFECT m_monochromeEffect;		//モノクロフィルターをかけるシェーダー。
+	Bloom        m_bloom;
 };

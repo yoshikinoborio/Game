@@ -1,6 +1,33 @@
 #include "stdafx.h"
 #include "GameScene.h"
 
+// 板ポリを描画。
+void GameScene::DrawQuadPrimitive()
+{
+	// 頂点ストリーム0番に板ポリの頂点バッファを設定する。
+	g_pd3dDevice->SetStreamSource(
+		0,												//頂点ストリームの番号。
+		m_quadPrimitive->GetVertexBuffer()->GetBody(),	//頂点バッファ。
+		0,												//頂点バッファの読み込みを開始するオフセットのバイト数。
+														//今回は先頭から読み込むので0でいい。
+		m_quadPrimitive->GetVertexBuffer()->GetStride()	//頂点一つ分のサイズ。単位はバイト。
+	);
+	// インデックスバッファを設定。
+	g_pd3dDevice->SetIndices(m_quadPrimitive->GetIndexBuffer()->GetBody());
+	// 頂点定義を設定する。
+	g_pd3dDevice->SetVertexDeclaration(m_quadPrimitive->GetVertexDecl());
+	//　準備が整ったので描画。
+	g_pd3dDevice->DrawIndexedPrimitive(
+		m_quadPrimitive->GetD3DPrimitiveType(),	//プリミティブの種類を指定する。
+		0,										//ベース頂点インデックス。0でいい。
+		0,										//最小の頂点インデックス。0でいい。
+		m_quadPrimitive->GetNumVertex(),			//頂点の数。
+		0,										//開始インデックス。0でいい。
+		m_quadPrimitive->GetNumPolygon()			//プリミティブの数。
+	);
+}
+
+
 //メインレンダリングターゲットを初期化。
 void GameScene::InitMainRenderTarget()
 {
@@ -9,7 +36,7 @@ void GameScene::InitMainRenderTarget()
 		FRAME_BUFFER_WITDH,			//レンダリングターゲットの幅と高さはフレームバッファと同じにしておく。(必ずしも同じである必要はない！！！)
 		FRAME_BUFFER_HEIGHT,
 		1,							//ミップマップレベル。これは1でいい。ミップマップ覚えてますか？
-		D3DFMT_A8R8G8B8,			//レンダリングターゲットのフォーマット。今回はR8G8B8A8の32bitを指定する。
+		D3DFMT_A16B16G16R16F,			//レンダリングターゲットのフォーマット。今回はR8G8B8A8の32bitを指定する。
 		D3DFMT_D24S8,				//デプスステンシルバッファのフォーマット。一般的に16bitと24bitフォーマットが使われることが多い。今回は24bitフォーマットを使う。
 		D3DMULTISAMPLE_NONE,		//マルチサンプリングの種類。今回はマルチサンプリングは行わないのでD3DMULTISAMPLE_NONEでいい。
 		0							//マルチサンプリングの品質レベル。今回はマルチサンプリングは行わないので0でいい。
@@ -67,7 +94,6 @@ void  GameScene::InitQuadPrimitive()
 	);
 }
 
-
 //メインレンダリングターゲットの内容を現在のレンダリングターゲットにコピー。
 void GameScene::CopyMainRTToCurrentRT()
 {
@@ -84,8 +110,8 @@ void GameScene::CopyMainRTToCurrentRT()
 		m_quadPrimitive->GetVertexBuffer()->GetStride()	//頂点一つ分のサイズ。単位はバイト。
 	);
 
-	//LPD3DXEFFECT shader = copyEffect;			//コピーを行うシェーダーを使う場合はこちら。
-	LPD3DXEFFECT shader = m_monochromeEffect;		//モノクロフィルターをかける場合はこちらを使用する。
+	LPD3DXEFFECT shader = m_copyEffect;			//コピーを行うシェーダーを使う場合はこちら。
+	//LPD3DXEFFECT shader = m_monochromeEffect;		//モノクロフィルターをかける場合はこちらを使用する。
 													//シェーダーを設定。
 	shader->SetTechnique("Default");
 	shader->Begin(NULL, D3DXFX_DONOTSAVESHADERSTATE);
@@ -162,7 +188,6 @@ void GameScene::LoadShaders()
 GameScene::GameScene()
 {
 	m_soundEngine = NULL;
-	g_effectManager = NULL;
 	g_damageCollisionWorld = NULL;
 	g_enemyManager = NULL;
 }
@@ -185,7 +210,7 @@ GameScene::~GameScene()
 //-----------------------------------------------------------------------------
 void GameScene::Initialize()
 {
-	g_effectManager = new EffectManager;
+	//g_effectManager = new EffectManager;
 	m_soundEngine = new CSoundEngine;
 	g_damageCollisionWorld = new DamageCollisionWorld;
 	g_enemyManager = new EnemyManager;
@@ -245,8 +270,8 @@ void GameScene::Draw()
 	g_pd3dDevice->GetRenderTarget(0, &renderTargetBackup);		//元々のレンダリングターゲットを保存。後で戻す必要があるので。
 	g_pd3dDevice->GetDepthStencilSurface(&depthBufferBackup);	//元々のデプスステンシルバッファを保存。後で戻す必要があるので。
 
-																//ユニティちゃんをオフスクリーンレンダリング開始。
-																//テクスチャをレンダリングターゲットに設定。
+	//ユニティちゃんをオフスクリーンレンダリング開始。
+	//テクスチャをレンダリングターゲットに設定。
 	g_pd3dDevice->SetRenderTarget(0, m_renderTarget.GetSurface());
 	g_pd3dDevice->SetDepthStencilSurface(m_renderTarget.GetDepthStencilBuffer());
 
@@ -299,7 +324,11 @@ void GameScene::Draw()
 	g_pd3dDevice->SetDepthStencilSurface(m_mainRenderTarget->GetDepthStencilBuffer());
 	// レンダリングターゲットをクリア。
 	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
-
+	//空の描画
+	m_sky.Draw(m_camera.GetViewMatrix(),
+		m_camera.GetProjectionMatrix(),
+		FALSE);
+	
 	//ステージの描画。
 	m_stage.Draw(m_camera.GetViewMatrix(),
 		m_camera.GetProjectionMatrix(),
@@ -310,22 +339,20 @@ void GameScene::Draw()
 		m_camera.GetProjectionMatrix(),
 		FALSE);
 
-	//ユニティちゃんの描画。
-	m_unitychan.Draw(m_camera.GetViewMatrix(),
-		m_camera.GetProjectionMatrix(),
-		FALSE);
-
 	//エネミーマネージャーの描画。
 	g_enemyManager->Draw(m_camera.GetViewMatrix(),
 		m_camera.GetProjectionMatrix(),
 		FALSE);
 
-	//空の描画
-	m_sky.Draw(m_camera.GetViewMatrix(),
+	//ユニティちゃんの描画。
+	m_unitychan.Draw(m_camera.GetViewMatrix(),
 		m_camera.GetProjectionMatrix(),
 		FALSE);
 
-	//体力バーの描画。
+	//ブルームの描画。
+	m_bloom.Render();
+
+	//プレイヤーの体力描画。
 	m_playerHPBar.Render();
 
 	//FPSの計測された値を文字列に変換して描画。、
@@ -387,11 +414,11 @@ void GameScene::Update()
 		break;
 	case FALSE:
 		//ダーメンコリジョンの更新。
-		g_damageCollisionWorld->Update();
+		//g_damageCollisionWorld->Update();
 		//物理ワールドの更新。
 		m_physicsWorld.Update();
 		//サウンドエンジンの更新。
-		m_soundEngine->Update();
+		//m_soundEngine->Update();
 		//ステージの更新。
 		m_stage.Update();
 		//ユニティちゃんの更新。
@@ -399,15 +426,15 @@ void GameScene::Update()
 		//マップにあるオブジェクトの更新。
 		m_map.Update();
 		//エネミーマネージャーの更新。
-		g_enemyManager->Update();
+		//g_enemyManager->Update();
 		//空の更新。
-		m_sky.Update();
+		//m_sky.Update();
 		//カメラの更新。
 		m_camera.Update();
 		//シャドウカメラの更新。
-		m_shadowmapcamera.Update();
+		//m_shadowmapcamera.Update();
 		//プレイヤーの体力バー更新。
-		m_playerHPBar.Update();
+		//m_playerHPBar.Update();
 	}
 }
 //-----------------------------------------------------------------------------

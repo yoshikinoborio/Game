@@ -20,7 +20,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::Initialize()
 {
-	SceneManager::ChangeScene(1);
+	SceneManager::ChangeScene(2);
 }
 
 void SceneManager::Update()

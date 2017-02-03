@@ -9,7 +9,7 @@ UnityChan::UnityChan()
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	//D3DXQUATERNIONの引数は回転軸(0.0f～1.0fがMax);
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-	m_position = D3DXVECTOR3(0.0f, 20.0f, 0.0f);
+	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_moveDir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_moveSpeed = 0.0f;
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -52,7 +52,7 @@ void UnityChan::Initialize()
 	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
 	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.4f, 0.4f, 0.4f, 1.0f));
 
-	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+	m_light.SetAmbientLight(D3DXVECTOR4(10.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
 	//ユニティちゃんの法線マップのロード。
 	m_skinModel.LoadNormalMap("image\\body_01_NRM.tga","Plane001");
@@ -107,6 +107,13 @@ void UnityChan::Initialize()
 	//g_damageCollisionWorld = new DamageCollisionWorld;
 	//g_damageCollisionWorld->Start();
 
+	//パーティクルの設定。
+	//D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
+	m_pEmitter = CParticleEmitter::EmitterCreate(
+		"ParticleEmitterStart",
+		ParicleType::Star,
+		m_position);
+
 	m_lv = 1;
 	m_lvUpEXP = 10;
 	m_holdEXP = 0;
@@ -126,6 +133,8 @@ void UnityChan::Initialize()
 void UnityChan::Update()
 {
 	m_animation.Update(GetLocalFrameDeltaTime());
+
+	m_pEmitter->Update();
 
 	//累積経験値への加算。
 	m_holdEXP += m_getEXP;
@@ -466,11 +475,8 @@ void UnityChan::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	bool isShadowReceiver)
 {
+	m_pEmitter->Render(&viewMatrix, &projMatrix);
 	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowReceiver);
-	/*for (auto p : m_particleEmitterList)
-	{
-		p->Render(viewMatrix, projMatrix);
-	}*/
 }
 
 
@@ -579,17 +585,6 @@ void UnityChan::StateMove()
 			if (g_pad.IsTrigger(enButtonA))
 			{
 				m_state = StateSLID;
-				/*D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
-				m_param.texturePath = "image\\star.png";
-				m_param.w = 0.5f;
-				m_param.h = 0.5f;
-				m_param.intervalTime = 0.01f;
-				m_param.initSpeed = D3DXVECTOR3(-UniPos.m[2][0], 0.0f, m_move.z = -UniPos.m[2][2]);
-				m_param.position = m_position;
-				m_param.life = 1.0f;
-				CParticleEmitter* parmEmi = new CParticleEmitter;
-				parmEmi->Init(m_param);
-				m_particleEmitterList.push_back(parmEmi);*/
 
 			}
 		}

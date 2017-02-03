@@ -44,7 +44,7 @@ void Map::Initialize()
 
 
 		m_skinModel[i].Update(mapChipLocInfoTable[i].pos, mapChipLocInfoTable[i].rotation, {1.0f, 1.0f, 1.0f});
-
+		D3DXMATRIX m_world;
 		//ここから衝突判定絡みの初期化。
 		//スキンモデルからメッシュコライダーを作成する。
 		D3DXMATRIX* rootBoneMatrix = m_skinModelData[i].GetRootBoneWorldMatrix();

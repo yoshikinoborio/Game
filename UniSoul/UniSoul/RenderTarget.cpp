@@ -46,6 +46,9 @@ void RenderTarget::Create(int w,
 		);
 	//テクスチャからレンダリングターゲットにするサーフェスのインターフェースの取得
 	m_texture->GetSurfaceLevel(0, &m_surface);
+
+	m_width = w;
+	m_height = h;
 }
 
 void RenderTarget::Release()

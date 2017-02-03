@@ -31,7 +31,7 @@ CParticle::~CParticle()
 		texture->Release();
 	}
 }
-void CParticle::Init(const SParicleEmitParameter& param)
+void CParticle::Init(const SParicleEmitParameter& param,D3DXVECTOR3 initSpeed, D3DXVECTOR3 pos)
 {
 	life = param.life;
 
@@ -39,9 +39,9 @@ void CParticle::Init(const SParicleEmitParameter& param)
 	float halfH = param.h * 0.5f;
 
 	D3DXVECTOR4 uv(0.0f, 0.0f, 1.0f, 1.0f);
-	moveSpeed = param.initSpeed;
+	moveSpeed = initSpeed;
 
-	position = param.position;
+	position = pos;
 
 	float add = ((rand() % 255) - 128) / 128.0f;
 	moveSpeed.x += add * 0.3f;

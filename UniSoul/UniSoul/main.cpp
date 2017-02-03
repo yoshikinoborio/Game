@@ -1,12 +1,11 @@
 #include "stdafx.h"
 #include "SceneManager.h"
-
-
 //-----------------------------------------------------------------------------
 // Name: ‰Šú‰»B
 //-----------------------------------------------------------------------------
 void Init()
 {
+	g_effectManager = new EffectManager;
 	g_sceneManager = new SceneManager;
 	g_sceneManager->Initialize();
 }

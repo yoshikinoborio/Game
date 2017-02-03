@@ -160,8 +160,7 @@ private:
 	CSoundSource	m_soundSource;
 	CSoundSource	m_soundSource2;
 	long long levelUpExpTable[MAX_LEVEL];
-	SParicleEmitParameter m_param;
-	std::list<CParticleEmitter*>	m_particleEmitterList;
+	CParticleEmitter* m_pEmitter;
 	Light			m_light;
 	float			m_frameDeltaTime = 1.0f / 60.0f;		//1フレームの経過時間。
 	float			m_deltaTimeMul = 1.0f;					//⊿タイムに乗算される値。

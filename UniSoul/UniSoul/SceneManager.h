@@ -3,7 +3,6 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 //シーンの管理クラス。
-//class SceneBase;
 
 class SceneManager
 {
