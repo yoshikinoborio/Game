@@ -85,7 +85,7 @@ void Model3D::Draw(D3DXMATRIX viewMatrix,
 	m_effect->BeginPass(0);
 
 	//ライトビュープロジェクション行列の計算。
-	m_LVP = g_pScenes->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * g_pScenes->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
+	m_LVP = static_cast<GameScene*>(g_pScenes)->Getshadowmapcamera()->GetShadowMapCameraViewMatrix() * static_cast<GameScene*>(g_pScenes)->Getshadowmapcamera()->GetShadowMapCameraProjectionMatrix();
 
 	//定数レジスタに設定するカラー。
 	D3DXVECTOR4 color(1.0f, 0.0f, 0.0f, 1.0f);

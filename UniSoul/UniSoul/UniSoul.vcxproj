@@ -247,6 +247,7 @@
     <ClInclude Include="ParticleParameterTable.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PlayerHPBar.h" />
+    <ClInclude Include="PlayerInfo.h" />
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="RenderTarget.h" />

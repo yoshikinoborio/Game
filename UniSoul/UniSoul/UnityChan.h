@@ -12,6 +12,12 @@
 class CParticleEmitter;
 class Camera;
 
+struct PlayerInfo
+{
+	D3DXVECTOR3	pos;			//ç¿ïWÅB
+	D3DXQUATERNION	rotation;	//âÒì]ÅB
+};
+
 class UnityChan : public AnimationModel3D
 {
 public:

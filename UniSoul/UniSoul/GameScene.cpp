@@ -297,9 +297,9 @@ void GameScene::Draw()
 
 	//保存しておいたバックバッファをレンダリングターゲットに設定。
 	g_pd3dDevice->SetRenderTarget(0, renderTargetBackup);		//戻す。
-																//保存しておいたバックバッファの深度バッファを設定。
+	//保存しておいたバックバッファの深度バッファを設定。
 	g_pd3dDevice->SetDepthStencilSurface(depthBufferBackup);	//戻す。
-																//オフスクリーンレンダリングした絵を描画。
+	//オフスクリーンレンダリングした絵を描画。
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	// 画面をクリア。
@@ -308,8 +308,8 @@ void GameScene::Draw()
 	g_pd3dDevice->BeginScene();
 
 
-	//ポストエフェクトに使うレンダリングターゲットの処理。
-	//あとで戻すためにフレームバッファのレンダリングターゲットとデプスステンシルバッファのバックアップを取る。
+	////ポストエフェクトに使うレンダリングターゲットの処理。
+	////あとで戻すためにフレームバッファのレンダリングターゲットとデプスステンシルバッファのバックアップを取る。
 	LPDIRECT3DSURFACE9 frameBufferRT;
 	LPDIRECT3DSURFACE9 frameBufferDS;
 	g_pd3dDevice->GetRenderTarget(0, &frameBufferRT);
@@ -375,15 +375,15 @@ void GameScene::Draw()
 	lv = lv + std::to_string(Lv);
 	m_font.Draw(lv.c_str(), 0, 0);
 
-	//シーンの描画が完了したのでレンダリングターゲットをフレームバッファに戻す。
+	////シーンの描画が完了したのでレンダリングターゲットをフレームバッファに戻す。
 	g_pd3dDevice->SetRenderTarget(0, frameBufferRT);
 	g_pd3dDevice->SetDepthStencilSurface(frameBufferDS);
 
-	//参照カウンタが増えているので開放。
+	////参照カウンタが増えているので開放。
 	frameBufferRT->Release();
 	frameBufferDS->Release();
 
-	//オフスクリーンレンダリングした絵をフレームバッファに貼り付ける。
+	////オフスクリーンレンダリングした絵をフレームバッファに貼り付ける。
 	CopyMainRTToCurrentRT();
 
 	// シーンの描画終了。
@@ -414,7 +414,7 @@ void GameScene::Update()
 		break;
 	case FALSE:
 		//ダーメンコリジョンの更新。
-		//g_damageCollisionWorld->Update();
+		g_damageCollisionWorld->Update();
 		//物理ワールドの更新。
 		m_physicsWorld.Update();
 		//サウンドエンジンの更新。
@@ -426,15 +426,15 @@ void GameScene::Update()
 		//マップにあるオブジェクトの更新。
 		m_map.Update();
 		//エネミーマネージャーの更新。
-		//g_enemyManager->Update();
+		g_enemyManager->Update();
 		//空の更新。
-		//m_sky.Update();
+		m_sky.Update();
 		//カメラの更新。
 		m_camera.Update();
 		//シャドウカメラの更新。
-		//m_shadowmapcamera.Update();
+		m_shadowmapcamera.Update();
 		//プレイヤーの体力バー更新。
-		//m_playerHPBar.Update();
+		m_playerHPBar.Update();
 	}
 }
 //-----------------------------------------------------------------------------

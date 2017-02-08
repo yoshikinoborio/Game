@@ -12,6 +12,7 @@
 #include "Primitive.h"
 #include "Physics.h"
 #include "Bloom.h"
+#include "ShadowMapCamera.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -68,9 +69,15 @@ public:
 	{
 		return &m_physicsWorld;
 	}
+	//メインレンダリングターゲットの取得。
 	RenderTarget* GetMainRenderTarget()
 	{
 		return m_mainRenderTarget;
+	}
+	//シャドウカメラのインスタンスの取得。
+	ShadowMapCamera* Getshadowmapcamera()
+	{
+		return &m_shadowmapcamera;
 	}
 private:
 	Stage			m_stage;
@@ -91,4 +98,5 @@ private:
 	LPD3DXEFFECT m_copyEffect;				//コピーを行うシェーダー。
 	LPD3DXEFFECT m_monochromeEffect;		//モノクロフィルターをかけるシェーダー。
 	Bloom        m_bloom;
+	ShadowMapCamera m_shadowmapcamera;
 };

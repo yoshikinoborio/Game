@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: edc2aa36db57219469bb5c15cbe9e12f
-timeCreated: 1475999467
+guid: fad6825b88a920a4a9590b6a17b289d7
+timeCreated: 1486304425
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,8 +9,8 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Crate
-    7400000: Default Take
+    4300000: Cube_000
+    7400000: Take 001
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -19,7 +19,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 

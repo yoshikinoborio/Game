@@ -2,7 +2,7 @@
 
 class UnityChan;
 
-//シャドウmマップカメラクラス。
+//シャドウマップカメラクラス。
 class ShadowMapCamera
 {
 public:

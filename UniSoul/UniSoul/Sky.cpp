@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "Sky.h"
+#include "SceneManager.h"
 
 Sky::Sky()
 {
-	m_scale = D3DXVECTOR3(3.0f, 3.0f, 3.0f);
+	m_scale = D3DXVECTOR3(5.0f, 5.0f, 5.0f);
 	//D3DXQUATERNION‚Ìˆø”‚Í‰ñ“]Ž²(0.0f`1.0f‚ªMax);
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
 	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -38,6 +39,7 @@ void Sky::Initialize()
 
 void Sky::Update()
 {
+	m_position = g_pScenes->GetUnityChan()->GetUnityChanPos();
 	m_skinModel.Update(m_position, m_rotation, m_scale);
 }
 

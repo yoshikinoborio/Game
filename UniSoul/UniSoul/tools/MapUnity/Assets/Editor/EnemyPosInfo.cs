@@ -21,6 +21,7 @@ public class EnemyPosInfo : EditorWindow
         Transform[] Objects = Object.GetComponentsInChildren<Transform>();
         string headerTxt = "";
 
+        //foreachはコレクション(配列、リスト、辞書)のすべての要素を1回ずつ読み出す構文。
         foreach (Transform tr in Objects)
         {
             if (tr.tag == "Enemy")

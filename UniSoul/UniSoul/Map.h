@@ -4,7 +4,7 @@
 #include "RigidBody.h"
 #include "MeshCollider.h"
 #include "Light.h"
-#define MapObjectNum 198
+#define MapObjectNum 356
 
 //マップチップの配置情報。
 struct MapLocInfo {
@@ -13,6 +13,7 @@ struct MapLocInfo {
 	D3DXQUATERNION	rotation;	//回転。
 	D3DXVECTOR3 scale;			//スケール。
 };
+
 class Map
 {
 public:

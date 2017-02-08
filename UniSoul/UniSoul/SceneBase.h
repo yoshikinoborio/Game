@@ -5,7 +5,6 @@
 #include "EffectManager.h"
 #include "EnemyManager.h"
 #include "SkinModel.h"
-#include "ShadowMapCamera.h"
 #include "RenderTarget.h"
 #include "SoundEngine.h"
 //シーンの基底クラス。
@@ -36,11 +35,6 @@ public:
 	{
 		return m_soundEngine;
 	}
-	//シャドウカメラのインスタンスの取得。
-	ShadowMapCamera* Getshadowmapcamera()
-	{
-		return &m_shadowmapcamera;
-	}
 	//レンダーターゲットのインスタンス取得。
 	RenderTarget* GetRenderTarget()
 	{
@@ -50,7 +44,6 @@ protected:
 	UnityChan m_unitychan;
 	CSoundEngine*	m_soundEngine;
 	Camera m_camera;
-	ShadowMapCamera m_shadowmapcamera;
 	RenderTarget	m_renderTarget;		//レンダーターゲットのインスタンス。
 };
 

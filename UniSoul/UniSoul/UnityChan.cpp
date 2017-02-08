@@ -2,6 +2,12 @@
 #include "UnityChan.h"
 #include "DamageCollisionWorld.h"
 #include "SceneManager.h"
+//プレイヤーの配置情報
+PlayerInfo PlayerInfoTable= {
+		D3DXVECTOR3(114.01f, -5.71f, 397.61f),             //平行移動
+		D3DXQUATERNION(0.00f, 0.72f, 0.00f, 0.70f),   //回転
+};
+
 
 UnityChan::UnityChan()
 {
@@ -100,12 +106,11 @@ void UnityChan::Initialize()
 
 	//キャラクタコントローラを初期化。
 	//第一引数が半径、第二引数が高さ、第三引数が位置。
-	m_characterController.Initialize(m_radius, m_height, m_position);
+	m_characterController.Initialize(m_radius, m_height,PlayerInfoTable.pos);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
 
-	//ポインタなのでnew。
-	//g_damageCollisionWorld = new DamageCollisionWorld;
-	//g_damageCollisionWorld->Start();
+	//Unityから出力したプレイヤーの回転情報で初期化。
+	m_rotation = PlayerInfoTable.rotation;
 
 	//パーティクルの設定。
 	//D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
@@ -134,7 +139,7 @@ void UnityChan::Update()
 {
 	m_animation.Update(GetLocalFrameDeltaTime());
 
-	m_pEmitter->Update();
+	//m_pEmitter->Update();
 
 	//累積経験値への加算。
 	m_holdEXP += m_getEXP;
@@ -475,7 +480,7 @@ void UnityChan::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	bool isShadowReceiver)
 {
-	m_pEmitter->Render(&viewMatrix, &projMatrix);
+	//m_pEmitter->Render(&viewMatrix, &projMatrix);
 	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowReceiver);
 }
 
