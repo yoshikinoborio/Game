@@ -222,11 +222,11 @@ void GameScene::Initialize()
 	LoadShaders();
 	//ダメージコリジョンの初期化。
 	g_damageCollisionWorld->Start();
-	//サウンドエンジンの初期化。
+	////サウンドエンジンの初期化。
 	m_soundEngine->Init();
-	//物理ワールドを初期化。
+	////物理ワールドを初期化。
 	m_physicsWorld.Initialize();
-	//ライトを初期化。
+	////ライトを初期化。
 	m_light.Initialize();
 	//カメラの初期化。
 	m_camera.Initialize();
@@ -252,6 +252,8 @@ void GameScene::Initialize()
 		0);
 	//プレイヤーの体力バー初期化。
 	m_playerHPBar.Initialize();
+	//YOU DIEDの初期化。
+	m_youDIED.Initialize();
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
 }
@@ -308,8 +310,8 @@ void GameScene::Draw()
 	g_pd3dDevice->BeginScene();
 
 
-	////ポストエフェクトに使うレンダリングターゲットの処理。
-	////あとで戻すためにフレームバッファのレンダリングターゲットとデプスステンシルバッファのバックアップを取る。
+	//ポストエフェクトに使うレンダリングターゲットの処理。
+	//あとで戻すためにフレームバッファのレンダリングターゲットとデプスステンシルバッファのバックアップを取る。
 	LPDIRECT3DSURFACE9 frameBufferRT;
 	LPDIRECT3DSURFACE9 frameBufferDS;
 	g_pd3dDevice->GetRenderTarget(0, &frameBufferRT);
@@ -328,11 +330,6 @@ void GameScene::Draw()
 	m_sky.Draw(m_camera.GetViewMatrix(),
 		m_camera.GetProjectionMatrix(),
 		FALSE);
-	
-	//ステージの描画。
-	m_stage.Draw(m_camera.GetViewMatrix(),
-		m_camera.GetProjectionMatrix(),
-		FALSE);
 
 	//マップにあるオブジェクトの描画。
 	m_map.Draw(m_camera.GetViewMatrix(),
@@ -349,11 +346,19 @@ void GameScene::Draw()
 		m_camera.GetProjectionMatrix(),
 		FALSE);
 
+	//ステージの描画。
+	m_stage.Draw(m_camera.GetViewMatrix(),
+		m_camera.GetProjectionMatrix(),
+		FALSE);
+
 	//ブルームの描画。
 	m_bloom.Render();
 
 	//プレイヤーの体力描画。
 	m_playerHPBar.Render();
+
+	//YOU DIEDの描画。
+	m_youDIED.Render();
 
 	//FPSの計測された値を文字列に変換して描画。、
 	double counter = m_stopWatch.GetElapsed();
@@ -375,15 +380,15 @@ void GameScene::Draw()
 	lv = lv + std::to_string(Lv);
 	m_font.Draw(lv.c_str(), 0, 0);
 
-	////シーンの描画が完了したのでレンダリングターゲットをフレームバッファに戻す。
+	//シーンの描画が完了したのでレンダリングターゲットをフレームバッファに戻す。
 	g_pd3dDevice->SetRenderTarget(0, frameBufferRT);
 	g_pd3dDevice->SetDepthStencilSurface(frameBufferDS);
 
-	////参照カウンタが増えているので開放。
+	//参照カウンタが増えているので開放。
 	frameBufferRT->Release();
 	frameBufferDS->Release();
 
-	////オフスクリーンレンダリングした絵をフレームバッファに貼り付ける。
+	//オフスクリーンレンダリングした絵をフレームバッファに貼り付ける。
 	CopyMainRTToCurrentRT();
 
 	// シーンの描画終了。
@@ -418,7 +423,7 @@ void GameScene::Update()
 		//物理ワールドの更新。
 		m_physicsWorld.Update();
 		//サウンドエンジンの更新。
-		//m_soundEngine->Update();
+		m_soundEngine->Update();
 		//ステージの更新。
 		m_stage.Update();
 		//ユニティちゃんの更新。
@@ -435,6 +440,8 @@ void GameScene::Update()
 		m_shadowmapcamera.Update();
 		//プレイヤーの体力バー更新。
 		m_playerHPBar.Update();
+		//YOU DIEDの更新。
+		m_youDIED.Update();
 	}
 }
 //-----------------------------------------------------------------------------

@@ -48,6 +48,13 @@ void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATE
 	m_skinModel.SetLight(&m_light);
 	m_skinModel.SetHasNormalMap(FALSE);
 
+	//距離フォグのフラグを設定。
+	m_skinModel.SetFogDistFlag(TRUE);
+	//距離フォグのパラメーターを設定。
+	m_skinModel.SetFogDistParam(150.0f, 300.0f);
+	//高さフォグのフラグを設定
+	m_skinModel.SetFogHeightFlag(FALSE);
+
 	//アニメーションの設定。
 	m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
 	m_animation.SetAnimationLoopFlag(enAnimDamage, FALSE);

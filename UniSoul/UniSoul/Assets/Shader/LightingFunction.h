@@ -9,7 +9,7 @@ struct SLight{
 	float4  g_diffuseLightColor[NUM_DIFFUSE_LIGHT];	//ディフューズライトのカラー。
 	float4  g_ambientLight;								//アンビエントライト。
 };
-SLight	g_light;		//ライト
+SLight	g_light;		//ライト。
 
 /*!
  *@brief	ディフューズライトを計算。

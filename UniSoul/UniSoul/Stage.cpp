@@ -36,6 +36,13 @@ void Stage::Initialize()
 	m_skinModel.SetLight(&m_light);
 	m_skinModel.SetHasNormalMap(FALSE);
 
+	//距離フォグのフラグを設定。
+	m_skinModel.SetFogDistFlag(TRUE);
+	//距離フォグのパラメーターを設定。
+	m_skinModel.SetFogDistParam(150.0f, 300.0f);
+	//高さフォグのパラメーターを設定。
+	m_skinModel.SetFogHeightFlag(FALSE);
+
 	//影描画するフラグをセット
 	m_skinModel.SetShadowReceiverFlag(TRUE);
 	m_skinModel.Update(m_position, m_rotation, m_scale);

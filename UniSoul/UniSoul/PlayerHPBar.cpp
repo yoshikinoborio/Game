@@ -26,7 +26,7 @@ void PlayerHPBar::Initialize()
 
 void PlayerHPBar::Update()
 {
-	//プレイヤーの残りHPに応じてＨＰバーのサイズを変える。
+	////プレイヤーの残りHPに応じてＨＰバーのサイズを変える。
 	float HpRate = (float)m_unityChan->GetHP() / (float)m_unityChan->GetMaxHP();
 	m_scale = HpBarMaxScale;
 	m_scale.x *= HpRate;

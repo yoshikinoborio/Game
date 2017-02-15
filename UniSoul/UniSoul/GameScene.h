@@ -13,6 +13,7 @@
 #include "Physics.h"
 #include "Bloom.h"
 #include "ShadowMapCamera.h"
+#include "YOU DIED.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -79,24 +80,30 @@ public:
 	{
 		return &m_shadowmapcamera;
 	}
+	//プレイヤーが死んだ時に出る文字。
+	YOUDIED* GetYOUDIED()
+	{
+		return &m_youDIED;
+	}
 private:
-	Stage			m_stage;
-	Light			m_light;
-	Map				m_map;
-	Sky				m_sky;
-	Enemy			m_enemy;
-	bool			m_stopFlag;			//スタートボタンを押したらカメラ以外の処理を止まるフラグ。
-	//bool			m_slowFlag;         //ヒットストップかどうかのフラグ。
+	Stage			m_stage;				//地面。
+	Light			m_light;				//ライト。
+	Map				m_map;					//マップに配置されているオブジェクト。
+	Sky				m_sky;					//スカイボックス。
+	Enemy			m_enemy;				//エネミー。
+	bool			m_stopFlag;				//スタートボタンを押したらカメラ以外の処理を止まるフラグ。
+	//bool			m_slowFlag;				//ヒットストップかどうかのフラグ。
 	//float			m_deltaTime;
-	CFont			m_font;
+	CFont			m_font;					//DirectXのフォント機能。
 	CStopwatch		m_stopWatch;
-	PlayerHPBar		m_playerHPBar;
-	PhysicsWorld	m_physicsWorld;
+	PlayerHPBar		m_playerHPBar;			//プレイヤーの体力バー。
+	PhysicsWorld	m_physicsWorld;			//物理ワールド。
 	//ポストエフェクトを使うための変数たち。
 	RenderTarget* m_mainRenderTarget;		//メインレンダリングターゲット。
 	CPrimitive*	 m_quadPrimitive;
 	LPD3DXEFFECT m_copyEffect;				//コピーを行うシェーダー。
 	LPD3DXEFFECT m_monochromeEffect;		//モノクロフィルターをかけるシェーダー。
-	Bloom        m_bloom;
-	ShadowMapCamera m_shadowmapcamera;
+	Bloom        m_bloom;					//ブルーム。
+	ShadowMapCamera m_shadowmapcamera;		//シャドウカメラ(影描画用カメラ)。
+	YOUDIED			m_youDIED;				//プレイヤーが死んだ時に出る文字。
 };

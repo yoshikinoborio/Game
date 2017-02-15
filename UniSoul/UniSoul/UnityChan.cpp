@@ -58,12 +58,17 @@ void UnityChan::Initialize()
 	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
 	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.4f, 0.4f, 0.4f, 1.0f));
 
-	m_light.SetAmbientLight(D3DXVECTOR4(10.3f, 0.3f, 0.3f, 1.0f));
+	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
 	//ユニティちゃんの法線マップのロード。
 	m_skinModel.LoadNormalMap("image\\body_01_NRM.tga","Plane001");
 	m_skinModel.LoadNormalMap("image\\hair_01_NRM.tga","tail");
 	m_skinModel.SetHasNormalMap(TRUE);
+
+	//距離フォグのフラグを設定。
+	m_skinModel.SetFogDistFlag(FALSE);
+	//高さフォグのフラグを設定。
+	m_skinModel.SetFogHeightFlag(FALSE);
 
 	//アニメーションの終了時間の設定。
 	m_animation.SetAnimationEndtime(AnimationRun, 0.84f);
@@ -343,7 +348,7 @@ void UnityChan::Update()
 			m_move.y = 10.0f;
 			if (!m_animation.IsPlay())
 			{
-				g_sceneManager->ChangeScene(1);
+				static_cast<GameScene*>(g_pScenes)->GetYOUDIED()->SetStartFlag(true);
 			}
 			break;
 		case StateAttack:

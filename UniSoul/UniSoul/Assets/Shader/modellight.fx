@@ -15,6 +15,11 @@ float4x4 	g_viewMatrix;			//ビュー行列。
 float4x4	g_rotationMatrix;		//!<回転行列。
 float4x4	g_viewMatrixRotInv;		//!<カメラの回転行列の逆行列。
 float3 		vEyePos;			//カメラの位置。	
+float4		g_fogDistParam;			//奥行フォグのパラメータ。xにフォグが掛かり始める深度。yにフォグが完全にかかる深度。zはフォグを計算するかどうかのフラグ。
+int		g_fogDistFlag;			//奥行フォグのフラグ。
+
+float4		g_fogHeightParam;		//高さフォグのパラメータ。xにフォグが掛かり始める深度。yにフォグが完全にかかる深度。zはフォグを計算するかどうかのフラグ。
+int		g_fogHeightFlag;		//高さフォグのフラグ。
 
 #define DIFFUSE_LIGHT_NUM	4		//ディフューズライトの数。
 float4	g_diffuseLightDirection[DIFFUSE_LIGHT_NUM];	//ディフューズライトの方向。
@@ -88,6 +93,7 @@ struct VS_OUTPUT
 	float2	uv	: TEXCOORD1;
 	float3  Eye	: TEXCOORD2;
 	float4  lightViewPos_1	: TEXCOORD3;
+	float4  worldPos_depth	: TEXCOORD4;	//xyzにワールド座標。wには射影空間でのdepthが格納される。
 };
 /*!
  *@brief	ワールド座標とワールド法線をスキン行列から計算する。
@@ -152,6 +158,7 @@ VS_OUTPUT VSMain( VS_INPUT In, uniform bool hasSkin )
 		//スキンなし。
 		CalcWorldPosAndNormal(In, Pos, Normal, Tangent );
 	}
+	o.worldPos_depth.xyz = Pos.xyz;
   
 	float4 worldpos = mul(In.Pos,g_worldMatrix);
 	worldpos.w = 1.0f;
@@ -159,18 +166,20 @@ VS_OUTPUT VSMain( VS_INPUT In, uniform bool hasSkin )
 	o.lightViewPos_1 = mul(worldpos,g_mLVP );
 
 	o.Pos = mul(float4(Pos.xyz, 1.0f), g_mViewProj);	//ビュー空間から射影空間に変換。
-    //拡散光+環境光。
-    float amb = -g_diffuseLightDirection[0].w;
-    float3 L = -g_diffuseLightDirection[0].xyz;//ローカルのライト座標。
-    //o.color = In.color * max(amb, dot(In.normal, -g_diffuseLightDirection[0].xyz));
-    //鏡面反射用のベクトル
-    o.Eye = vEyePos - Pos.xyz;
+	o.worldPos_depth.w = o.Pos.w;
 
-    o.uv = In.uv;
+    	//拡散光+環境光。
+    	float amb = -g_diffuseLightDirection[0].w;
+    	float3 L = -g_diffuseLightDirection[0].xyz;//ローカルのライト座標。
+    	//o.color = In.color * max(amb, dot(In.normal, -g_diffuseLightDirection[0].xyz));
+    	//鏡面反射用のベクトル
+    	o.Eye = vEyePos - Pos.xyz;
+
+    	o.uv = In.uv;
 	o.Normal = normalize(Normal);
-    //o.Normal = normalize(Normal);
-    o.Tangent = normalize(Tangent);
-    o.Tex0 = In.Tex0;
+    	//o.Normal = normalize(Normal);
+    	o.Tangent = normalize(Tangent);
+   	 o.Tex0 = In.Tex0;
 	return o;
 }
 /*!
@@ -229,6 +238,28 @@ float4 PSMain( VS_OUTPUT In ) : COLOR
 
 	lig = DiffuseLight(NORMAL);
 	color.xyz *= lig;
+
+	//高さフォグ。
+	if(g_fogHeightFlag == 1)
+	{
+		//高さフォグ
+		float h = max(In.worldPos_depth.y - g_fogHeightParam.y, 0.0f);
+		float t = min(h / g_fogHeightParam.x, 1.0f);
+		color.xyz = lerp(float3(0.75f, 0.75f, 0.95f), color.xyz, t);
+	}
+	
+	//奥行フォグ。
+	if(g_fogDistFlag == 1)
+	{
+		//フォグの計算。
+		//フォグがかかる始点から終点まで線形補間を行いフォグを良い感じにしている。	
+		//距離フォグ
+		float z = length(In.worldPos_depth.xyz - vEyePos);
+		z = max(z - g_fogDistParam.x, 0.0f);
+		float t = min( z / g_fogDistParam.y, 1.0f);
+		color.xyz = lerp(color.xyz, float3(0.65f, 0.65f, 0.95f), t);
+	}
+	
 	return color;
 }
 

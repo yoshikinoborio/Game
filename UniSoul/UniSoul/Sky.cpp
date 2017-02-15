@@ -35,6 +35,13 @@ void Sky::Initialize()
 	m_light.SetAmbientLight(D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
 	m_skinModel.SetLight(&m_light);
 	m_skinModel.SetHasNormalMap(FALSE);
+
+	//距離フォグのフラグを設定。
+	m_skinModel.SetFogDistFlag(FALSE);
+	//高さフォグのフラグを設定。
+	m_skinModel.SetFogHeightFlag(TRUE);
+	//高さフォグのパラメーターを設定。
+	m_skinModel.SetFogHeightParam(100.0f, 10.0f);
 }
 
 void Sky::Update()

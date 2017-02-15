@@ -13,6 +13,16 @@ SkinModel::SkinModel()
 	m_effect = NULL;
 	m_shadoweffect = NULL;
 	m_isShadowReceiver = FALSE;
+
+	//奥行フォグの初期化。
+	m_fogDistParam[0] = 0.0f;
+	m_fogDistParam[1] = 0.0f;
+	m_fogDistFlag = 0;
+
+	//高さフォグの初期化。
+	m_fogHeightParam[0] = 0.0f;
+	m_fogHeightParam[1] = 0.0f;
+	m_fogHeightFlag = 0;
 }
 
 SkinModel::~SkinModel()
@@ -148,6 +158,17 @@ void SkinModel::DrawMeshContainer(
 		m_effect->SetMatrix("g_mViewProj", &viewProj);
 		//視点。
 		m_effect->SetVector("vEyePos", &(D3DXVECTOR4)g_pScenes->GetCamera()->GetEyePt());
+
+		//距離フォグの設定を転送。
+		m_effect->SetVector("g_fogDistParam", &(D3DXVECTOR4)m_fogDistParam);
+		//距離フォグのフラグを転送。
+		m_effect->SetInt("g_fogDistFlag", m_fogDistFlag);
+
+		//高さフォグの設定を転送。
+		m_effect->SetVector("g_fogHeightParam", &(D3DXVECTOR4)m_fogHeightParam);
+		//高さフォグの奥行フラグを転送。
+		m_effect->SetInt("g_fogHeightFlag", m_fogHeightFlag);
+
 		//影を描画しているレンダーターゲットのテクスチャを取得。
 		if (m_isShadowReceiver == TRUE)
 		{
