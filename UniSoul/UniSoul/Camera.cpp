@@ -70,12 +70,14 @@ void Camera::Update()
 	{
 		PostQuitMessage(0);
 	}
+
 	
 	//カメラがユニティちゃんに追従する処理。
 	D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
 	V.y += 2.0f;
 	m_lookatPt = V;	//注視点をユニティちゃんの少し上に設定。
 	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
+
 
 	//右スティックを使った縦のカメラ移動。
 	if (fabsf(m_rStick_y) > 0.0f) {

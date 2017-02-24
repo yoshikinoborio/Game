@@ -177,7 +177,6 @@ VS_OUTPUT VSMain( VS_INPUT In, uniform bool hasSkin )
 
     	o.uv = In.uv;
 	o.Normal = normalize(Normal);
-    	//o.Normal = normalize(Normal);
     	o.Tangent = normalize(Tangent);
    	 o.Tex0 = In.Tex0;
 	return o;
@@ -235,7 +234,7 @@ float4 PSMain( VS_OUTPUT In ) : COLOR
 			+ NORMAL*localNormal.z;
 		
 	}
-
+	//NORMAL = normalize(NORMAL);
 	lig = DiffuseLight(NORMAL);
 	color.xyz *= lig;
 

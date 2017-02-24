@@ -28,11 +28,11 @@ namespace {
 		// フレームにある行列からワールド変換行列を生成。
 		if (pParentMatrix != NULL)
 			D3DXMatrixMultiply(&pFrame->CombinedTransformationMatrix,
-			&pFrame->TransformationMatrix,
-			pParentMatrix);
+				&pFrame->TransformationMatrix,
+				pParentMatrix);
 		else
 			pFrame->CombinedTransformationMatrix = pFrame->TransformationMatrix;
-		//兄弟フレームの行列をワールド変換行列に。
+		//兄弟フレームの行列をワールド変換行列に。y
 		if (pFrame->pFrameSibling != NULL)
 		{
 			UpdateFrameMatrices(pFrame->pFrameSibling, pParentMatrix);
@@ -740,11 +740,11 @@ void SkinModelData::LoadModelData(const char* filePath, Animation* anim)
 	HRESULT hr = D3DXLoadMeshHierarchyFromX(
 		filePath,	//xファイルのファイルパス。
 		D3DXMESH_VB_MANAGED,	//メッシュ作成のオプション、D3DXMESH_MANAGEDを指定するのが一般的、Direct3Dが管理するメモリ下に作成。
-		g_pd3dDevice,	//デバイスへのポインタ。
-		&alloc,			//ID3DXAllocateHierarchyインターフェイスへのポインタ(指定xファイルからフレーム階層を構築)。
-		nullptr,		//xファイル内にユーザ定義部分があるとき、その情報をここに格納。
-		&m_frameRoot,	//D3DXFRAME構造体へのダブルポインタで、ここにフレーム階層の親分（ルートフレーム）へのポインタのポインタが返る、このポインタを通して子フレームにアクセスできる、要するにフレーム階層の全てが格納される。
-		&m_pAnimController	//ID3DXAnimationControllerインターフェイスへのポインタで、xファイル内のアニメーションに対応するアニメーションコントローラへのポインタが返る。
+		g_pd3dDevice,			//デバイスへのポインタ。
+		&alloc,					//ID3DXAllocateHierarchyインターフェイスへのポインタ(指定xファイルからフレーム階層を構築)。
+		nullptr,				//xファイル内にユーザ定義部分があるとき、その情報をここに格納。
+		&m_frameRoot,			//D3DXFRAME構造体へのダブルポインタで、ここにフレーム階層の親分（ルートフレーム）へのポインタのポインタが返る、このポインタを通して子フレームにアクセスできる、要するにフレーム階層の全てが格納される。
+		&m_pAnimController		//ID3DXAnimationControllerインターフェイスへのポインタで、xファイル内のアニメーションに対応するアニメーションコントローラへのポインタが返る。
 		);
 	if (FAILED(hr)) {
 		return;

@@ -222,11 +222,11 @@ void GameScene::Initialize()
 	LoadShaders();
 	//ダメージコリジョンの初期化。
 	g_damageCollisionWorld->Start();
-	////サウンドエンジンの初期化。
+	//サウンドエンジンの初期化。
 	m_soundEngine->Init();
-	////物理ワールドを初期化。
+	//物理ワールドを初期化。
 	m_physicsWorld.Initialize();
-	////ライトを初期化。
+	//ライトを初期化。
 	m_light.Initialize();
 	//カメラの初期化。
 	m_camera.Initialize();
@@ -242,6 +242,8 @@ void GameScene::Initialize()
 	m_map.Initialize();
 	//空の初期化。
 	m_sky.Initialize();
+	//見えない当たり判定の作成。
+	//m_collisionCreat.Initialize();
 	//レンダリングターゲットの作成。
 	m_renderTarget.Create(2480,
 		2480,
@@ -254,6 +256,8 @@ void GameScene::Initialize()
 	m_playerHPBar.Initialize();
 	//YOU DIEDの初期化。
 	m_youDIED.Initialize();
+	//ブラックアウトの画像の初期化。
+	m_black.Initialize();
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
 }
@@ -288,8 +292,8 @@ void GameScene::Draw()
 
 	//マップにあるオブジェクトの影の描画。
 	m_map.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
-		m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
-		TRUE);
+	m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
+	TRUE);
 
 
 	//エネミーマネージャーの敵の影の描画。
@@ -333,8 +337,8 @@ void GameScene::Draw()
 
 	//マップにあるオブジェクトの描画。
 	m_map.Draw(m_camera.GetViewMatrix(),
-		m_camera.GetProjectionMatrix(),
-		FALSE);
+	m_camera.GetProjectionMatrix(),
+	FALSE);
 
 	//エネミーマネージャーの描画。
 	g_enemyManager->Draw(m_camera.GetViewMatrix(),
@@ -359,6 +363,9 @@ void GameScene::Draw()
 
 	//YOU DIEDの描画。
 	m_youDIED.Render();
+
+	//ブラックアウトの画像の描画。
+	m_black.Render();
 
 	//FPSの計測された値を文字列に変換して描画。、
 	double counter = m_stopWatch.GetElapsed();
@@ -442,6 +449,8 @@ void GameScene::Update()
 		m_playerHPBar.Update();
 		//YOU DIEDの更新。
 		m_youDIED.Update();
+		//ブラックアウトの画像の更新。
+		m_black.Update();
 	}
 }
 //-----------------------------------------------------------------------------

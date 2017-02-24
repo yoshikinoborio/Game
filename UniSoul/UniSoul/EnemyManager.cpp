@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "EnemyManager.h"
 #include "EnemySkeleton.h"
-
-SkinModelData g_orginSkinModelData;
+#include "EnemyGoblin.h"
+#include "EnemyBoss.h"
 
 //エネミーの配置情報。
 struct EnemyManagerLocInfo {
@@ -23,7 +23,7 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager()
 {
-	for (auto enemy : enemyskeletonList)
+	for (auto enemy : m_enemyskeletonList)
 	{
 		delete enemy;
 	}
@@ -31,59 +31,116 @@ EnemyManager::~EnemyManager()
 
 void EnemyManager::Initialize()
 {
-	//敵のモデル情報からオリジナルを作成。
-	g_orginSkinModelData.LoadModelData(EnemyChipLocInfoTable->modelName,&m_animation);
-
+	//Unityから出力された情報から敵を生成する処理。
 	for (EnemyManagerLocInfo& enemyinfo : EnemyChipLocInfoTable) {
-		EnemySkeleton* newEnemy = new EnemySkeleton;
-		newEnemy->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
-		enemyskeletonList.push_back(newEnemy);
+		
+		//ボスの初期化。
+		if (enemyinfo.modelName == "image\\EnemyBoss.X")
+		{
+			m_enemyBoss = new EnemyBoss;
+			m_enemyBoss->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
+		}//骨型の敵の初期化。
+		else if (enemyinfo.modelName == "image\\Skeleton@Skin.X")
+		{
+			EnemySkeleton* newEnemy = new EnemySkeleton;
+			newEnemy->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
+			m_enemyskeletonList.push_back(newEnemy);
+		}//ゴブリンの初期化。
+		else if (enemyinfo.modelName == "image\\EnemyGoblin.X")
+		{
+			EnemyGoblin* newEnemy = new EnemyGoblin;
+			newEnemy->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
+			m_enemyGoblinList.push_back(newEnemy);
+		}
+			
 	}
 }
 
 void EnemyManager::Update()
 {
-	////エネミーの先頭を確保。
-	auto it = enemyskeletonList.begin();
-	//エネミーのリストの最後まで。
-	while (it != enemyskeletonList.end())
-	{
-		//エネミーがTRUEを返して来たら削除。
-		if (TRUE == (*it)->GetDead()) {
-			//エネミーの解放。
-			delete *it;
-			//解放した次のエネミーを確保。
-			//erase関数が返り値が有効なイテレータを返してくれる。
-			it = enemyskeletonList.erase(it);
-		}
-		else
+	//骨の更新処理。
+	{//エネミーの先頭を確保。
+		auto it = m_enemyskeletonList.begin();
+		//エネミーのリストの最後まで。
+		while (it != m_enemyskeletonList.end())
 		{
-			//次に進む処理。
-			it++;
+			//エネミーがTRUEを返して来たら削除。
+			if (TRUE == (*it)->GetDead()) {
+				//エネミーの解放。
+				delete *it;
+				//解放した次のエネミーを確保。
+				//erase関数が返り値が有効なイテレータを返してくれる。
+				it = m_enemyskeletonList.erase(it);
+			}
+			else
+			{
+				//次に進む処理。
+				it++;
+			}
+		}
+		for (auto enemy : m_enemyskeletonList) {
+			enemy->Update();
 		}
 	}
-	for (auto enemy: enemyskeletonList) {
-		enemy->Update();
+
+	//ゴブリンの更新処理。
+	{
+		//エネミーの先頭を確保。
+		auto it = m_enemyGoblinList.begin();
+		//エネミーのリストの最後まで。
+		while (it != m_enemyGoblinList.end())
+		{
+			//エネミーがTRUEを返して来たら削除。
+			if (TRUE == (*it)->GetDead()) {
+				//エネミーの解放。
+				delete *it;
+				//解放した次のエネミーを確保。
+				//erase関数が返り値が有効なイテレータを返してくれる。
+				it = m_enemyGoblinList.erase(it);
+			}
+			else
+			{
+				//次に進む処理。
+				it++;
+			}
+		}
+		for (auto enemy : m_enemyGoblinList) {
+			enemy->Update();
+		}
 	}
+	//ボスの更新。
+	m_enemyBoss->Update();
 }
 
 void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	bool isShadowReceiver)
 {
-	for (auto enemy : enemyskeletonList)
+	//骨型の描画。
+	for (auto enemy: m_enemyskeletonList)
 	{
 		enemy->Draw(viewMatrix, projMatrix, isShadowReceiver);
 	}
 
-	//for (EnemyManagerLocInfo& enemyinfo : EnemyChipLocInfoTable) {
-	//	enemyskeleton->Draw(viewMatrix,projMatrix, diffuseLightDirection, diffuseLightColor, ambientLight, numDiffuseLight, isShadowReceiver);
-	//}
+	//ゴブリンの描画。
+	for (auto enemy : m_enemyGoblinList)
+	{
+		enemy->Draw(viewMatrix, projMatrix, isShadowReceiver);
+	}
+	//ボスの描画。
+	m_enemyBoss->Draw(viewMatrix, projMatrix, isShadowReceiver);
+	
 }
 
 void EnemyManager::SetFrameDeltaTimeMul(float mul)
 {
-	for (auto enemy : enemyskeletonList) {
+	for (auto enemy : m_enemyskeletonList) {
 		enemy->SetFrameDeltaTimeMul(mul);
 	}
+
+	for (auto enemy : m_enemyGoblinList) {
+		enemy->SetFrameDeltaTimeMul(mul);
+	}
+	m_enemyBoss->SetFrameDeltaTimeMul(mul);
+
 }

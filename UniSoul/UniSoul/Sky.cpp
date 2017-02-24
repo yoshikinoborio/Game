@@ -13,13 +13,14 @@ Sky::Sky()
 
 Sky::~Sky()
 {
-
+	delete m_skinModelData;
 }
 
 void Sky::Initialize()
 {
-	m_skinModelData.LoadModelData("image\\SkyBox.X", &m_animation);
-	m_skinModel.Initialize(&m_skinModelData);
+	m_skinModelData = static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load("image\\SkyBox.X", &m_animation);
+	//m_skinModelDataResources.Load("image\\SkyBox.X", &m_animation);
+	m_skinModel.Initialize(m_skinModelData);
 
 	//ÉâÉCÉgÇÃê›íËÅB
 	//m_light.SetDiffuseLightDirection(0, D3DXVECTOR4(0.707f, 0.0f, -0.707f, 1.0f));

@@ -21,10 +21,10 @@ public:
 	//この基底クラスの関数(オーバーライドされる関数)を仮想関数と言う。
 	virtual void Update() = 0;
 protected:
-	SkinModelData	m_skinModelData;	//スキンモデルデータ。
-	SkinModel		m_skinModel;		//スキンモデル。
-	Animation		m_animation;		//アニメーション。
-	Turn			m_turn;				//回転。
-	MeshCollider	m_meshCollider;		//メッシュコライダー。
-	RigidBody		m_rigidBody;		//剛体。
+	SkinModelData*	m_skinModelData;					//スキンモデルデータ。
+	SkinModel		m_skinModel;						//スキンモデル。
+	Animation		m_animation;						//アニメーション。
+	Turn			m_turn;								//回転。
+	MeshCollider	m_meshCollider;						//メッシュコライダー。
+	RigidBody		m_rigidBody;						//剛体。
 };

@@ -22,7 +22,7 @@ public:
 	class Collision {
 	public:
 		float radius;						//半径。
-		D3DXVECTOR3 position;					//中心。
+		D3DXVECTOR3 position;				//中心。
 		float life;							//寿命。
 		int damage;							//ダメージ量。
 		EnAttr attr;						//属性。

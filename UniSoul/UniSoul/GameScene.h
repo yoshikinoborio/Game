@@ -14,6 +14,8 @@
 #include "Bloom.h"
 #include "ShadowMapCamera.h"
 #include "YOU DIED.h"
+#include "Black.h"
+#include "CollisionCreat.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -85,6 +87,15 @@ public:
 	{
 		return &m_youDIED;
 	}
+	//画面がだんだん見えなくなるor見えてくる処理に使う画像。
+	Black* GetBlack()
+	{
+		return &m_black;
+	}
+	SkinModelDataResources* GetSkinModelDataResources()
+	{
+		return &m_skinModelDataResources;
+	}
 private:
 	Stage			m_stage;				//地面。
 	Light			m_light;				//ライト。
@@ -99,11 +110,14 @@ private:
 	PlayerHPBar		m_playerHPBar;			//プレイヤーの体力バー。
 	PhysicsWorld	m_physicsWorld;			//物理ワールド。
 	//ポストエフェクトを使うための変数たち。
-	RenderTarget* m_mainRenderTarget;		//メインレンダリングターゲット。
-	CPrimitive*	 m_quadPrimitive;
-	LPD3DXEFFECT m_copyEffect;				//コピーを行うシェーダー。
-	LPD3DXEFFECT m_monochromeEffect;		//モノクロフィルターをかけるシェーダー。
-	Bloom        m_bloom;					//ブルーム。
+	RenderTarget*	m_mainRenderTarget;		//メインレンダリングターゲット。
+	CPrimitive*		m_quadPrimitive;
+	LPD3DXEFFECT	m_copyEffect;			//コピーを行うシェーダー。
+	LPD3DXEFFECT	m_monochromeEffect;		//モノクロフィルターをかけるシェーダー。
+	Bloom			m_bloom;				//ブルーム。
 	ShadowMapCamera m_shadowmapcamera;		//シャドウカメラ(影描画用カメラ)。
 	YOUDIED			m_youDIED;				//プレイヤーが死んだ時に出る文字。
+	Black			m_black;				//画面がだんだん見えなくなるor見えてくる処理に使う画像。
+	//CollisionCreat	m_collisionCreat;		//見えない当たり判定。
+	SkinModelDataResources	m_skinModelDataResources;	//スキンモデルリソース。
 };

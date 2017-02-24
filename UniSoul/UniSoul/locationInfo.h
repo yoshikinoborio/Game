@@ -1751,7 +1751,7 @@
 //image\\Yashi.X
 {
 	"image\\Yashi.X",
-	D3DXVECTOR3(122.00f, -11.05f, 425.00f),             //平行移動
+	D3DXVECTOR3(122.00f, -11.23f, 425.00f),             //平行移動
 	D3DXQUATERNION(0.33f, -0.62f, -0.62f, -0.33f ),    //回転
 	D3DXVECTOR3(-2.54f, 2.54f, 2.54f ),            //拡大
 },

@@ -1,7 +1,5 @@
 #pragma once
 #include "EnemyBase.h"
-#include "CharacterController.h"
-#include "Light.h"
 
 #define SKELETONWAITTIME 0.0f
 #define SKELETONWALKSPEED 0.02f*60.0f
@@ -9,7 +7,12 @@
 
 class UnityChan;
 
-//エネミーの状態遷移の種類。
+static D3DXVECTOR3 EnemyCource[] = {
+#include "EnemyCource.h"
+};
+
+
+//スケルトンの状態遷移の種類。
 enum SkeletonState {
 	SkeletonStateSearch = 0,//索敵中。
 	SkeletonStateFind,		//発見。
@@ -18,7 +21,7 @@ enum SkeletonState {
 	SkeletonStateDead,		//死。
 };
 
-//エネミー(スケルトン)クラス。
+//スケルトンクラス。
 class EnemySkeleton : public EnemyBase
 {
 public:
@@ -40,20 +43,17 @@ public:
 	{
 		return m_isDead;
 	}
+	//回転の処理。
+	float Turn(D3DXVECTOR3 dir);
 private:
-	D3DXVECTOR3 m_initPos;						//骨の初期位置。
-	SkeletonState     m_state;					//骨の敵の状態。
-	CharacterController	m_characterController;	//骨の敵のキャラクタコントローラ。
-	D3DXVECTOR3     m_move;						//移動量。
-	UnityChan*		m_unitytyan;				//ユニティちゃんのインスタンス。
-	D3DXVECTOR3		m_unityPos;					//ユニティちゃんの位置。
-	D3DXVECTOR3		m_posDifference;			//ユニティちゃんとの距離。
-	D3DXVECTOR3		m_SkeDir;					//敵の向きベクトル。
-	float			m_walkTimer;				//歩く時間。
-	int				m_hp;						//ヒットポイント。
-	int				m_dropEXP;					//倒された時に落とす経験値量。
-	float			m_atrTime;					//この時間以上になったら当たりを発生させる。
-	bool			m_isDead;					//死んだ。
-	std::unique_ptr<btCollisionObject>	m_collisionObject;		//コリジョンオブジェクト。
-	Light			m_light;
+	D3DXVECTOR3			m_initPos;					//骨の初期位置。
+	SkeletonState		m_state;					//骨の敵の状態。
+	UnityChan*			m_unitytyan;				//ユニティちゃんのインスタンス。
+	D3DXVECTOR3			m_unityPos;					//ユニティちゃんの位置。
+	D3DXVECTOR3			m_posDifference;			//ユニティちゃんとの距離。
+	D3DXVECTOR3			m_SkeDir;					//敵の向きベクトル。
+	float				m_walkTimer;				//歩く時間。
+	float				m_atrTime;					//この時間以上になったら当たりを発生させる。
+	int					m_courceArray;				//コース定義の数。
+	int					m_mostNearCourceIndex;		//一番近いコース定義。
 };

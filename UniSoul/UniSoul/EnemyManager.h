@@ -1,6 +1,8 @@
 #pragma once
 #include "Animation.h"
 class EnemySkeleton;
+class EnemyGoblin;
+class EnemyBoss;
 
 //エネミー全部の処理をするクラス。
 class EnemyManager
@@ -18,12 +20,12 @@ public:
 	//後ろに付いているconstの役割は関数の中身で値を変えないと言うのを明示的に教えている。
 	const std::vector<EnemySkeleton*>& GetEnemyList() const
 	{
-		return enemyskeletonList;
+		return m_enemyskeletonList;
 	}
 	//constだと中身を変えたい時に変えれないので変えたい時用のためにもう一つ用意。
 	std::vector<EnemySkeleton*>& GetEnemyList()
 	{
-		return enemyskeletonList;
+		return m_enemyskeletonList;
 	}
 	/*!
 	* @brief	⊿タイムに乗算される値を設定。
@@ -31,6 +33,10 @@ public:
 	*/
 	void SetFrameDeltaTimeMul(float mul);
 private:
-	//エネミー型の可変長配列。
-	std::vector< EnemySkeleton*> enemyskeletonList;
+	//骨型の敵の可変長配列。
+	std::vector< EnemySkeleton*> m_enemyskeletonList;
+	//ゴブリン型の可変長配列。
+	std::vector< EnemyGoblin*>	m_enemyGoblinList;
+	//ボス。
+	EnemyBoss* m_enemyBoss;
 };

@@ -4,8 +4,7 @@
 #include "SceneManager.h"
 //プレイヤーの配置情報
 PlayerInfo PlayerInfoTable= {
-		D3DXVECTOR3(114.01f, -5.71f, 397.61f),             //平行移動
-		D3DXQUATERNION(0.00f, 0.72f, 0.00f, 0.70f),   //回転
+#include "PlayerInfo.h"
 };
 
 
@@ -38,14 +37,14 @@ UnityChan::UnityChan()
 
 UnityChan::~UnityChan()
 {
-
+	delete m_skinModelData;
 }
 
 void UnityChan::Initialize()
 {
 	//モデルのロード。
-	m_skinModelData.LoadModelData("image\\Unitytyan.X", &m_animation);
-	m_skinModel.Initialize(&m_skinModelData);
+	m_skinModelData = static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load("image\\Unitytyan.X", &m_animation);
+	m_skinModel.Initialize(m_skinModelData);
 
 	//ライトの設定。
 	m_light.SetDiffuseLightDirection(0, D3DXVECTOR4(0.707f, 0.0f, -0.707f, 1.0f));
@@ -182,11 +181,6 @@ void UnityChan::Update()
 	{
 		g_enemyManager->SetFrameDeltaTimeMul(1.0f);
 	}
-
-	if (g_pad.IsTrigger(enButtonX))
-	{
-		g_sceneManager->ChangeScene(1);
-	}
 	
 	Damage();
 
@@ -305,9 +299,9 @@ void UnityChan::Update()
 				//着地のアニメーションが終わったら待機にする。
 				if (!m_animation.IsPlay()) {
 					m_state = StateWait_00;
-					//落下時間を0に戻す。
-					m_fallTimer = 0.0f;
 				}
+				//落下時間を0に戻す。
+				m_fallTimer = 0.0f;
 			}
 			else
 			{

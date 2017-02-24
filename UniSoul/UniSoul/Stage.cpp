@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Stage.h"
 #include "SceneManager.h"
+#include "GameScene.h"
 
 Stage::Stage()
 {
@@ -12,14 +13,15 @@ Stage::Stage()
 
 Stage::~Stage()
 {
-
+	delete m_skinModelData;
 }
 
 //初期化。
 void Stage::Initialize()
 {
-	m_skinModelData.LoadModelData("image\\Ground.X", &m_animation);
-	m_skinModel.Initialize(&m_skinModelData);
+	m_skinModelData = static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load("image\\Ground.X", &m_animation);
+	//m_skinModelData.LoadModelData("image\\Ground.X", &m_animation);
+	m_skinModel.Initialize(m_skinModelData);
 
 	//ライトの設定。
 	m_light.SetDiffuseLightDirection(0, D3DXVECTOR4(0.707f, 0.0f, -0.707f, 1.0f));
@@ -48,7 +50,7 @@ void Stage::Initialize()
 	m_skinModel.Update(m_position, m_rotation, m_scale);
 	//ここから衝突判定絡みの初期化。
 	//スキンモデルからメッシュコライダーを作成する。
-	D3DXMATRIX* rootBoneMatrix = m_skinModelData.GetRootBoneWorldMatrix();
+	D3DXMATRIX* rootBoneMatrix = m_skinModelData->GetRootBoneWorldMatrix();
 	m_meshCollider.CreateFromSkinModel(&m_skinModel, rootBoneMatrix);
 	//続いて剛体を作成する。
 	//まずは剛体を作成するための情報を設定。

@@ -1,5 +1,7 @@
 #pragma once
 #include "AnimationModel3D.h"
+#include "CharacterController.h"
+#include "Light.h"
 
 //エネミーの基底クラス。
 class EnemyBase : public AnimationModel3D
@@ -13,6 +15,18 @@ public:
 		enAnimAttack,	//攻撃中。
 		enAnimDamage,	//ダメージ。
 		enAnimDead,		//死。
+		enAnimJump,		//ジャンプ。
+		enAnimFall,		//落下中。
+		enAnimLanding,	//着地。
+		
+	};
+
+	enum BossEnemyAnimation {
+		enBossAnimInvalid = -1,
+		enBossAnimWait,		//待機中。
+		enBossAnimWalk,		//歩き中。
+		enBossAnimRun,		//走り中。
+		enBossAnimAttack,	//攻撃中。
 	};
 	EnemyBase() {
 
@@ -49,18 +63,25 @@ public:
 		m_deltaTimeMul = mul;
 	}
 protected:
-	D3DXVECTOR3		m_position;					//座標。
-	D3DXVECTOR3     m_scale;					//スケール。
-	D3DXMATRIX		m_world;					//ワールド行列。
-	EnemyAnimation	m_currentAnimSetNo;			//現在再生しているアニメーション。
-	D3DXQUATERNION  m_rotation;					//回転行列。
-	D3DXVECTOR3     m_moveDir;					//方向。
-	float           m_moveSpeed;				//移動速度(歩く時と走る時の速度調整用)。
-	float			m_currentAngleY;			//現在の方向。
-	float			m_targetAngleY;				//向きたい方向。
-	bool			m_isTurn;					//回転フラグ。
-	float			m_height;					//敵の高さ。
-	float			m_radius;					//敵の半径。
-	float			m_frameDeltaTime = 1.0f / 60.0f;		//1フレームの経過時間。
-	float			m_deltaTimeMul = 1.0f;					//⊿タイムに乗算される値。
+	D3DXVECTOR3			m_position;							//座標。
+	D3DXVECTOR3			m_scale;							//スケール。
+	D3DXMATRIX			m_world;							//ワールド行列。
+	CharacterController	m_characterController;				//キャラクタコントローラ。
+	D3DXVECTOR3			m_move;								//移動量。
+	EnemyAnimation		m_currentAnimSetNo;					//現在再生しているアニメーション。
+	BossEnemyAnimation	m_currentBossAnimSetNo;				//ボス専用。
+	D3DXQUATERNION		m_rotation;							//回転行列。
+	D3DXVECTOR3			m_moveDir;							//方向。
+	float				m_moveSpeed;						//移動速度(歩く時と走る時の速度調整用)。
+	float				m_currentAngleY;					//現在の方向。
+	float				m_targetAngleY;						//向きたい方向。
+	bool				m_isTurn;							//回転フラグ。
+	float				m_height;							//敵の高さ。
+	float				m_radius;							//敵の半径。
+	float				m_frameDeltaTime = 1.0f / 60.0f;	//1フレームの経過時間。
+	float				m_deltaTimeMul = 1.0f;				//⊿タイムに乗算される値。
+	int					m_hp;								//ヒットポイント。
+	int					m_dropEXP;							//倒された時に落とす経験値量。
+	Light				m_light;							//ライト。
+	bool				m_isDead;							//死んだ。
 };

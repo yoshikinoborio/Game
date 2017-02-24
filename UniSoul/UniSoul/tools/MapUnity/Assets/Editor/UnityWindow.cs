@@ -36,11 +36,24 @@ class UnityWindow : EditorWindow
         //プレイヤーの配置情報のボタンが押されtureが返って来る。
         if (GUILayout.Button("プレイヤーの配置情報 出力"))
         {
-
-            //エネミー配置情報出力の処理
+            //プレイヤー配置情報出力の処理
             PlayerInfo.ShowWindow();
             Debug.Log("プレイヤーの配置情報が無事出力できました。");
+        }
 
+        //敵のコース定義の配置情報のボタンが押されtureが返って来る。
+        if (GUILayout.Button("敵のコース定義の配置情報 出力"))
+        {
+            //敵のコース定義配置情報出力の処理
+            EnemyCourse.ShowWindow();
+            Debug.Log("敵のコース定義の配置情報が無事出力できました。");
+        }
+        //コリジョンの配置情報のボタンが押されtureが返って来る。
+        if (GUILayout.Button("コリジョンの配置情報 出力"))
+        {
+            //コリジョンの配置情報出力の処理
+            Collition.ShowWindow();
+            Debug.Log("コリジョンの配置情報が無事出力できました。");
         }
     }
 }

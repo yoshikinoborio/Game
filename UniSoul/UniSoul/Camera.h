@@ -1,5 +1,5 @@
 #pragma once
-
+#include "CharacterController.h"
 class Player;
 class UnityChan;
 

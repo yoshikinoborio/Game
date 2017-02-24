@@ -17,21 +17,23 @@ EnemySkeleton::EnemySkeleton()
 	m_walkTimer = 0.0f;
 	m_hp = 0;
 	m_atrTime = 0.0f;
+	m_mostNearCourceIndex = 0;
 	m_isDead = FALSE;
 	m_unitytyan = g_pScenes->GetUnityChan();
 }
 
 EnemySkeleton::~EnemySkeleton()
 {
-	
+	delete m_skinModelData;
 }
 
 void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION rotation, D3DXVECTOR3 scale)
 {
 	//オリジナルのモデルからコピー(クローン)を作成。
-	m_skinModelData.CloneModelData(g_orginSkinModelData, &m_animation);
+	m_skinModelData = static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load(modelPath, &m_animation);
+	//m_skinModelDataResources.Load(modelPath, &m_animation);
 	//クローンを使って初期化。
-	m_skinModel.Initialize(&m_skinModelData);
+	m_skinModel.Initialize(m_skinModelData);
 
 	//ライトの設定。
 	m_light.SetDiffuseLightDirection(0, D3DXVECTOR4(0.707f, 0.0f, -0.707f, 1.0f));
@@ -73,6 +75,21 @@ void EnemySkeleton::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATE
 	m_height = 1.0f;
 	m_radius = 0.6f;
 	
+	float Min;
+	Min = 99999;	//番兵
+	//コース定義の配列の数を計算。
+	m_courceArray = sizeof(EnemyCource) / sizeof(EnemyCource[0]);
+	for (int i = 0; i < m_courceArray; i++) {
+		D3DXVECTOR3 dist;
+		dist = m_position - EnemyCource[i];
+		float len = D3DXVec3Length(&dist);
+		if (len < Min)
+		{
+			//一番近いコース定義を確保
+			m_mostNearCourceIndex = i;
+			Min = len;//一番短い長さ
+		}
+	}
 
 	m_hp = 10;
 
@@ -121,8 +138,7 @@ void EnemySkeleton::Update()
 				}
 				//近くにいない時は索敵中。
 				m_state = SkeletonStateSearch;
-				m_moveSpeed = SKELETONWAITTIME;
-				//m_moveSpeed = SKELETONWAITTIME;
+				m_moveSpeed = SKELETONRUNSPEED;
 				SearchMove();
 			}
 			break;
@@ -276,27 +292,37 @@ void EnemySkeleton::FindMove()
 	m_move.x= m_moveSpeed*m_posDifference.x;
 	m_move.z = m_moveSpeed*m_posDifference.z;
 
-	//回転の処理。
-	if (D3DXVec3Length(&m_posDifference) > 0.0f)
-	{
-		D3DXVECTOR3 forward = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
-		//回転量の計算。
-		m_targetAngleY = acos(D3DXVec3Dot(&forward, &m_posDifference));
-		D3DXVECTOR3 axis;
-		//ベクトルとベクトルの外積を取って+,-どちらに回すかを決める。
-		D3DXVec3Cross(&axis, &forward, &m_posDifference);
-		D3DXVec3Normalize(&axis, &axis);
-		//負数の時は+にする。
-		if (axis.y < 0.0f)
-		{
-			m_targetAngleY *= -1.0f;
-		}
-	}
+	//回転。
+	m_targetAngleY = Turn(m_posDifference);
 }
 
 void EnemySkeleton::SearchMove()
 {
-	//m_walkTimer += 1.0f / 60.0f;
+	//コース定義に従った移動の処理。
+	{
+		//コース定義に向かうベクトルを求める
+		D3DXVECTOR3 toCource = EnemyCource[m_mostNearCourceIndex] - m_position;
+		//コース定義のベクトルの長さを調べる。
+		float len = D3DXVec3Length(&toCource);
+		//調べたコース定義のベクトルの長さが10.0f以下なら次のコース定義に進む。
+		if (len < 10.0f)
+		{
+			//コース定義の配列のインデックスを進める。
+			m_mostNearCourceIndex++;
+			//最後のコース定義まで来たら一番最初のコース定義に戻る。
+			if (m_mostNearCourceIndex > m_courceArray)
+			{
+				m_mostNearCourceIndex = 0;
+			}
+		}
+		//コース定義に向かうベクトルの正規化。
+		D3DXVec3Normalize(&toCource, &toCource);
+
+		m_move.x = m_moveSpeed*toCource.x;
+		m_move.z = m_moveSpeed*toCource.z;
+		//回転。
+		m_targetAngleY = Turn(toCource);
+	}
 
 }
 
@@ -327,4 +353,26 @@ void EnemySkeleton::Damage()
 			m_state = SkeletonStateDamage;
 		}
 	}
+}
+
+float EnemySkeleton::Turn(D3DXVECTOR3 dir)
+{
+	//回転の処理。
+	if (D3DXVec3Length(&dir) > 0.0f)
+	{
+		D3DXVECTOR3 forward = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+		//回転量の計算。
+		m_targetAngleY = acos(D3DXVec3Dot(&forward, &dir));
+		D3DXVECTOR3 axis;
+		//ベクトルとベクトルの外積を取って+,-どちらに回すかを決める。
+		D3DXVec3Cross(&axis, &forward, &dir);
+		D3DXVec3Normalize(&axis, &axis);
+		//負数の時は+にする。
+		if (axis.y < 0.0f)
+		{
+			m_targetAngleY *= -1.0f;
+		}
+	}
+
+	return m_targetAngleY;
 }

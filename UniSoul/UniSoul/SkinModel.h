@@ -1,9 +1,11 @@
 #pragma once
 #include "Animation.h"
 #include "SkinModelData.h"
+#include "SkinModelDataResources.h"
 #include "Light.h"
 
 class SkinModelData;
+class SkinModelDataResources;
 
 	//スキンモデル。
 class SkinModel {
