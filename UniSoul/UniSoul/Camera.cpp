@@ -83,7 +83,7 @@ void Camera::Update()
 
 //DEBUGíÜÇÃÇ›çsÇ§ÅB
 #ifdef _DEBUG
-	if (g_pad.IsTrigger(enButtonX)&&g_pad.IsTrigger(enButtonUp))
+	if (g_pad.IsTrigger(enButtonUp))
 	{
 		m_cameraFreeFlag = TRUE;
 	}
@@ -187,7 +187,7 @@ void Camera::FreeCameraMode()
 		m_lookatPt = m_eyePt;
 		m_lookatPt.z += 2.0f;
 
-		if (g_pad.IsTrigger(enButtonX) && g_pad.IsTrigger(enButtonDown))
+		if (g_pad.IsTrigger(enButtonDown))
 		{
 			m_cameraFreeFlag = FALSE;
 		}

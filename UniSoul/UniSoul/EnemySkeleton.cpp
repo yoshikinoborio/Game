@@ -132,7 +132,7 @@ void EnemySkeleton::Update()
 
 				//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
 				//自分の向きベクトル。
-				D3DXVECTOR3 Dir = m_move;
+				D3DXVECTOR3 Dir = D3DXVECTOR3(SkePos.m[3][0], SkePos.m[3][1], SkePos.m[3][2]);
 				//プレイヤーへの向きベクトル。
 				D3DXVECTOR3 PlayerDir = PosDiff;
 				//二つのベクトルを正規化。
@@ -153,7 +153,7 @@ void EnemySkeleton::Update()
 					break;
 				}
 
-				////ユニティちゃんが近くに来た時の処理。
+				//ユニティちゃんが近くに来た時の処理。
 				//if (D3DXVec3LengthSq(&PosDiff) < 500.0f)
 				//{
 				//	//発見。
@@ -185,7 +185,7 @@ void EnemySkeleton::Update()
 			m_atrTime += DeltaTime;
 			//攻撃時に当たり判定を生成。
 			//スケルトンの前方向に当たり判定を発生させる。
-			if (m_atrTime >= 1.2f)
+			if (m_atrTime >= 1.3f)
 			{
 				g_damageCollisionWorld->Add(2.0f, D3DXVECTOR3(SkePos.m[3][0], SkePos.m[3][1], SkePos.m[3][2]), 0.03f, 10, g_damageCollisionWorld->enDamageToPlayer, 0);
 				m_atrTime = 0.0f;
@@ -321,32 +321,32 @@ void EnemySkeleton::FindMove()
 void EnemySkeleton::SearchMove()
 {
 	m_state = SkeletonStateSearch;
-	m_moveSpeed = SKELETONRUNSPEED;
+	m_moveSpeed = SKELETONWAITTIME;
 	//コース定義に従った移動の処理。
-	{
-		//コース定義に向かうベクトルを求める
-		D3DXVECTOR3 toCource = EnemyCource[m_mostNearCourceIndex] - m_position;
-		//コース定義のベクトルの長さを調べる。
-		float len = D3DXVec3Length(&toCource);
-		//調べたコース定義のベクトルの長さが10.0f以下なら次のコース定義に進む。
-		if (len < 10.0f)
-		{
-			//コース定義の配列のインデックスを進める。
-			m_mostNearCourceIndex++;
-			//最後のコース定義まで来たら一番最初のコース定義に戻る。
-			if (m_mostNearCourceIndex > m_courceArray)
-			{
-				m_mostNearCourceIndex = 0;
-			}
-		}
-		//コース定義に向かうベクトルの正規化。
-		D3DXVec3Normalize(&toCource, &toCource);
+	//{
+	//	//コース定義に向かうベクトルを求める
+	//	D3DXVECTOR3 toCource = EnemyCource[m_mostNearCourceIndex] - m_position;
+	//	//コース定義のベクトルの長さを調べる。
+	//	float len = D3DXVec3Length(&toCource);
+	//	//調べたコース定義のベクトルの長さが10.0f以下なら次のコース定義に進む。
+	//	if (len < 10.0f)
+	//	{
+	//		//コース定義の配列のインデックスを進める。
+	//		m_mostNearCourceIndex++;
+	//		//最後のコース定義まで来たら一番最初のコース定義に戻る。
+	//		if (m_mostNearCourceIndex > m_courceArray)
+	//		{
+	//			m_mostNearCourceIndex = 0;
+	//		}
+	//	}
+	//	//コース定義に向かうベクトルの正規化。
+	//	D3DXVec3Normalize(&toCource, &toCource);
 
-		m_move.x = m_moveSpeed*toCource.x;
-		m_move.z = m_moveSpeed*toCource.z;
-		//回転。
-		m_targetAngleY = Turn(toCource);
-	}
+	//	m_move.x = m_moveSpeed*toCource.x;
+	//	m_move.z = m_moveSpeed*toCource.z;
+	//	//回転。
+	//	m_targetAngleY = Turn(toCource);
+	//}
 
 }
 

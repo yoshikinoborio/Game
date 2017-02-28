@@ -10,7 +10,7 @@ EnemyBoss::EnemyBoss()
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_height = 0.0f;
 	m_radius = 0.0f;
-	m_state = EnemyBossStateFind;
+	m_state = EnemyBossStateSearch;
 	m_currentBossAnimSetNo = enBossAnimInvalid;
 	m_hp = 0;
 	m_isDead = FALSE;
@@ -41,7 +41,7 @@ void EnemyBoss::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNIO
 	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.2f, 0.2f, 0.2f, 1.0f));
 
-	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
+	m_light.SetAmbientLight(D3DXVECTOR4(30.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
 	m_skinModel.SetHasNormalMap(FALSE);
 
@@ -74,9 +74,9 @@ void EnemyBoss::Update()
 {
 	m_animation.Update(GetLocalFrameDeltaTime());
 
-	if (m_state == EnemyBossStateFind)
+	if (m_state == EnemyBossStateSearch)
 	{
-		m_currentBossAnimSetNo = enBossAnimRun;
+		m_currentBossAnimSetNo = enBossAnimWait;
 	}
 	
 
@@ -101,7 +101,7 @@ void EnemyBoss::Update()
 		}
 	}
 
-	if (m_state== EnemyBossStateDead)
+	if (m_state== EnemyBossStateSearch)
 	{
 		m_currentBossAnimSetNo = enBossAnimWait;
 	}

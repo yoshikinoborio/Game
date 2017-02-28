@@ -126,8 +126,8 @@ void UnityChan::Initialize()
 	m_lv = 1;
 	m_lvUpEXP = 10;
 	m_holdEXP = 0;
-	m_hp = 10;
-	m_maxhp = 100;
+	m_hp = 30;
+	m_maxhp = 30;
 
 	//経験値テーブルの中身の初期化。
 	int nextLevelPoint = 10;
