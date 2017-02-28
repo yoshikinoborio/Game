@@ -19,6 +19,12 @@ public:
 	//更新
 	void Update();
 
+	//パッドを使ったカメラの回転の処理。
+	void PadUseRotation();
+
+	//フリーカメラモードの処理。
+	void FreeCameraMode();
+
 	//ビュー行列の設定
 	void SetViewMatrix(D3DXMATRIX View)
 	{
@@ -120,24 +126,31 @@ public:
 	{
 		return m_aspect;
 	}
+	//カメラのが自由か固定かのフラグを取得。
+	bool GetCameraFreeFlag()
+	{
+		return m_cameraFreeFlag;
+	}
 private:
-	D3DXMATRIX		m_viewMatrix;			//ビュー行列 カメラ行列とも言う
-	D3DXMATRIX		m_projectionMatrix;		//プロジェクション行列 ビュー空間から射影空間に変換する行列
-	D3DXMATRIX		m_viewMatrixInv;		//ビュー行列の逆行列
-	D3DXVECTOR3		m_eyePt;				//カメラの座標
-	D3DXVECTOR3		m_lookatPt;				//カメラの注視点
-	D3DXVECTOR3		m_upVec;				//カメラの上方向
-	float			m_far;					//遠平面(ファー)
-	float			m_near;					//近平面(ニアー)
-	float			m_aspect;				//アスペクト比
-	D3DXVECTOR3		m_toEyeptVector;		//注視点からカメラの座標に向かうベクトル
-	Player*			m_player;				//プレイヤーインスタンス
-	UnityChan*      m_unitychan;			//ユニティちゃんのインスタンス
-	float			m_angle;				//回転
-	D3DXQUATERNION	m_yAxis;				//Y軸回転のクォータニオン
-	D3DXQUATERNION	m_zAxis;				//Z軸回転のクォータニオン
-	D3DXMATRIX		m_rot;					//クォータニオンから作った回転行列を格納
-	D3DXVECTOR4		m_v4;					//回転行列を使ってm_toEyeptVectorを回転させたのを格納
-	float			m_rStick_x;				//右スティックのX軸の入力量を格納
-	float           m_rStick_y;				//右スティックのY軸の入力量を格納
+	D3DXMATRIX		m_viewMatrix;			//ビュー行列 カメラ行列とも言う。
+	D3DXMATRIX		m_projectionMatrix;		//プロジェクション行列 ビュー空間から射影空間に変換する行列・
+	D3DXMATRIX		m_viewMatrixInv;		//ビュー行列の逆行列。
+	D3DXVECTOR3		m_eyePt;				//カメラの座標。
+	D3DXVECTOR3		m_lookatPt;				//カメラの注視点。
+	D3DXVECTOR3		m_upVec;				//カメラの上方向。
+	float			m_far;					//遠平面(ファー)。
+	float			m_near;					//近平面(ニアー)。
+	float			m_aspect;				//アスペクト比。
+	D3DXVECTOR3		m_toEyeptVector;		//注視点からカメラの座標に向かうベクトル。
+	Player*			m_player;				//プレイヤーインスタンス。
+	UnityChan*      m_unitychan;			//ユニティちゃんのインスタンス。
+	float			m_angle;				//回転。
+	D3DXQUATERNION	m_yAxis;				//Y軸回転のクォータニオン。
+	D3DXQUATERNION	m_zAxis;				//Z軸回転のクォータニオン。
+	D3DXMATRIX		m_rot;					//クォータニオンから作った回転行列を格納。
+	D3DXVECTOR4		m_v4;					//回転行列を使ってm_toEyeptVectorを回転させたのを格納。
+	float			m_rStick_x;				//右スティックのX軸の入力量を格納。
+	float           m_rStick_y;				//右スティックのY軸の入力量を格納。
+	bool			m_cameraFreeFlag;		//自由なカメラに切り替えるフラグ。
+	D3DXVECTOR3     m_moveDir;				//カメラの向き。
 };

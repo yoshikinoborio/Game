@@ -28,7 +28,7 @@ void CParticleEmitter::Update()
 	if (timer >= param->intervalTime) {
 		//パーティクルを生成。
 		CParticle* p = new CParticle;
-		p->Init(*param, param->initSpeed, param->position);
+		p->Init(*param, param->initSpeed, m_emitPosition);
 		timer = 0.0f;
 		particleList.push_back(p);
 	}

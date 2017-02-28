@@ -126,7 +126,7 @@ void UnityChan::Initialize()
 	m_lv = 1;
 	m_lvUpEXP = 10;
 	m_holdEXP = 0;
-	m_hp = 100;
+	m_hp = 10;
 	m_maxhp = 100;
 
 	//経験値テーブルの中身の初期化。
@@ -145,11 +145,11 @@ void UnityChan::Update()
 
 	//m_pEmitter->Update();
 
-	//累積経験値への加算。
+		//累積経験値への加算。
 	m_holdEXP += m_getEXP;
 	m_getEXP = 0;
 	//累積経験値が必要経験値を上回るとレベルアップ。
-	while (m_holdEXP >= levelUpExpTable[m_lv] )
+	while (m_holdEXP >= levelUpExpTable[m_lv])
 	{
 		//レベルの加算。
 		m_lv += 1;
@@ -162,10 +162,10 @@ void UnityChan::Update()
 	m_characterController.SetHeight(m_height);
 
 	m_move = m_characterController.GetMoveSpeed();
-	
+
 	m_isTurn = FALSE;
 
-	if (m_state!=StateDead)
+	if (m_state != StateDead)
 	{
 		if (g_pad.IsTrigger(enButtonX))
 		{
@@ -181,7 +181,7 @@ void UnityChan::Update()
 	{
 		g_enemyManager->SetFrameDeltaTimeMul(1.0f);
 	}
-	
+
 	Damage();
 
 	switch (m_battleFlag)
@@ -193,7 +193,11 @@ void UnityChan::Update()
 			if (m_characterController.IsOnGround() == TRUE)
 			{
 				//パッドによるカメラの奥に移動する処理。
-				PadMove();
+				if (m_camera->GetCameraFreeFlag()!=TRUE)
+				{
+					PadMove();
+				}
+				
 				//移動量を見て動いているか止まっているかをチェック。
 				if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
 				{
@@ -283,7 +287,7 @@ void UnityChan::Update()
 			if (m_characterController.IsOnGround() == TRUE)
 			{
 				PadMove();
-				
+
 				//着地して動いているか止まっているかをチェック。
 				if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
 				{
@@ -293,7 +297,7 @@ void UnityChan::Update()
 				{
 					//地面に着地して入力をされていなかったら着地に遷移。
 					m_state = StateLanding;
-					
+
 				}
 
 				//着地のアニメーションが終わったら待機にする。
@@ -444,12 +448,12 @@ void UnityChan::Update()
 				m_currentAnimSetNo = AnimationDamage_00;
 			}
 
-			if (m_state==StateDead)
+			if (m_state == StateDead)
 			{
 				m_currentAnimSetNo = AnimationDownFly;
 			}
 
-			if (m_state==StateAttack)
+			if (m_state == StateAttack)
 			{
 				m_currentAnimSetNo = AnimationPunch;
 			}
@@ -465,8 +469,6 @@ void UnityChan::Update()
 
 	m_soundSource.Update();
 	m_soundSource2.Update();
-
-	//g_damageCollisionWorld->Update();
 
 	m_currentAngleY = m_turn.Update(m_isTurn, m_targetAngleY);
 

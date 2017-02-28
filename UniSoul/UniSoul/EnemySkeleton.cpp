@@ -129,22 +129,45 @@ void EnemySkeleton::Update()
 			//地面に着いている時。
 			if (m_characterController.IsOnGround() == TRUE)
 			{
-				//ユニティちゃんが近くに来た時の処理。
-				if (D3DXVec3LengthSq(&PosDiff) < 500.0f)
+
+				//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
+				//自分の向きベクトル。
+				D3DXVECTOR3 Dir = m_move;
+				//プレイヤーへの向きベクトル。
+				D3DXVECTOR3 PlayerDir = PosDiff;
+				//二つのベクトルを正規化。
+				D3DXVec3Normalize(&Dir,&Dir);
+				D3DXVec3Normalize(&PlayerDir, &PlayerDir);
+
+				//正規化した二つのベクトルの内積を計算。
+				float dot = D3DXVec3Dot(&Dir, &PlayerDir);
+				//内積の値の逆余弦からラジアンを求める。
+				float rad = acos(dot);
+				//ラジアンから角度に変換し実際の角度差を求める。
+				float selfangle D3DXToDegree(rad);
+				//自分の視野角にいるかつ距離が500以下の時。
+				if (selfangle < 50.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
 				{
 					//発見。
 					m_state = SkeletonStateFind;
 					break;
 				}
+
+				////ユニティちゃんが近くに来た時の処理。
+				//if (D3DXVec3LengthSq(&PosDiff) < 500.0f)
+				//{
+				//	//発見。
+				//	m_state = SkeletonStateFind;
+				//	break;
+				//}
 				//近くにいない時は索敵中。
-				m_state = SkeletonStateSearch;
-				m_moveSpeed = SKELETONRUNSPEED;
 				SearchMove();
 			}
 			break;
 			//発見。
 		case SkeletonStateFind:
 			m_moveSpeed = SKELETONRUNSPEED;
+			FindMove();
 			//索敵範囲内にユニティちゃんを発見。
 			//発見中に近くに行くと攻撃する。
 			if (D3DXVec3LengthSq(&PosDiff) < 10.0f)
@@ -156,7 +179,6 @@ void EnemySkeleton::Update()
 				m_state = SkeletonStateSearch;
 				m_moveSpeed = SKELETONWAITTIME;
 			}
-			FindMove();
 			break;
 		case SkeletonStateAttack:
 			m_animation.SetAnimationLoopFlag(enAnimAttack, TRUE);
@@ -298,6 +320,8 @@ void EnemySkeleton::FindMove()
 
 void EnemySkeleton::SearchMove()
 {
+	m_state = SkeletonStateSearch;
+	m_moveSpeed = SKELETONRUNSPEED;
 	//コース定義に従った移動の処理。
 	{
 		//コース定義に向かうベクトルを求める

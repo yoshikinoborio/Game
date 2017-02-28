@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Black.h"
+#include "SceneManager.h"
 
 Black::Black()
 {
@@ -47,6 +48,7 @@ void Black::Update()
 		else
 		{
 			m_alph = 255;
+			g_sceneManager->ChangeScene(1);
 		}
 	}
 

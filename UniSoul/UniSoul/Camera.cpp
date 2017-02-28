@@ -14,6 +14,7 @@ Camera::Camera()
 	m_toEyeptVector = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rStick_x = 0.0f;
 	m_rStick_y = 0.0f;
+	m_cameraFreeFlag = FALSE;
 }
 
 Camera::~Camera()
@@ -71,14 +72,53 @@ void Camera::Update()
 		PostQuitMessage(0);
 	}
 
-	
-	//カメラがユニティちゃんに追従する処理。
-	D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
-	V.y += 2.0f;
-	m_lookatPt = V;	//注視点をユニティちゃんの少し上に設定。
-	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
+	//パッドから取得した情報を元にカメラを回転させる処理。
+	if (m_cameraFreeFlag==FALSE)
+	{
+		PadUseRotation();
+	}
 
+	//カメラ逆行列の計算(カメラのワールド行列の逆行列)。
+	D3DXMatrixInverse(&m_viewMatrixInv, NULL, &m_viewMatrix);
 
+//DEBUG中のみ行う。
+#ifdef _DEBUG
+	if (g_pad.IsTrigger(enButtonX)&&g_pad.IsTrigger(enButtonUp))
+	{
+		m_cameraFreeFlag = TRUE;
+	}
+	//フリーカメラモードでの処理。
+	FreeCameraMode();
+#endif // _DEBUG
+
+	if (m_cameraFreeFlag == FALSE) {
+		//カメラがユニティちゃんに追従する処理。
+		D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
+		V.y += 2.0f;
+		m_lookatPt = V;	//注視点をユニティちゃんの少し上に設定。
+		m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
+	}
+		
+
+	//左手座標系ビュー行列を作成する。
+	D3DXMatrixLookAtLH(&m_viewMatrix,	//左手座標系ビュー行列　D3DXMATRIX構造体へのポインタ。
+		&m_eyePt,						//視点を定義する D3DXVECTOR3構造体へのポインタ(平行移動で使われる)。
+		&m_lookatPt,					//カメラの注視対象を定義する D3DXVECTOR3構造体へのポインタ。
+		&m_upVec						//ワールドの上方、一般には(0,1,0)を定義する D3DXVECTOR3構造体へのポインタ。
+	);
+
+	//視野に基づいて、左手座標系のパースペクティブ射影行列(3D世界で遠近法を実現する行列)を作成。
+	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix,		//左手座標系のパースペクティブ射影行列を表す D3DXMATRIX 構造体へのポインターを返す。
+		D3DX_PI / 4,									//y方向の視野角 (画角)。
+		m_aspect,										//アスペクト比。
+		m_near,											//近くのビュープレーンのz値(シーンの奥行き方向をどこからどこまで描画するかの設定)。
+		m_far											//遠くのビュープレーンのz値。
+	);
+
+}
+
+void Camera::PadUseRotation()
+{
 	//右スティックを使った縦のカメラ移動。
 	if (fabsf(m_rStick_y) > 0.0f) {
 		D3DXVECTOR3 Cross;
@@ -112,23 +152,44 @@ void Camera::Update()
 		m_toEyeptVector.y = m_v4.y;
 		m_toEyeptVector.z = m_v4.z;
 	}
+}
 
-	//カメラ逆行列の計算(カメラのワールド行列の逆行列)。
-	D3DXMatrixInverse(&m_viewMatrixInv, NULL, &m_viewMatrix);
+void Camera::FreeCameraMode()
+{
+	if (m_cameraFreeFlag == TRUE) {
+		D3DXVECTOR3 moveDirCameraLocal;
+		moveDirCameraLocal.y = 0.0f;
+		moveDirCameraLocal.x = g_pad.GetLStickXF();
+		moveDirCameraLocal.z = g_pad.GetRStickYF();
 
-	//左手座標系ビュー行列を作成する。
-	D3DXMatrixLookAtLH(&m_viewMatrix,	//左手座標系ビュー行列　D3DXMATRIX構造体へのポインタ。
-		&m_eyePt,						//視点を定義する D3DXVECTOR3構造体へのポインタ(平行移動で使われる)。
-		&m_lookatPt,					//カメラの注視対象を定義する D3DXVECTOR3構造体へのポインタ。
-		&m_upVec						//ワールドの上方、一般には(0,1,0)を定義する D3DXVECTOR3構造体へのポインタ。
-		);
+		D3DXMATRIX& ViewInv = m_viewMatrixInv;//カメラの逆行列を取得。
+											  //カメラ空間から見た奥方向のベクトルを取得。
+		D3DXVECTOR3 cameraZ;
+		cameraZ.x = ViewInv.m[2][0];
+		cameraZ.y = 0.0f;		//Y軸いらない。
+		cameraZ.z = ViewInv.m[2][2];
+		D3DXVec3Normalize(&cameraZ, &cameraZ);	//Y軸を打ち消しているので正規化する。
+												//カメラから見た横方向のベクトルを取得。
+		D3DXVECTOR3 cameraX;
+		cameraX.x = ViewInv.m[0][0];
+		cameraX.y = 0.0f;		//Y軸はいらない。
+		cameraX.z = ViewInv.m[0][2];
+		D3DXVec3Normalize(&cameraX, &cameraX);	//Y軸を打ち消しているので正規化する。
 
-	//視野に基づいて、左手座標系のパースペクティブ射影行列(3D世界で遠近法を実現する行列)を作成。
-	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix,		//左手座標系のパースペクティブ射影行列を表す D3DXMATRIX 構造体へのポインターを返す。
-		D3DX_PI / 4,									//y方向の視野角 (画角)。
-		m_aspect,										//アスペクト比。
-		m_near,											//近くのビュープレーンのz値(シーンの奥行き方向をどこからどこまで描画するかの設定)。
-		m_far											//遠くのビュープレーンのz値。
-		);
+		m_moveDir.x += cameraX.x * moveDirCameraLocal.x + cameraZ.x * moveDirCameraLocal.z;
+		m_moveDir.y = 0.0f;	//Y軸はいらない。
+		m_moveDir.z += cameraX.z * moveDirCameraLocal.x + cameraZ.z * moveDirCameraLocal.z;
 
+		m_eyePt.x = m_moveDir.x*2.0f;
+		m_eyePt.y += g_pad.GetLStickYF() *1.0f;
+		m_eyePt.z = m_moveDir.z*2.0f;
+
+		m_lookatPt = m_eyePt;
+		m_lookatPt.z += 2.0f;
+
+		if (g_pad.IsTrigger(enButtonX) && g_pad.IsTrigger(enButtonDown))
+		{
+			m_cameraFreeFlag = FALSE;
+		}
+	}
 }

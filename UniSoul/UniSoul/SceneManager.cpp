@@ -16,11 +16,12 @@ SceneManager::SceneManager()
 
 SceneManager::~SceneManager()
 {
+
 }
 
 void SceneManager::Initialize()
 {
-	SceneManager::ChangeScene(2);
+	SceneManager::ChangeScene(1);
 }
 
 void SceneManager::Update()

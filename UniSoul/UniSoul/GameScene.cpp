@@ -187,8 +187,9 @@ void GameScene::LoadShaders()
 
 GameScene::GameScene()
 {
-	m_soundEngine = NULL;
+	g_effectManager = new EffectManager;
 	g_damageCollisionWorld = NULL;
+	m_soundEngine = NULL;
 	g_enemyManager = NULL;
 }
 
@@ -200,7 +201,6 @@ GameScene::~GameScene()
 	m_stopFlag = FALSE;
 	//m_slowFlag = FALSE;
 	//m_deltaTime = 0.0f;
-	delete g_effectManager;
 	delete g_damageCollisionWorld;
 	delete g_enemyManager;
 }
@@ -358,8 +358,12 @@ void GameScene::Draw()
 	//ブルームの描画。
 	m_bloom.Render();
 
-	//プレイヤーの体力描画。
-	m_playerHPBar.Render();
+
+	if (m_camera.GetCameraFreeFlag() == FALSE)
+	{
+		//プレイヤーの体力描画。
+		m_playerHPBar.Render();
+	}
 
 	//YOU DIEDの描画。
 	m_youDIED.Render();
@@ -375,17 +379,48 @@ void GameScene::Draw()
 	FPS = FPS + std::to_string(counter);
 	m_font.Draw(FPS.c_str(), 1650, 0);
 
-	int HP = m_unitychan.GetHP();
-	std::string str;
-	str = "HP ";
-	str = str + std::to_string(HP);
-	m_font.Draw(str.c_str(), 0, 50);
+	if (m_camera.GetCameraFreeFlag()==FALSE)
+	{
+		int HP = m_unitychan.GetHP();
+		std::string str;
+		str = "HP ";
+		str = str + std::to_string(HP);
+		m_font.Draw(str.c_str(), 0, 50);
 
-	int Lv = m_unitychan.GetLv();
-	std::string lv;
-	lv = "Lv ";
-	lv = lv + std::to_string(Lv);
-	m_font.Draw(lv.c_str(), 0, 0);
+		int Lv = m_unitychan.GetLv();
+		std::string lv;
+		lv = "Lv ";
+		lv = lv + std::to_string(Lv);
+		m_font.Draw(lv.c_str(), 0, 0);
+	}
+	else
+	{
+		//フリーカメラモードの表示。
+		std::string FreeCameraMode;
+		FreeCameraMode = "FreeCameraMode";
+		m_font.Draw(FreeCameraMode.c_str(), 0, 0);
+
+		//カメラの位置を表示。
+		D3DXVECTOR3 pos = m_camera.GetEyePt();
+		int PosX = pos.x;
+		std::string FreeCameraPositionX;
+		FreeCameraPositionX = "Position.X:";
+		FreeCameraPositionX = FreeCameraPositionX + std::to_string(PosX);
+		m_font.Draw(FreeCameraPositionX.c_str(), 0, 20);
+
+		int PosY = pos.y;
+		std::string FreeCameraPositionY;
+		FreeCameraPositionY = "Position.Y:";
+		FreeCameraPositionY = FreeCameraPositionY + std::to_string(PosY);
+		m_font.Draw(FreeCameraPositionY.c_str(), 0, 40);
+
+		int PosZ = pos.z;
+		std::string FreeCameraPositionZ;
+		FreeCameraPositionZ = "Position.Z:";
+		FreeCameraPositionZ = FreeCameraPositionZ + std::to_string(PosZ);
+		m_font.Draw(FreeCameraPositionZ.c_str(), 0, 60);
+	}
+	
 
 	//シーンの描画が完了したのでレンダリングターゲットをフレームバッファに戻す。
 	g_pd3dDevice->SetRenderTarget(0, frameBufferRT);

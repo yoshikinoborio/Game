@@ -6,6 +6,7 @@ MapChip::MapChip()
 {
 	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_scale = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_drawFlag = FALSE;
 }
 
 MapChip::~MapChip()
@@ -72,8 +73,13 @@ void MapChip::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION 
 
 void MapChip::Update()
 {
-	//マップオブジェクトを更新。
-	m_skinModel.Update(m_position, m_rotation, { 1.0f, 1.0f,1.0f });
+	//if (m_drawFlag == FALSE)
+	//{
+		//マップオブジェクトを更新。
+		m_skinModel.Update(m_position, m_rotation, { 1.0f, 1.0f,1.0f });
+		m_drawFlag = TRUE;
+	//}
+	
 }
 
 void MapChip::Draw(

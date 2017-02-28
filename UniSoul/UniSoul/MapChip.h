@@ -38,5 +38,6 @@ private:
 	D3DXVECTOR3		m_position;		//座標。
 	D3DXVECTOR3     m_scale;		//スケール。
 	D3DXQUATERNION	m_rotation;		//回転。
+	bool			m_drawFlag;
 
 };
