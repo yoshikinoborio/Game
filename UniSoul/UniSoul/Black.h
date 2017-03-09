@@ -15,7 +15,7 @@ public:
 		m_alphFlag = flag;
 	}
 private:
-	int m_alph;	//α値の変わり。
-	bool m_alphFlag; //FALSEの時はだんだん色が薄くなりTRUEにすると濃くなっていく。
+	int m_alph;			//α値の変わり。
+	bool m_alphFlag;	//FALSEの時はだんだん色が薄くなりTRUEにすると濃くなっていく。
 };
 

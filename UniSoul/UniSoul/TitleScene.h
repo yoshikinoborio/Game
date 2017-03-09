@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include "Title.h"
+#include "TitleCursor.h"
 
 //タイトルシーン
 class TitleScene : public SceneBase
@@ -19,6 +20,8 @@ public:
 private:
 	//タイトルの画像。
 	Title m_title;
+	//タイトルに表示されているカーソル。
+	TitleCursor m_titleCursor;
 };
 
 //どこでも使えるようにextern

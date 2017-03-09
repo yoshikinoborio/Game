@@ -58,11 +58,6 @@ public:
 	{
 		m_stopFlag = Flg;
 	}
-	//TRUEにするとUpdateの更新回数を減らす。
-	/*void SetSlowFlag(bool Flg)
-	{
-	m_slowFlag = Flg;
-	}*/
 	bool GetStopFlag()
 	{
 		return m_stopFlag;
@@ -103,8 +98,6 @@ private:
 	Sky				m_sky;					//スカイボックス。
 	Enemy			m_enemy;				//エネミー。
 	bool			m_stopFlag;				//スタートボタンを押したらカメラ以外の処理を止まるフラグ。
-	//bool			m_slowFlag;				//ヒットストップかどうかのフラグ。
-	//float			m_deltaTime;
 	CFont			m_font;					//DirectXのフォント機能。
 	CStopwatch		m_stopWatch;
 	PlayerHPBar		m_playerHPBar;			//プレイヤーの体力バー。

@@ -66,7 +66,7 @@ void Camera::Update()
 		}
 	}
 
-	//パッドのスタートボタンでゲーム終了。
+	//パッドのセレクトボタンでゲーム終了。
 	if (g_pad.IsPress(enButtonSelect))
 	{
 		PostQuitMessage(0);

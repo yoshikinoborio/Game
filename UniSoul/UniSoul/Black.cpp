@@ -4,8 +4,13 @@
 
 Black::Black()
 {
+	//Še•Ï”‚Ì‰Šú‰»B
 	m_alph = 255;
 	m_alphFlag = FALSE;
+	m_position = D3DXVECTOR2(0.0f, 0.0f);
+	m_angle = 0;
+	m_scale = D3DXVECTOR2(0.0f, 0.0f);
+	m_backColor = D3DCOLOR_ARGB(0, 0, 0, 0);
 }
 
 

@@ -19,19 +19,19 @@ void TitleScene::Initialize()
 	m_soundEngine = new CSoundEngine;
 	m_soundEngine->Init();
 	m_title.Initialize();
+	m_titleCursor.Initialize();
 }
 
 void TitleScene::Update()
 {
+	//サウンドの更新。
+	m_soundEngine->Update();
 	//パッドの更新。
 	g_pad.Update();
-	m_soundEngine->Update();
-
+	//タイトル画像の更新。
 	m_title.Update();
-	if (g_pad.IsTrigger(enButtonA))
-	{
-		g_sceneManager->ChangeScene(2);
-	}
+	//カーソルの更新。
+	m_titleCursor.Update();
 }
 
 void TitleScene::Draw()
@@ -40,8 +40,10 @@ void TitleScene::Draw()
 	// 画面をクリア。
 	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
-	//スタート画面の描画。
-	m_title.Draw();
+	//タイトル画面の描画。
+	m_title.Render();
+	//カーソルの描画。
+	m_titleCursor.Render();
 
 	// シーンの描画終了。
 	g_pd3dDevice->EndScene();

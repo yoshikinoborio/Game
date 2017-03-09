@@ -23,8 +23,3 @@ void Title::Update()
 {
 	C2DImage::SetupMatrices();
 }
-
-void Title::Draw()
-{
-	C2DImage::Render();
-}

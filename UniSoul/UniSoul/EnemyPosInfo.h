@@ -43,14 +43,14 @@
 //image\\EnemyGoblin.X
 {
 	"image\\EnemyGoblin.X",
-	D3DXVECTOR3(35.60f, 3.00f, 547.40f),             //平行移動
+	D3DXVECTOR3(145.48f, -1.00f, 581.00f),             //平行移動
 	D3DXQUATERNION(0.00f, 0.00f, 0.00f, 1.00f ),    //回転
-	D3DXVECTOR3(-1.00f, 1.00f, 1.00f ),            //拡大
+	D3DXVECTOR3(1.00f, 1.00f, 1.00f ),            //拡大
 },
 //image\\EnemyBoss.X
 {
 	"image\\EnemyBoss.X",
-	D3DXVECTOR3(168.70f, -9.80f, 710.10f),             //平行移動
+	D3DXVECTOR3(167.70f, -10.40f, 715.58f),             //平行移動
 	D3DXQUATERNION(0.00f, 0.00f, 0.00f, 1.00f ),    //回転
-	D3DXVECTOR3(-1.00f, 1.00f, 1.00f ),            //拡大
+	D3DXVECTOR3(1.00f, 1.00f, 1.00f ),            //拡大
 },

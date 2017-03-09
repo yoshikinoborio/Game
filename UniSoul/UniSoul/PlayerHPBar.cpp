@@ -6,6 +6,11 @@ const D3DXVECTOR2 HpBarMaxScale = { 3.0f,1.5f };
 
 PlayerHPBar::PlayerHPBar()
 {
+	//Še•Ï”‚Ì‰Šú‰»B
+	m_position = D3DXVECTOR2(0.0f, 0.0f);
+	m_angle = 0;
+	m_scale = D3DXVECTOR2(0.0f, 0.0f);
+	m_backColor = D3DCOLOR_ARGB(0, 0, 0, 0);
 }
 
 
