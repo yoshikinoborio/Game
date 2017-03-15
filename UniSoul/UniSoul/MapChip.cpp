@@ -4,26 +4,23 @@
 
 MapChip::MapChip()
 {
-	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_scale = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_drawFlag = FALSE;
+	m_position = Vector3Zero;
+	m_scale = Vector3Zero;
 }
 
 MapChip::~MapChip()
 {
-
+	delete m_skinModelData;
 }
 
-void MapChip::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION rotation)
+void MapChip::Initialize(const char* modelPath, const D3DXVECTOR3& pos, const D3DXQUATERNION& rotation)
 {
 	m_position = pos;
-	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+	m_scale = Vector3One;
 	m_rotation = rotation;
 
 	//モデルをロード。
 	m_skinModelData = static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load(modelPath, &m_animation);
-	//m_skinModelDataResources.Load(modelPath, &m_animation);
-	//m_skinModelData.LoadModelData(modelPath, &m_animation);
 	m_skinModel.Initialize(m_skinModelData);
 
 	//ライトの設定。
@@ -51,7 +48,7 @@ void MapChip::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION 
 	m_skinModel.SetFogHeightFlag(FALSE);
 
 
-	m_skinModel.Update(pos, rotation, { 1.0f, 1.0f, 1.0f });
+	m_skinModel.Update(pos, rotation, m_scale);
 	D3DXMATRIX m_world;
 	//ここから衝突判定絡みの初期化。
 	//スキンモデルからメッシュコライダーを作成する。
@@ -73,13 +70,8 @@ void MapChip::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION 
 
 void MapChip::Update()
 {
-	//if (m_drawFlag == FALSE)
-	//{
-		//マップオブジェクトを更新。
-		m_skinModel.Update(m_position, m_rotation, { 1.0f, 1.0f,1.0f });
-		m_drawFlag = TRUE;
-	//}
-	
+	//マップオブジェクトを更新。
+	m_skinModel.Update(m_position, m_rotation, m_scale);
 }
 
 void MapChip::Draw(

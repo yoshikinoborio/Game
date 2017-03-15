@@ -7,9 +7,8 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #define MAX_NAME 255
 class CParticle;
-/*!
-* @brief	パーティクルの発生機
-*/
+
+//パーティクルの発生機
 class CParticleEmitter {
 public:
 	static CParticleEmitter* EmitterCreate(LPCSTR EmitterName, ParicleType type, D3DXVECTOR3 pos) {
@@ -17,38 +16,41 @@ public:
 		pEmitter->SetEmitParameter(static_cast<SParicleEmitParameter*>(ParticleParamPT_Array[type]));
 		pEmitter->SetEmitterName(EmitterName);
 		pEmitter->SetEmitPos(pos);
-		pEmitter->Init();
+		pEmitter->Initialize();
 		return pEmitter;
 	}
-	/*!
-	* @brief	コンストラクタ。
-	*/
+	//コンストラクタ。
 	CParticleEmitter();
-	/*!
-	* @brief	デストラクタ。
-	*/
+
+	//デストラクタ。
 	~CParticleEmitter();
-	/*!
-	*@brief	初期化。
-	*@param[in]	camera		パーティクルの描画で使用するカメラ。
-	*@param[in]	param		パーティクル生成用のパラメータ。
-	*/
-	void Init();
+
+	
+	//初期化。
+	void Initialize();
+
+	//更新。
 	void Update();
+
+	//描画。
 	void Render(const D3DXMATRIX* viewMatrix, const D3DXMATRIX* projMatrix);
+
 	//パーティクルテーブルのパーティクルを設定。
 	void SetEmitParameter(SParicleEmitParameter* param) {
 		this->param = param;
 	}
+
 	//渡されたパーティクルエミッターの名前を設定。
 	void SetEmitterName(LPCSTR name) {
 		CH_ASSERT(strlen(name) < MAX_NAME);
 		strcpy(m_EmitterName, name);
 	}
+
 	//発生場所をセット。
 	void SetEmitPos(D3DXVECTOR3 pos) {
 		m_emitPosition = pos;
 	}
+
 private:
 	SParicleEmitParameter*	param;			//!<パラメータ。
 	std::list<CParticle*>	particleList;	//!<パーティクルのリスト。

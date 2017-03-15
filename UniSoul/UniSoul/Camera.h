@@ -1,6 +1,5 @@
 #pragma once
 #include "CharacterController.h"
-class Player;
 class UnityChan;
 
 //カメラクラス
@@ -25,6 +24,22 @@ public:
 	//フリーカメラモードの処理。
 	void FreeCameraMode();
 
+	//フリーカメラモードフラグの操作処理。
+	void FreeCameraFlagChanger();
+
+	//ゲームの停止。
+	void GameStop();
+
+	//カメラのビュー行列とパースペクティブ射影行列の作成。
+	void CameraMatrixUpadate();
+
+	//カメラがプレイヤーを追いかける処理。
+	void TargetPlayer();
+
+	//ゲームの終了。
+	void GameEnd();
+
+
 	//ビュー行列の設定
 	void SetViewMatrix(D3DXMATRIX View)
 	{
@@ -32,102 +47,102 @@ public:
 	}
 
 	//ビュー行列の取得
-	D3DXMATRIX GetViewMatrix()
+	const D3DXMATRIX& GetViewMatrix() const
 	{
 		return m_viewMatrix;
 	}
 
 	//ビュー行列の逆行列を取得。
-	D3DXMATRIX& GetViewMatrixInv()
+	const D3DXMATRIX& GetViewMatrixInv() const
 	{
 		return m_viewMatrixInv;
 	}
 
 	//プロジェクション行列の設定
-	void SetProjectionMatrix(D3DXMATRIX Proj)
+	void SetProjectionMatrix(const D3DXMATRIX& Proj)
 	{
 		m_projectionMatrix = Proj;
 	}
 
 	//プロジェクション行列の取得
-	D3DXMATRIX GetProjectionMatrix()
+	const D3DXMATRIX& GetProjectionMatrix() const
 	{
 		return m_projectionMatrix;
 	}
 
 	//カメラの座標の設定
-	void SetEyePt(D3DXVECTOR3 Eye)
+	void SetEyePt(const D3DXVECTOR3& Eye)
 	{
 		m_eyePt = Eye;
 	}
 	
 	//カメラの座標の取得
-	D3DXVECTOR3 GetEyePt()
+	const D3DXVECTOR3& GetEyePt()
 	{
 		return m_eyePt;
 	}
 
 	//カメラの注視点の設定
-	void SetLookatPt(D3DXVECTOR3 Lookat)
+	void SetLookatPt(const D3DXVECTOR3& Lookat)
 	{
 		m_lookatPt = Lookat;
 	}
 	
 	//カメラの注視点の取得
-	D3DXVECTOR3 GetLookatPt()
+	const D3DXVECTOR3& GetLookatPt() const
 	{
 		return m_lookatPt;
 	}
 
 	//カメラの上方向の設定
-	void SetUpVec(D3DXVECTOR3 Up)
+	void SetUpVec(const D3DXVECTOR3& Up)
 	{
 		m_upVec = Up;
 	}
 	
 	//カメラの上方向の取得
-	D3DXVECTOR3 GetUpVec()
+	const D3DXVECTOR3& GetUpVec() const
 	{
 		return m_upVec;
 	}
 
 	//ファーの設定
-	void SetFar(float Far)
+	void SetFar(const float& Far)
 	{
 		m_far = Far;
 	}
 
 	//ファーの取得
-	float GetFar()
+	const float& GetFar() const
 	{
 		return m_far;
 	}
 
 	//二アーの設定
-	void SetNear(float Near)
+	void SetNear(const float& Near)
 	{
 		m_near = Near;
 	}
 
 	//二アーの取得
-	float GetNear()
+	const float& GetNear() const
 	{
 		return m_near;
 	}
 
 	//アスペクト比の設定
-	void SetAspect(float Aspect)
+	void SetAspect(const float& Aspect)
 	{
 		m_aspect = Aspect;
 	}
 
 	//アスペクト比の取得
-	float GetAspect()
+	const float& GetAspect() const
 	{
 		return m_aspect;
 	}
 	//カメラのが自由か固定かのフラグを取得。
-	bool GetCameraFreeFlag()
+	const bool& GetCameraFreeFlag() const
 	{
 		return m_cameraFreeFlag;
 	}
@@ -142,8 +157,7 @@ private:
 	float			m_near;					//近平面(ニアー)。
 	float			m_aspect;				//アスペクト比。
 	D3DXVECTOR3		m_toEyeptVector;		//注視点からカメラの座標に向かうベクトル。
-	Player*			m_player;				//プレイヤーインスタンス。
-	UnityChan*      m_unitychan;			//ユニティちゃんのインスタンス。
+	UnityChan*      m_unitychan;			//プレイヤーのインスタンス。
 	float			m_angle;				//回転。
 	D3DXQUATERNION	m_yAxis;				//Y軸回転のクォータニオン。
 	D3DXQUATERNION	m_zAxis;				//Z軸回転のクォータニオン。

@@ -8,12 +8,16 @@ class Stage :public AnimationModel3D
 public:
 	//デストラクタ
 	Stage();
+
 	//コンストラクタ
 	~Stage();
+
 	//初期化
 	void Initialize();
+
 	//更新
 	void Update()override;
+
 	//描画
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,

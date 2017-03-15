@@ -18,98 +18,104 @@ public:
 	//更新。
 	void Update();
 
+	//シャドウカメラのビュー行列とパースペクティブ射影行列の作成。
+	void ShadowCameraMatrixUpadate();
+
+	//シャドウカメラがプレイヤーを追いかける処理。
+	void ShadowCameraTargetPlayer();
+
 	//ビュー行列の設定。
-	void SetShadowMapCameraViewMatrix(D3DXMATRIX View)
+	void SetShadowMapCameraViewMatrix(const D3DXMATRIX& View)
 	{
 		m_shadowmapcameraviewMatrix = View;
 	}
 
 	//ビュー行列の取得。
-	D3DXMATRIX GetShadowMapCameraViewMatrix()
+	const D3DXMATRIX& GetShadowMapCameraViewMatrix() const
 	{
 		return m_shadowmapcameraviewMatrix;
 	}
 
 	//プロジェクション行列の設定。
-	void SetShadowMapCameraProjectionMatrix(D3DXMATRIX Proj)
+	void SetShadowMapCameraProjectionMatrix(const D3DXMATRIX& Proj)
 	{
 		m_shadowmapcameraprojectionMatrix = Proj;
 	}
 
 	//プロジェクション行列の取得。
-	D3DXMATRIX GetShadowMapCameraProjectionMatrix()
+	const D3DXMATRIX& GetShadowMapCameraProjectionMatrix() const
 	{
 		return m_shadowmapcameraprojectionMatrix;
 	}
 
 	//カメラの座標の設定。
-	void SetShadowMapCameraEyePt(D3DXVECTOR3 Eye)
+	void SetShadowMapCameraEyePt(const D3DXVECTOR3& Eye)
 	{
 		m_shadowmapcameraeyePt = Eye;
 	}
 
 	//カメラの座標の取得。
-	D3DXVECTOR3 GetShadowMapCameraEyePt()
+	const D3DXVECTOR3& GetShadowMapCameraEyePt() const
 	{
 		return m_shadowmapcameraeyePt;
 	}
 
 	//カメラの注視点の設定。
-	void SetShadowMapCameraLooktPt(D3DXVECTOR3 Lookat)
+	void SetShadowMapCameraLooktPt(const D3DXVECTOR3& Lookat)
 	{
 		m_shadowmapcameralookatPt = Lookat;
 	}
 
 	//カメラの注視点の取得。
-	D3DXVECTOR3 GetShadowMapCameraLooktPt()
+	const D3DXVECTOR3& GetShadowMapCameraLooktPt() const
 	{
 		return m_shadowmapcameralookatPt;
 	}
 
 	//カメラの上方向の設定。
-	void SetShadowMapCameraUpVec(D3DXVECTOR3 Up)
+	void SetShadowMapCameraUpVec(const D3DXVECTOR3& Up)
 	{
 		m_shadowmapcameraupvec = Up;
 	}
 
 	//カメラの上方向の取得。
-	D3DXVECTOR3 GetShadowMapCameraUpVec()
+	const D3DXVECTOR3& GetShadowMapCameraUpVec() const
 	{
 		return m_shadowmapcameraupvec;
 	}
 
 	//ファーの設定。
-	void SetShadowMapCameraFar(float Far)
+	void SetShadowMapCameraFar(const float& Far)
 	{
 		m_shadowmapcamerafar = Far;
 	}
 
 	//ファーの取得。
-	float GetShadowMapCameraFar()
+	const float& GetShadowMapCameraFar() const
 	{
 		return m_shadowmapcamerafar;
 	}
 
 	//二アーの設定。
-	void SetNear(float Near)
+	void SetNear(const float& Near)
 	{
 		m_shadowmapcameranear = Near;
 	}
 
 	//二アーの取得。
-	float GetShadowMapCameraNear()
+	const float& GetShadowMapCameraNear() const
 	{
 		return m_shadowmapcameranear;
 	}
 
 	//アスペクト比の設定。
-	void SetShadowMapCameraAspect(float Aspect)
+	void SetShadowMapCameraAspect(const float& Aspect)
 	{
 		m_shadowmapcameraaspect = Aspect;
 	}
 
 	//アスペクト比の取得。
-	float GetShadowMapCameraAspect()
+	const float& GetShadowMapCameraAspect() const
 	{
 		return m_shadowmapcameraaspect;
 	}
@@ -123,5 +129,5 @@ private:
 	float			m_shadowmapcameranear;				//シャドウカメラの近平面(ニアー)。
 	float			m_shadowmapcameraaspect;			//シャドウカメラのアスペクト比。
 	D3DXVECTOR3		m_toEyeptVector;					//注視点からカメラの座標に向かうベクトル。
-	UnityChan*      m_unitychan;						//ユニティちゃんのインスタンス。
+	UnityChan*      m_unitychan;						//プレイヤーのインスタンス。
 };

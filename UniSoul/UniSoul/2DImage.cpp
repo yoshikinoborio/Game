@@ -51,7 +51,7 @@ HRESULT C2DImage::CreateSprite()
 	return S_OK;
 }
 
-void C2DImage::SetupMatrices2()
+void C2DImage::SetupSlideMatrices()
 {
 	D3DXMatrixIdentity(&this->m_transformMatrix);	//ƒ[ƒ‹ƒhs—ñ‰Šú‰»
 

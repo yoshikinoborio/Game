@@ -48,9 +48,9 @@ public:
 private:
 	D3DXVECTOR3			m_initPos;					//骨の初期位置。
 	SkeletonState		m_state;					//骨の敵の状態。
-	UnityChan*			m_unitytyan;				//ユニティちゃんのインスタンス。
-	D3DXVECTOR3			m_unityPos;					//ユニティちゃんの位置。
-	D3DXVECTOR3			m_posDifference;			//ユニティちゃんとの距離。
+	UnityChan*			m_unitytyan;				//プレイヤーのインスタンス。
+	D3DXVECTOR3			m_unityPos;					//プレイヤーの位置。
+	D3DXVECTOR3			m_posDifference;			//プレイヤーとの距離。
 	D3DXVECTOR3			m_SkeDir;					//敵の向きベクトル。
 	float				m_walkTimer;				//歩く時間。
 	float				m_atrTime;					//この時間以上になったら当たりを発生させる。

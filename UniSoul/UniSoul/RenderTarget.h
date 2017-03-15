@@ -4,6 +4,7 @@ class RenderTarget {
 public:
 	//コンストラクタ
 	RenderTarget();
+
 	//デストラクタ
 	~RenderTarget();
 
@@ -20,39 +21,44 @@ public:
 	*@param[in]	multiSampleQuality	マルチサンプリングの品質。
 	*/
 	void Create(
-		int w,
-		int h,
-		int mipLevel,
-		D3DFORMAT colorFormat,
-		D3DFORMAT depthStencilFormat,
-		D3DMULTISAMPLE_TYPE multiSampleType,
-		int multiSampleQuality);
+		const int& w,
+		const int& h,
+		const int& mipLevel,
+		const D3DFORMAT& colorFormat,
+		const D3DFORMAT& depthStencilFormat,
+		const D3DMULTISAMPLE_TYPE& multiSampleType,
+		const int& multiSampleQuality);
+
 	//サーフェスの取得
-	LPDIRECT3DSURFACE9 GetSurface()
+	const LPDIRECT3DSURFACE9& GetSurface() const
 	{
 		return m_surface;
 	}
+
 	//デプスステンシルバッファの取得
-	LPDIRECT3DSURFACE9 GetDepthStencilBuffer()
+	const LPDIRECT3DSURFACE9& GetDepthStencilBuffer() const
 	{
 		return m_depthSurface;
 	}
+
 	//テクスチャの取得
-	LPDIRECT3DTEXTURE9 GetTexture()
+	const LPDIRECT3DTEXTURE9& GetTexture() const
 	{
 		return m_texture;
 	}
+
 	//幅を取得。
-	
-	int GetWidth() const
+	const int& GetWidth() const
 	{
 		return m_width;
 	}
+
 	//高さを取得
-	int GetHeight() const
+	const int& GetHeight() const
 	{
 		return m_height;
 	}
+
 private:
 	LPDIRECT3DSURFACE9		m_depthSurface;		//深度バッファ用のサーフェイス(デプスステンシルバッファ)
 	LPDIRECT3DTEXTURE9		m_texture;			//書き込み先のテクスチャ。

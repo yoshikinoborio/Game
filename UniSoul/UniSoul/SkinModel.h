@@ -103,9 +103,9 @@ public:
 		return m_worldMatrix;
 	}
 	//法線マップのロード。
-	//ユニティちゃんの法線マップを読み込む用の関数。
+	//プレイヤーの法線マップを読み込む用の関数。
 	void LoadNormalMap(const char* filePath, const char* BoneName);
-	//ユニティちゃん以外の時に使うよう。
+	//プレイヤー以外の時に使うよう。
 	void LoadNormalMap(const char* filePath);
 
 	//法線マップの保持フラグを設定。
@@ -127,8 +127,8 @@ private:
 	bool					m_isShadowReceiver;			//シャドウレシーバー。
 	D3DXMATRIX				m_LVP;						//ライトビュープロジェクション行列。
 	LPDIRECT3DTEXTURE9		m_normalMap = NULL;			//法線マップのテクスチャ。
-	LPDIRECT3DTEXTURE9		m_normalMap2 = NULL;		//法線マップ(ユニティちゃんの頭)のテクスチャ。
-	LPDIRECT3DTEXTURE9		m_normalMap3 = NULL;		//法線マップ(ユニティちゃんの体)のテクスチャ。
+	LPDIRECT3DTEXTURE9		m_normalMap2 = NULL;		//法線マップ(プレイヤーの頭)のテクスチャ。
+	LPDIRECT3DTEXTURE9		m_normalMap3 = NULL;		//法線マップ(プレイヤーの体)のテクスチャ。
 	bool					m_hasNormalMap = FALSE;		//法線マップを保持している(フラグ)？
 	float					m_fogDistParam[2];			//距離フォグのパラメータ。
 	int						m_fogDistFlag;				//距離フォグを掛けないか掛けるかのフラグ。

@@ -5,8 +5,15 @@
 class Title : public C2DImage
 {
 public:
+	//コンストラクタ。
 	Title();
+
+	//デストラクタ。
 	~Title();
+
+	//初期化。
 	void Initialize();
+
+	//更新。
 	void Update();
 };

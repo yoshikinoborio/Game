@@ -17,9 +17,9 @@ CParticleEmitter::~CParticleEmitter()
 
 }
 
-void CParticleEmitter::Init()
+void CParticleEmitter::Initialize()
 {
-	strcpy(m_ParticleName, param->texturePath);
+	strcpy_s(m_ParticleName, param->texturePath);
 	timer = 1.0f;
 }
 

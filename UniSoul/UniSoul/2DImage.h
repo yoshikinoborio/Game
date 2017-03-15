@@ -3,23 +3,37 @@
 class C2DImage
 {
 public:
+	//コンストラクタ。
 	C2DImage();
+
+	//デストラクタ。
 	~C2DImage();
+
+	//初期化。
 	void Initialize();
-	//virtual void Update() = 0;
+
+	//描画。
 	void Render();
+
+	//行列作成。
 	void SetupMatrices();
+
 	//画像を拡大して移動させるのではなくて移動してから拡大する事によって
 	//画像の原点がスプライトの端に来る。
-	void SetupMatrices2();
+	void SetupSlideMatrices();
+
+	//スケールの設定。
 	void SetScale(D3DXVECTOR2& scale)
 	{
 		m_scale = scale;
 	}
+
+	//位置の設定。
 	void SetPosition(D3DXVECTOR2& position)
 	{
 		m_position = position;
 	}
+
 	//スプライト生成関数
 	HRESULT CreateSprite();	
 protected:

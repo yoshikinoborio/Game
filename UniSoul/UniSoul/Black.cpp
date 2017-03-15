@@ -57,6 +57,7 @@ void Black::Update()
 		}
 	}
 
+
 	m_backColor = D3DCOLOR_ARGB(m_alph, 255, 255, 255);
 	this->SetupMatrices();
 }

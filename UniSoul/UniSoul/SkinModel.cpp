@@ -201,12 +201,12 @@ void SkinModel::DrawMeshContainer(
 				// ディフューズテクスチャ。
 				m_effect->SetTexture("g_diffuseTexture", pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
 
-				//ユニティちゃんの頭の法線。
+				//プレイヤーの頭の法線。
 				if (!strcmp("hair_01.tga",pMeshContainer->textureName[pBoneComb[iAttrib].AttribId].c_str()))
 				{
 					m_effect->SetTexture("g_normalTexture", m_normalMap2);
 					m_effect->SetInt("g_hasNormalMap", 1);
-				}//ユニティちゃんの体の法線。
+				}//プレイヤーの体の法線。
 				else if (!strcmp("body_01.tga",pMeshContainer->textureName[pBoneComb[iAttrib].AttribId].c_str()))
 				{
 					m_effect->SetTexture("g_normalTexture", m_normalMap3);
@@ -257,7 +257,7 @@ void SkinModel::DrawMeshContainer(
 			m_effect->BeginPass(0);
 			for (DWORD i = 0; i < pMeshContainer->NumMaterials; i++) {
 
-				//ユニティちゃんの頭の法線。
+				//プレイヤーの頭の法線。
 				
 					m_effect->SetInt("g_hasNormalMap", 0);
 				

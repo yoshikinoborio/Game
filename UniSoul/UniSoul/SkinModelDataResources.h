@@ -8,20 +8,22 @@ class Animation;
 class SkinModelDataResources
 {
 public:
+	//コンストラクタ。
 	SkinModelDataResources();
+
+	//デストラクタ。
 	~SkinModelDataResources();
-	/*!
-	* @brief	ロード。
-	*@param[in]	modelPath			モデルのファイルパス。
-	*@param[in]	anim				アニメーション。
-	*/
+
+
+	//モデルのロード。
+	//モデルのファイルパス。
+	//アニメーション。
 	SkinModelData* Load(
 		const char* modelPath,
 		Animation* anim
 	);
-	/*!
-	* @brief	SkinModelDataのリリースを破棄。
-	*/
+	
+	//SkinModelDataのリリースを破棄。
 	void Release();
 	///*!
 	//* @brief	ガベージコレクトの実行。

@@ -208,40 +208,54 @@ GameScene::~GameScene()
 //-----------------------------------------------------------------------------
 void GameScene::Initialize()
 {
-	//g_effectManager = new EffectManager;
 	m_soundEngine = new CSoundEngine;
 	g_damageCollisionWorld = new DamageCollisionWorld;
 	g_enemyManager = new EnemyManager;
 	//メインレンダリングターゲットを作成する。
 	InitMainRenderTarget();
+
 	//四角形の板ポリプリミティブを作成。
 	InitQuadPrimitive();
+
 	//シェーダーをロード。
 	LoadShaders();
+
 	//ダメージコリジョンの初期化。
 	g_damageCollisionWorld->Start();
+
 	//サウンドエンジンの初期化。
 	m_soundEngine->Init();
+
 	//物理ワールドを初期化。
 	m_physicsWorld.Initialize();
+
 	//ライトを初期化。
 	m_light.Initialize();
+
 	//カメラの初期化。
 	m_camera.Initialize();
+
 	//シャドウカメラの初期化。
 	m_shadowmapcamera.Initialize();
+
 	//ステージの初期化。
 	m_stage.Initialize();
-	//ユニティちゃんの初期化。
+
+	//プレイヤーの初期化。
 	m_unitychan.Initialize();
+
 	//エネミーマネージャーの初期化。
 	g_enemyManager->Initialize();
+
 	//マップにあるオブジェクトの初期化。
 	m_map.Initialize();
+
 	//空の初期化。
 	m_sky.Initialize();
+
 	//見えない当たり判定の作成。
 	//m_collisionCreat.Initialize();
+
 	//レンダリングターゲットの作成。
 	m_renderTarget.Create(2480,
 		2480,
@@ -250,12 +264,16 @@ void GameScene::Initialize()
 		D3DFMT_D16,
 		D3DMULTISAMPLE_NONE,
 		0);
+
 	//プレイヤーの体力バー初期化。
 	m_playerHPBar.Initialize();
-	//YOU DIEDの初期化。
-	m_youDIED.Initialize();
+
+	//YouDiedの初期化。
+	m_youDied.Initialize();
+
 	//ブラックアウトの画像の初期化。
 	m_black.Initialize();
+
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
 }
@@ -274,7 +292,7 @@ void GameScene::Draw()
 	g_pd3dDevice->GetRenderTarget(0, &renderTargetBackup);		//元々のレンダリングターゲットを保存。後で戻す必要があるので。
 	g_pd3dDevice->GetDepthStencilSurface(&depthBufferBackup);	//元々のデプスステンシルバッファを保存。後で戻す必要があるので。
 
-	//ユニティちゃんをオフスクリーンレンダリング開始。
+	//プレイヤーをオフスクリーンレンダリング開始。
 	//テクスチャをレンダリングターゲットに設定。
 	g_pd3dDevice->SetRenderTarget(0, m_renderTarget.GetSurface());
 	g_pd3dDevice->SetDepthStencilSurface(m_renderTarget.GetDepthStencilBuffer());
@@ -283,7 +301,7 @@ void GameScene::Draw()
 	//現在設定されているレンダリングターゲットをクリア。
 	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
 
-	//影ユニティちゃんの描画。
+	//影プレイヤーの描画。
 	m_unitychan.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
 		m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
 		TRUE);
@@ -343,7 +361,7 @@ void GameScene::Draw()
 		m_camera.GetProjectionMatrix(),
 		FALSE);
 
-	//ユニティちゃんの描画。
+	//プレイヤーの描画。
 	m_unitychan.Draw(m_camera.GetViewMatrix(),
 		m_camera.GetProjectionMatrix(),
 		FALSE);
@@ -363,8 +381,8 @@ void GameScene::Draw()
 		m_playerHPBar.Render();
 	}
 
-	//YOU DIEDの描画。
-	m_youDIED.Render();
+	//YouDiedの描画。
+	m_youDied.Render();
 
 	//ブラックアウトの画像の描画。
 	m_black.Render();
@@ -375,11 +393,16 @@ void GameScene::Draw()
 	std::string FPS;
 	FPS = "FPS = ";
 	FPS = FPS + std::to_string(counter);
+	
+#ifdef _DEBUG
 	m_font.Draw(FPS.c_str(), 1650, 0);
 
+#endif // DEBUG
+
+	
 	if (m_camera.GetCameraFreeFlag()==FALSE)
 	{
-		//プレイヤーのHOを表示。
+		//プレイヤーのHPを表示。
 		int HP = m_unitychan.GetHP();
 		std::string str;
 		str = "HP ";
@@ -462,28 +485,40 @@ void GameScene::Update()
 	case FALSE:
 		//ダーメンコリジョンの更新。
 		g_damageCollisionWorld->Update();
+
 		//物理ワールドの更新。
 		m_physicsWorld.Update();
+
 		//サウンドエンジンの更新。
 		m_soundEngine->Update();
+
 		//ステージの更新。
 		m_stage.Update();
-		//ユニティちゃんの更新。
+
+		//プレイヤーの更新。
 		m_unitychan.Update();
+
 		//マップにあるオブジェクトの更新。
 		m_map.Update();
+
 		//エネミーマネージャーの更新。
 		g_enemyManager->Update();
+
 		//空の更新。
 		m_sky.Update();
+
 		//カメラの更新。
 		m_camera.Update();
+
 		//シャドウカメラの更新。
 		m_shadowmapcamera.Update();
+
 		//プレイヤーの体力バー更新。
 		m_playerHPBar.Update();
-		//YOU DIEDの更新。
-		m_youDIED.Update();
+
+		//YouDiedの更新。
+		m_youDied.Update();
+
 		//ブラックアウトの画像の更新。
 		m_black.Update();
 	}

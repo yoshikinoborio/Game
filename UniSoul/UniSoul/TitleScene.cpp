@@ -2,26 +2,34 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 
+//コンストラクタ。
 TitleScene::TitleScene()
 {
 	m_soundEngine = NULL;
 }
 
-
+//デストラクタ。
 TitleScene::~TitleScene()
 {
 	Terminate();
 }
 
-
+//初期化。
 void TitleScene::Initialize()
 {
 	m_soundEngine = new CSoundEngine;
+	//サウンドエンジンの初期化。
 	m_soundEngine->Init();
+
+	//タイトル画像初期化。
 	m_title.Initialize();
+
+	//カーソルの初期化。
 	m_titleCursor.Initialize();
 }
 
+
+//更新。
 void TitleScene::Update()
 {
 	//サウンドの更新。
@@ -34,6 +42,8 @@ void TitleScene::Update()
 	m_titleCursor.Update();
 }
 
+
+//描画。
 void TitleScene::Draw()
 {
 	g_pd3dDevice->BeginScene();
@@ -53,6 +63,7 @@ void TitleScene::Draw()
 	
 }
 
+//解放。
 void TitleScene::Terminate()
 {
 }

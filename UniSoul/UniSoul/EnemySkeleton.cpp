@@ -153,7 +153,7 @@ void EnemySkeleton::Update()
 					break;
 				}
 
-				//ユニティちゃんが近くに来た時の処理。
+				//プレイヤーが近くに来た時の処理。
 				//if (D3DXVec3LengthSq(&PosDiff) < 500.0f)
 				//{
 				//	//発見。
@@ -168,7 +168,7 @@ void EnemySkeleton::Update()
 		case SkeletonStateFind:
 			m_moveSpeed = SKELETONRUNSPEED;
 			FindMove();
-			//索敵範囲内にユニティちゃんを発見。
+			//索敵範囲内にプレイヤーを発見。
 			//発見中に近くに行くと攻撃する。
 			if (D3DXVec3LengthSq(&PosDiff) < 10.0f)
 			{
@@ -190,7 +190,7 @@ void EnemySkeleton::Update()
 				g_damageCollisionWorld->Add(2.0f, D3DXVECTOR3(SkePos.m[3][0], SkePos.m[3][1], SkePos.m[3][2]), 0.03f, 10, g_damageCollisionWorld->enDamageToPlayer, 0);
 				m_atrTime = 0.0f;
 			}
-			//攻撃中にユニティちゃんが攻撃可能範囲外に移動したら追跡。
+			//攻撃中にプレイヤーが攻撃可能範囲外に移動したら追跡。
 			if (D3DXVec3LengthSq(&PosDiff) > 10.0f)
 			{
 				//攻撃が終わってから移動開始。
@@ -309,7 +309,7 @@ void EnemySkeleton::FindMove()
 	//キャラが向いている方向を正規化。
 	D3DXVec3Normalize(&m_posDifference, &m_posDifference);
 	
-	//敵をユニティちゃんの向きに進ませる。
+	//敵をプレイヤーの向きに進ませる。
 	//m_movesSpeedに掛ける値をDirにすると先読み型になる。
 	m_move.x= m_moveSpeed*m_posDifference.x;
 	m_move.z = m_moveSpeed*m_posDifference.z;

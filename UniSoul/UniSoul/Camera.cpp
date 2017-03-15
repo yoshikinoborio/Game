@@ -33,7 +33,7 @@ void Camera::Initialize()
 	m_lookatPt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_upVec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
-	//ユニティちゃんのインスタンスの取得。
+	//プレイヤーのインスタンスの取得。
 	m_unitychan = g_pScenes->GetUnityChan();
 	
 	
@@ -45,80 +45,41 @@ void Camera::Initialize()
 //カメラの更新。
 void Camera::Update()
 {
-	//右スティックからの入力を取得。
-	m_rStick_x = g_pad.GetRStickXF();
-	m_rStick_y = g_pad.GetRStickYF();
-
 	// 画面を止めるor再生する処理。
-	//ゲームでしか使わないのでキャストゲームシーンクラスにキャスト。
-	if (static_cast<GameScene*>(g_pScenes)->GetStopFlag() == FALSE)
-	{
-		if (g_pad.IsTrigger(enButtonStart))
-		{
-			static_cast<GameScene*>(g_pScenes)->SetStopFlag(TRUE);
-		}
-	}
-	else
-	{
-		if (g_pad.IsTrigger(enButtonStart))
-		{
-			static_cast<GameScene*>(g_pScenes)->SetStopFlag(FALSE);
-		}
-	}
-
-	//パッドのセレクトボタンでゲーム終了。
-	if (g_pad.IsPress(enButtonSelect))
-	{
-		PostQuitMessage(0);
-	}
+	GameStop();
 
 	//パッドから取得した情報を元にカメラを回転させる処理。
-	if (m_cameraFreeFlag==FALSE)
+	if (m_cameraFreeFlag == FALSE)
 	{
+		//パッドを使ったカメラの回転処理。
 		PadUseRotation();
+		//カメラがプレイヤーに追従する処理。
+		TargetPlayer();
 	}
-
-	//カメラ逆行列の計算(カメラのワールド行列の逆行列)。
-	D3DXMatrixInverse(&m_viewMatrixInv, NULL, &m_viewMatrix);
 
 //DEBUG中のみ行う。
 #ifdef _DEBUG
-	if (g_pad.IsTrigger(enButtonUp))
-	{
-		m_cameraFreeFlag = TRUE;
-	}
+	FreeCameraFlagChanger();
 	//フリーカメラモードでの処理。
 	FreeCameraMode();
 #endif // _DEBUG
+	
+	//カメラのビュー行列とパースペクティブ射影行列の作成。
+	CameraMatrixUpadate();
 
-	if (m_cameraFreeFlag == FALSE) {
-		//カメラがユニティちゃんに追従する処理。
-		D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
-		V.y += 2.0f;
-		m_lookatPt = V;	//注視点をユニティちゃんの少し上に設定。
-		m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
-	}
-		
-
-	//左手座標系ビュー行列を作成する。
-	D3DXMatrixLookAtLH(&m_viewMatrix,	//左手座標系ビュー行列　D3DXMATRIX構造体へのポインタ。
-		&m_eyePt,						//視点を定義する D3DXVECTOR3構造体へのポインタ(平行移動で使われる)。
-		&m_lookatPt,					//カメラの注視対象を定義する D3DXVECTOR3構造体へのポインタ。
-		&m_upVec						//ワールドの上方、一般には(0,1,0)を定義する D3DXVECTOR3構造体へのポインタ。
-	);
-
-	//視野に基づいて、左手座標系のパースペクティブ射影行列(3D世界で遠近法を実現する行列)を作成。
-	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix,		//左手座標系のパースペクティブ射影行列を表す D3DXMATRIX 構造体へのポインターを返す。
-		D3DX_PI / 4,									//y方向の視野角 (画角)。
-		m_aspect,										//アスペクト比。
-		m_near,											//近くのビュープレーンのz値(シーンの奥行き方向をどこからどこまで描画するかの設定)。
-		m_far											//遠くのビュープレーンのz値。
-	);
-
+	//カメラ逆行列の計算(カメラのワールド行列の逆行列)。
+	D3DXMatrixInverse(&m_viewMatrixInv, NULL, &m_viewMatrix);
+	
+	//ゲームの終了。
+	GameEnd();
 }
 
 void Camera::PadUseRotation()
 {
+	//右スティックからの入力を取得。
+	m_rStick_x = g_pad.GetRStickXF();
+	m_rStick_y = g_pad.GetRStickYF();
+
 	//右スティックを使った縦のカメラ移動。
 	if (fabsf(m_rStick_y) > 0.0f) {
 		D3DXVECTOR3 Cross;
@@ -187,9 +148,76 @@ void Camera::FreeCameraMode()
 		m_lookatPt = m_eyePt;
 		m_lookatPt.z += 2.0f;
 
-		if (g_pad.IsTrigger(enButtonDown))
+		//フリーカメラフラグの操作。
+		FreeCameraFlagChanger();
+	}
+}
+
+void Camera::GameStop()
+{
+	//ゲームでしか使わないのでキャストゲームシーンクラスにキャスト。
+	if (static_cast<GameScene*>(g_pScenes)->GetStopFlag() == FALSE)
+	{
+		//ゲームの停止。
+		if (g_pad.IsTrigger(enButtonStart))
 		{
-			m_cameraFreeFlag = FALSE;
+			static_cast<GameScene*>(g_pScenes)->SetStopFlag(TRUE);
 		}
+	}
+	else
+	{
+		//ゲームの再生。
+		if (g_pad.IsTrigger(enButtonStart))
+		{
+			static_cast<GameScene*>(g_pScenes)->SetStopFlag(FALSE);
+		}
+	}
+}
+
+void Camera::CameraMatrixUpadate()
+{
+	//左手座標系ビュー行列を作成する。
+	D3DXMatrixLookAtLH(&m_viewMatrix,	//左手座標系ビュー行列　D3DXMATRIX構造体へのポインタ。
+		&m_eyePt,						//視点を定義する D3DXVECTOR3構造体へのポインタ(平行移動で使われる)。
+		&m_lookatPt,					//カメラの注視対象を定義する D3DXVECTOR3構造体へのポインタ。
+		&m_upVec						//ワールドの上方、一般には(0,1,0)を定義する D3DXVECTOR3構造体へのポインタ。
+	);
+
+	//視野に基づいて、左手座標系のパースペクティブ射影行列(3D世界で遠近法を実現する行列)を作成。
+	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix,		//左手座標系のパースペクティブ射影行列を表す D3DXMATRIX 構造体へのポインターを返す。
+		D3DX_PI / 4,									//y方向の視野角 (画角)。
+		m_aspect,										//アスペクト比。
+		m_near,											//近くのビュープレーンのz値(シーンの奥行き方向をどこからどこまで描画するかの設定)。
+		m_far											//遠くのビュープレーンのz値。
+	);
+}
+
+void Camera::TargetPlayer()
+{
+	D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
+	V.y += 2.0f;
+	m_lookatPt = V;	//注視点をプレイヤーの少し上に設定。
+	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
+}
+
+void Camera::GameEnd()
+{
+	//パッドのセレクトボタンでゲーム終了。
+	if (g_pad.IsPress(enButtonSelect))
+	{
+		PostQuitMessage(0);
+	}
+}
+
+void Camera::FreeCameraFlagChanger()
+{
+	if (g_pad.IsTrigger(enButtonUp))
+	{
+		m_cameraFreeFlag = TRUE;
+	}
+
+	if (g_pad.IsTrigger(enButtonDown))
+	{
+		m_cameraFreeFlag = FALSE;
 	}
 }

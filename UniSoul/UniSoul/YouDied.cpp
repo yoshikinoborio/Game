@@ -1,19 +1,20 @@
 #include "stdafx.h"
-#include "YOU DIED.h"
 #include "SceneManager.h"
+#include "YouDied.h"
 
-YOUDIED::YOUDIED()
+//コンストラクタ。
+YouDied::YouDied()
 {
 	m_alph = 0;
 	m_startFlag = FALSE;
 }
 
-YOUDIED::~YOUDIED()
+//デストラクタ。
+YouDied::~YouDied()
 {
-
 }
 
-void YOUDIED::Initialize()
+void YouDied::Initialize()
 {
 	m_position = D3DXVECTOR2(FRAME_BUFFER_WITDH / 2, FRAME_BUFFER_HEIGHT / 2 + 100);
 	m_angle = 0;
@@ -23,7 +24,7 @@ void YOUDIED::Initialize()
 	C2DImage::Initialize();
 }
 
-void YOUDIED::Update()
+void YouDied::Update()
 {
 	//フラグがTRUEになったらα値の計算開始。
 	if (m_startFlag == TRUE)
@@ -40,7 +41,7 @@ void YOUDIED::Update()
 			static_cast<GameScene*>(g_pScenes)->GetBlack()->SetStartFlag(TRUE);
 		}
 	}
-	
-	m_backColor= D3DCOLOR_ARGB(m_alph, 255, 255, 255);
+
+	m_backColor = D3DCOLOR_ARGB(m_alph, 255, 255, 255);
 	this->SetupMatrices();
 }

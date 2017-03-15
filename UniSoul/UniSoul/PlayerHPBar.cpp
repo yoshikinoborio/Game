@@ -2,6 +2,7 @@
 #include "PlayerHPBar.h"
 #include "SceneManager.h"
 
+//HPƒo[‚Ì‘å‚«‚³B
 const D3DXVECTOR2 HpBarMaxScale = { 3.0f,1.5f };
 
 PlayerHPBar::PlayerHPBar()
@@ -36,5 +37,5 @@ void PlayerHPBar::Update()
 	m_scale = HpBarMaxScale;
 	m_scale.x *= HpRate;
 	C2DImage::SetScale(m_scale);
-	this->SetupMatrices2();
+	this->SetupSlideMatrices();
 }

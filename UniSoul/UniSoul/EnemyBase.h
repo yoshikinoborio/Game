@@ -1,12 +1,12 @@
 #pragma once
 #include "AnimationModel3D.h"
 #include "CharacterController.h"
-#include "Light.h"
 
 //エネミーの基底クラス。
 class EnemyBase : public AnimationModel3D
 {
 public:
+	//ボス以外の状態遷移の種類。
 	enum EnemyAnimation {
 		enAnimInvalid = -1,
 		enAnimWait,		//待機中。
@@ -21,6 +21,7 @@ public:
 		
 	};
 
+	//ボス専用の状態遷移の種類。
 	enum BossEnemyAnimation {
 		enBossAnimInvalid = -1,
 		enBossAnimWait,		//待機中。
@@ -28,6 +29,8 @@ public:
 		enBossAnimRun,		//走り中。
 		enBossAnimAttack,	//攻撃中。
 	};
+
+	//コンストラクタ。
 	EnemyBase() {
 
 	}
@@ -37,7 +40,7 @@ public:
 	}
 
 	//同じアニメーションが再生されていても気にせずにでも最初から流す。
-	virtual void PlayAnimationForce(EnemyAnimation animNo)
+	virtual void PlayAnimationForce(const EnemyAnimation& animNo)
 	{
 		m_animation.PlayAnimation(animNo, 0.3f);
 		m_currentAnimSetNo = animNo;
@@ -50,15 +53,13 @@ public:
 	}
 
 	//ローカル⊿タイムを取得。
-	float GetLocalFrameDeltaTime() const
+	const float& GetLocalFrameDeltaTime() const
 	{
 		return  m_frameDeltaTime* m_deltaTimeMul;
 	}
-	/*!
-	* @brief	⊿タイムに乗算される値を設定。
-	*@param[in]	mul		グローバル⊿タイムに乗算される値。この値に0.5を設定するとエネミーの挙動が0.5倍速になる。
-	*/
-	void SetFrameDeltaTimeMul(float mul)
+	//⊿タイムに乗算される値を設定。
+	//グローバル⊿タイムに乗算される値。この値に0.5を設定するとエネミーの挙動が0.5倍速になる。
+	void SetFrameDeltaTimeMul(const float& mul)
 	{
 		m_deltaTimeMul = mul;
 	}
@@ -82,6 +83,5 @@ protected:
 	float				m_deltaTimeMul = 1.0f;				//⊿タイムに乗算される値。
 	int					m_hp;								//ヒットポイント。
 	int					m_dropEXP;							//倒された時に落とす経験値量。
-	Light				m_light;							//ライト。
 	bool				m_isDead;							//死んだ。
 };

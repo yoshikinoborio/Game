@@ -132,7 +132,7 @@ void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	
 }
 
-void EnemyManager::SetFrameDeltaTimeMul(float mul)
+void EnemyManager::SetFrameDeltaTimeMul(const float& mul)
 {
 	for (auto enemy : m_enemyskeletonList) {
 		enemy->SetFrameDeltaTimeMul(mul);

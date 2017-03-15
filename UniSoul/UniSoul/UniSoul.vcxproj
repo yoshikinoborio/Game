@@ -216,7 +216,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="WaveFile.cpp" />
     <ClCompile Include="WaveFileBank.cpp" />
-    <ClCompile Include="YOU  DIED.cpp" />
+    <ClCompile Include="YouDied.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DImage.h" />
@@ -287,7 +287,7 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="WaveFile.h" />
     <ClInclude Include="WaveFileBank.h" />
-    <ClInclude Include="YOU DIED.h" />
+    <ClInclude Include="YouDied.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

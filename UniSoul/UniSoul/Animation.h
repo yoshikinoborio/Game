@@ -76,7 +76,7 @@ private:
 	ID3DXAnimationController*				m_pAnimController;		//アニメーションコントローラ。
 	int										m_numAnimSet;			//アニメーションセットの数。
 	std::unique_ptr<ID3DXAnimationSet*[]>	m_animationSets;		//アニメーションセットの配列。
-	std::unique_ptr<bool[]>					m_animationLoopFlags;		//アニメーションのループフラグ。	
+	std::unique_ptr<bool[]>					m_animationLoopFlags;	//アニメーションのループフラグ。	
 	//スマートポインター(ポインタで渡されたクラスのデストラクタを有効範囲からると呼び出す)
 	std::unique_ptr<float[]>				m_blendRateTable;		//ブレンディングレートのテーブル。
 	std::unique_ptr<double[]>				m_animationEndTime;		//アニメーションの終了タイム。デフォルトは-1.0が入っていて、-1.0が入っている場合はID3DXAnimationSetのアニメーション終了タイムが優先される。

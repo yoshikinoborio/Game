@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Light.h"
 
+//コンストラクタ。
 Light::Light()
 {
 	ZeroMemory(m_diffuseLightDirection, sizeof(m_diffuseLightDirection));
@@ -8,10 +9,12 @@ Light::Light()
 	m_ambientLight = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
+//デストラクタ。
 Light::~Light()
 {
 }
 
+//初期化。
 void Light::Initialize()
 {
 	//ディフューズライト。
