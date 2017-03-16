@@ -27,6 +27,13 @@ EnemyManager::~EnemyManager()
 	{
 		delete enemy;
 	}
+
+	for (auto enemy : m_enemyGoblinList)
+	{
+		delete enemy;
+	}
+
+	delete m_enemyBoss;
 }
 
 void EnemyManager::Initialize()
@@ -132,7 +139,7 @@ void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	
 }
 
-void EnemyManager::SetFrameDeltaTimeMul(const float& mul)
+void EnemyManager::SetFrameDeltaTimeMul(float mul)
 {
 	for (auto enemy : m_enemyskeletonList) {
 		enemy->SetFrameDeltaTimeMul(mul);

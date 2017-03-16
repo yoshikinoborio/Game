@@ -1,23 +1,23 @@
 #pragma once
 #include "EnemyBase.h"
-#include "CharacterController.h"
 
-//ゴブリンの状態遷移の種類。
-enum EnemyGoblinState {
-	DragonBoarStateSearch = 0,//索敵中。
-	DragonBoarStateWalk,
-	DragonBoarStateRun,
-	DragonBoarStateAttack,
-	DragonBoarStateDamage,
-	DragonBoarStateDead,
-	DragonBoarStateJump,
-	DragonBoarStateFall,
-	DragonBoarStateLanding,
-};
-
+//ゴブリンのクラス。
 class EnemyGoblin : public EnemyBase
 {
 public:
+	//ゴブリンの状態遷移の種類。
+	enum class EnemyGoblinState {
+		StateSearch = 0,//索敵中。
+		StateWalk,
+		StateRun,
+		StateAttack,
+		StateDamage,
+		StateDead,
+		StateJump,
+		StateFall,
+		StateLanding,
+	};
+
 	//コンストラクタ。
 	EnemyGoblin();
 
@@ -25,7 +25,7 @@ public:
 	~EnemyGoblin();
 
 	//初期化。
-	void Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION rotation, D3DXVECTOR3 scale);
+	void Initialize(const char* modelPath,const D3DXVECTOR3& pos, const D3DXQUATERNION& rotation, const D3DXVECTOR3& scale);
 
 	//更新。
 	void Update()override;
@@ -36,7 +36,7 @@ public:
 		bool isShadowReceiver);
 
 	//死んだかどうかのフラグを取得。
-	bool GetDead()
+	bool GetDead() const
 	{
 		return m_isDead;
 	}

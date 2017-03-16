@@ -14,6 +14,7 @@ YouDied::~YouDied()
 {
 }
 
+//初期化。
 void YouDied::Initialize()
 {
 	m_position = D3DXVECTOR2(FRAME_BUFFER_WITDH / 2, FRAME_BUFFER_HEIGHT / 2 + 100);
@@ -24,6 +25,7 @@ void YouDied::Initialize()
 	C2DImage::Initialize();
 }
 
+//更新。
 void YouDied::Update()
 {
 	//フラグがTRUEになったらα値の計算開始。

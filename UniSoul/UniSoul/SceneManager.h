@@ -23,7 +23,7 @@ public:
 	void Draw();
 
 	//シーンの切り替え。
-	void ChangeScene(const int& key);
+	void ChangeScene(int key);
 
 	//解放。
 	void Terminate();

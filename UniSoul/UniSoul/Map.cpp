@@ -6,11 +6,13 @@ MapLocInfo mapChipLocInfoTable[] = {
 #include "locationInfo.h"
 };
 
+//コンストラクタ。
 Map::Map()
 {
 	
 }
 
+//デストラクタ。
 Map::~Map()
 {
 	for (auto mapList : m_mapChipList)
@@ -19,6 +21,7 @@ Map::~Map()
 	}
 }
 
+//初期化。
 void Map::Initialize()
 {
 	for (MapLocInfo& mapinfo : mapChipLocInfoTable) {
@@ -29,6 +32,7 @@ void Map::Initialize()
 
 }
 
+//更新。
 void Map::Update()
 {
 	
@@ -38,6 +42,7 @@ void Map::Update()
 	}
 }
 
+//描画。
 void Map::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	bool isShadowReceiver)

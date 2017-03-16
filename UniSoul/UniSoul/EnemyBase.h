@@ -39,8 +39,20 @@ public:
 	{
 	}
 
+	//HPの取得。
+	int GetHP() const
+	{
+		return m_hp;
+	}
+
+	//最大HPの取得。
+	int GetMaxHP() const
+	{
+		return m_maxhp;
+	}
+
 	//同じアニメーションが再生されていても気にせずにでも最初から流す。
-	virtual void PlayAnimationForce(const EnemyAnimation& animNo)
+	virtual void PlayAnimationForce(EnemyAnimation animNo)
 	{
 		m_animation.PlayAnimation(animNo, 0.3f);
 		m_currentAnimSetNo = animNo;
@@ -53,13 +65,13 @@ public:
 	}
 
 	//ローカル⊿タイムを取得。
-	const float& GetLocalFrameDeltaTime() const
+	float GetLocalFrameDeltaTime()
 	{
-		return  m_frameDeltaTime* m_deltaTimeMul;
+		return  m_frameDeltaTime * m_deltaTimeMul;
 	}
 	//⊿タイムに乗算される値を設定。
 	//グローバル⊿タイムに乗算される値。この値に0.5を設定するとエネミーの挙動が0.5倍速になる。
-	void SetFrameDeltaTimeMul(const float& mul)
+	void SetFrameDeltaTimeMul(float mul)
 	{
 		m_deltaTimeMul = mul;
 	}
@@ -82,6 +94,7 @@ protected:
 	float				m_frameDeltaTime = 1.0f / 60.0f;	//1フレームの経過時間。
 	float				m_deltaTimeMul = 1.0f;				//⊿タイムに乗算される値。
 	int					m_hp;								//ヒットポイント。
+	int					m_maxhp;							//最大ヒットポイント。
 	int					m_dropEXP;							//倒された時に落とす経験値量。
 	bool				m_isDead;							//死んだ。
 };

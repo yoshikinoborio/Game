@@ -121,16 +121,16 @@ void UnityChan::Initialize()
 
 	//パーティクルの設定。
 	//D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
-	m_pEmitter = CParticleEmitter::EmitterCreate(
+	/*m_pEmitter = CParticleEmitter::EmitterCreate(
 		"ParticleEmitterStart",
 		ParicleType::Star,
-		m_position);
+		m_position);*/
 
 	m_lv = 1;
 	m_lvUpEXP = 10;
 	m_holdEXP = 0;
 	m_hp = 30;
-	m_maxhp = 30;
+	m_maxhp = m_hp;
 
 	//経験値テーブルの中身の初期化。
 	int nextLevelPoint = 10;
@@ -143,6 +143,7 @@ void UnityChan::Initialize()
 	//オンメモリ再生。
 	m_soundSource.Init("image/landing.wav");
 	m_soundSource2.Init("image/LvUpSE.wav");
+
 }
 void UnityChan::Update()
 {
@@ -613,8 +614,26 @@ void UnityChan::AnimationSelectPlay()
 	//待機(立ち)を設定。
 	if (m_state == StateWait)
 	{
-		//待機(立ち)アニメーション。
-		m_currentAnimSetNo = AnimationWait_00;
+		//ランダム関数の初期化。
+		srand((unsigned int)time(NULL));
+		int RandNum = rand() % 100;
+		//1/3の確率で三種類の待機アニメーションが流れる。
+		if (0 < RandNum&&RandNum < 33)
+		{
+			//待機(立ち)アニメーション。
+			m_currentAnimSetNo = AnimationWait_00;
+		}
+		else if (34 < RandNum&&RandNum < 66)
+		{
+			//待機(腕伸ばし)アニメーション。
+			m_currentAnimSetNo = AnimationWait_01;
+		}
+		else if (67 < RandNum&&RandNum < 100)
+		{
+			//待機(クルクル)アニメーション。
+			m_currentAnimSetNo = AnimationWait_02;
+		}
+		
 	}
 	else if (m_state == StateBackStep)
 	{
@@ -724,26 +743,28 @@ void UnityChan::EnemyPlayChanger()
 }
 void UnityChan::MapShiftProcess()
 {
-	m_time += 0.1f;
-	if (m_time < 1.0f)
-	{
-		m_move *= 0.89f;
-		m_time = 0.0f;
-		m_state = StateLanding;
-	}
+	//m_time += 0.1f;
+	m_move *= 0.98f;
 }
 
 void UnityChan::MapShift() 
 {
-	if (g_pad.IsTrigger(enButtonY))
+	if (m_characterController.IsOnGround() == TRUE)
 	{
-		//まずプレイヤーのワールド行列を取得。
-		D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
-		//取得してきたワールド行列の前方向に速度を設定。
-		m_move.x = UniPos.m[2][0] * 100.0f;
-		m_move.y = 10.0f;
-		m_move.z = UniPos.m[2][2] * 100.0f;
-		m_characterController.Jump();
-		m_state = StateMapShift;
+		if (g_pad.IsTrigger(enButtonY) && m_state != StateMapShift)
+		{
+			//まずプレイヤーのワールド行列を取得。
+			D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
+			//取得してきたワールド行列の前方向に速度を設定。
+			m_move.x = UniPos.m[2][0] * 100.0f;
+			m_move.y = 10.0f;
+			m_move.z = UniPos.m[2][2] * 100.0f;
+			m_characterController.Jump();
+			m_state = StateMapShift;
+		}
+	}
+	else
+	{
+		m_state = StateFall;
 	}
 }

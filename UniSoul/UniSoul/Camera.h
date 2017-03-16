@@ -77,7 +77,7 @@ public:
 	}
 	
 	//カメラの座標の取得
-	const D3DXVECTOR3& GetEyePt()
+	const D3DXVECTOR3& GetEyePt() const
 	{
 		return m_eyePt;
 	}
@@ -107,42 +107,42 @@ public:
 	}
 
 	//ファーの設定
-	void SetFar(const float& Far)
+	void SetFar(float Far)
 	{
 		m_far = Far;
 	}
 
 	//ファーの取得
-	const float& GetFar() const
+	float GetFar() const
 	{
 		return m_far;
 	}
 
 	//二アーの設定
-	void SetNear(const float& Near)
+	void SetNear(float Near)
 	{
 		m_near = Near;
 	}
 
 	//二アーの取得
-	const float& GetNear() const
+	float GetNear() const
 	{
 		return m_near;
 	}
 
 	//アスペクト比の設定
-	void SetAspect(const float& Aspect)
+	void SetAspect(float Aspect)
 	{
 		m_aspect = Aspect;
 	}
 
 	//アスペクト比の取得
-	const float& GetAspect() const
+	float GetAspect() const
 	{
 		return m_aspect;
 	}
 	//カメラのが自由か固定かのフラグを取得。
-	const bool& GetCameraFreeFlag() const
+	bool GetCameraFreeFlag() const
 	{
 		return m_cameraFreeFlag;
 	}

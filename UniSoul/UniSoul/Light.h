@@ -33,7 +33,7 @@ public:
 	//平行光源の方向を設定。
 	//ライトの番号
 	//方向。
-	void SetDiffuseLightDirection(const int& lightNo, const D3DXVECTOR4& dir)
+	void SetDiffuseLightDirection(int lightNo, const D3DXVECTOR4& dir)
 	{
 		m_diffuseLightDirection[lightNo] = dir;
 	}
@@ -41,7 +41,7 @@ public:
 	//平行光源の色を設定。
 	//ライトの番号。
 	//平行光源の色。
-	void SetDiffuseLightColor(const int& lightNo, const D3DXVECTOR4& color)
+	void SetDiffuseLightColor(int lightNo, const D3DXVECTOR4& color)
 	{
 		m_diffuseLightColor[lightNo] = color;
 	}
@@ -59,7 +59,7 @@ public:
 	}
 
 	//ライトの数取得
-	const int& GetLight_Num() const
+	int GetLight_Num() const
 	{
 		return LIGHT_NUM;
 	}

@@ -6,6 +6,7 @@
 #include "ParticleParameterTable.h"
 #define _CRT_SECURE_NO_WARNINGS 1
 #define MAX_NAME 255
+
 class CParticle;
 
 //パーティクルの発生機
@@ -41,13 +42,13 @@ public:
 	}
 
 	//渡されたパーティクルエミッターの名前を設定。
-	void SetEmitterName(LPCSTR name) {
+	void SetEmitterName(const LPCSTR& name) {
 		CH_ASSERT(strlen(name) < MAX_NAME);
 		strcpy(m_EmitterName, name);
 	}
 
 	//発生場所をセット。
-	void SetEmitPos(D3DXVECTOR3 pos) {
+	void SetEmitPos(const D3DXVECTOR3& pos) {
 		m_emitPosition = pos;
 	}
 

@@ -17,7 +17,7 @@ public:
 	float Turn::Update(bool isTurn, float currentAngleY);
 
 	//Œ»İ‚Ì•ûŒü‚Ìæ“¾B
-	const float& GetCurrentAngleY() const
+	float GetCurrentAngleY() const
 	{
 		return m_currentAngleY;
 

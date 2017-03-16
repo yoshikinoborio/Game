@@ -14,13 +14,13 @@ RenderTarget::~RenderTarget()
 	Release();
 }
 
-void RenderTarget::Create(const int& w,
-	const int& h,
-	const int& mipLevel,
+void RenderTarget::Create(int w,
+	int h,
+	int mipLevel,
 	const D3DFORMAT& colorFormat,
 	const D3DFORMAT& depthStencilFormat,
 	const D3DMULTISAMPLE_TYPE& multiSampleType,
-	const int& multiSampleQuality)
+	int multiSampleQuality)
 {
 	//デプスステンシルバッファの作成(テクスチャへのレンダリングに使う深度バッファ)
 	HRESULT hr = g_pd3dDevice->CreateDepthStencilSurface(

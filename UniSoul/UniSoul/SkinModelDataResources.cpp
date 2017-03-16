@@ -1,17 +1,19 @@
 #include "stdafx.h"
 #include "SkinModelDataResources.h"
 
+//コンストラクタ。
 SkinModelDataResources::SkinModelDataResources()
 {
 
 }
 
-
+//デストラクタ。
 SkinModelDataResources::~SkinModelDataResources()
 {
 	Release();
 }
 
+//ロード。
 SkinModelData* SkinModelDataResources::Load(const char* modelPath,Animation* anim)
 {
 	SkinModelData* originalSkinModelData;	//オリジナルのスキンモデルデータ。
@@ -33,9 +35,9 @@ SkinModelData* SkinModelDataResources::Load(const char* modelPath,Animation* ani
 		//既存のモデルなので使い回す。
 		//mapに登録されているスキンモデルデータを入れる。
 		originalSkinModelData = it->second;
-		//m_skinModelData->CloneModelData(*m_originalSkinModelData, anim);
 	}
 	skinModelData = new SkinModelData;
+	//既存か新規のオリジナルスキンモデルデータでスキンモデルのクローンを作成する。
 	skinModelData->CloneModelData(*originalSkinModelData, anim);
 	//クローンされたスキンモデルデータを返す。
 	return skinModelData;

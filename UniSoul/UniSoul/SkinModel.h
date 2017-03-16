@@ -10,10 +10,15 @@ class SkinModelDataResources;
 	//スキンモデル。
 class SkinModel {
 public:
+	//コンストラクタ。
 	SkinModel();
+
+	//デストラクタ。
 	~SkinModel();
+
 	//初期化。
 	void Initialize(SkinModelData* modelData);
+
 	//描画。
 	void Draw(D3DXMATRIX* viewMatrix, 
 		D3DXMATRIX* projMatrix, 
@@ -34,7 +39,7 @@ public:
 	*@param[in]	param1		フォグパラメータ１
 	*フォグが掛かり切る距離。
 	*/
-	void SetFogDistParam(float param0, float param1)
+	void SetFogDistParam(float param0,float param1)
 	{
 		m_fogDistParam[0] = param0;
 		m_fogDistParam[1] = param1;
@@ -53,7 +58,7 @@ public:
 	*@param[in]	param1		フォグパラメータ１
 	*フォグが掛かり切る高さ。
 	*/
-	void SetFogHeightParam(float param0, float param1)
+	void SetFogHeightParam(float param0,float param1)
 	{
 		m_fogHeightParam[0] = param0;
 		m_fogHeightParam[1] = param1;

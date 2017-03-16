@@ -52,7 +52,7 @@ void SceneManager::Draw()
 	g_pScenes->Draw();
 }
 
-void SceneManager::ChangeScene(const int& key)
+void SceneManager::ChangeScene(int key)
 {
 	m_nextScene = key;
 }

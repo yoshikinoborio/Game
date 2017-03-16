@@ -4,13 +4,13 @@
 
 EnemyGoblin::EnemyGoblin()
 {
-	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_position = Vector3Zero;
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-	m_scale = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_scale = Vector3Zero;
+	m_move = Vector3Zero;
 	m_height = 0.0f;
 	m_radius = 0.0f;
-	m_state = DragonBoarStateSearch;
+	m_state = EnemyGoblinState::StateSearch;
 	m_currentAnimSetNo = enAnimInvalid;
 	m_hp = 0;
 	m_isDead = FALSE;
@@ -22,11 +22,11 @@ EnemyGoblin::~EnemyGoblin()
 	delete m_skinModelData;
 }
 
-void EnemyGoblin::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION rotation, D3DXVECTOR3 scale)
+void EnemyGoblin::Initialize(const char* modelPath, const D3DXVECTOR3& pos, const D3DXQUATERNION& rotation, const D3DXVECTOR3& scale)
 {
 	//モデルのロード。
 	m_skinModelData= static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load(modelPath, &m_animation);
-	//m_skinModelData.LoadModelData(modelPath, &m_animation);
+	
 	m_skinModel.Initialize(m_skinModelData);
 
 	//ライトの設定。
@@ -75,7 +75,7 @@ void EnemyGoblin::Update()
 {
 	m_animation.Update(GetLocalFrameDeltaTime());
 
-	if (m_state == DragonBoarStateSearch)
+	if (m_state == EnemyGoblinState::StateSearch)
 	{
 		m_currentAnimSetNo = enAnimWait;
 	}

@@ -10,17 +10,17 @@ namespace {
 	const float RUNSPEED = 0.2f*60.0f;		//走るスピード。
 	const float MAX_RUN = 0.6f*60.0f;		//歩きまでの上限値。
 	const short MAX_LEVEL = 100;			//レベルの最大値。
+											//プレイヤーの配置情報。
+	struct PlayerInfo
+	{
+		D3DXVECTOR3	pos;			//座標。
+		D3DXQUATERNION	rotation;	//回転。
+	};
 };
 
 class CParticleEmitter;
 class Camera;
 
-//プレイヤーの配置情報。
-struct PlayerInfo
-{
-	D3DXVECTOR3	pos;			//座標。
-	D3DXQUATERNION	rotation;	//回転。
-};
 
 //プレイヤーのクラス。
 class UnityChan : public AnimationModel3D
@@ -137,38 +137,38 @@ public:
 	}
 
 	//HPの取得。
-	const int& GetHP() const
+	int GetHP() const
 	{
 		return m_hp;
 	}
 
 	//最大HPの取得。
-	const int& GetMaxHP() const
+	int GetMaxHP() const
 	{
 		return m_maxhp;
 	}
 
 	//経験値の加算。
-	void AddPlayerEXP(const int& EXP)
+	void AddPlayerEXP(int EXP)
 	{
 		m_getEXP += EXP;
 	}
 
 	//プレイヤーのレベルの取得。
-	const int& GetLv() const
+	int GetLv() const
 	{
 		return m_lv;
 	}
 	
 	//ローカル⊿タイムを取得。
-	const float& GetLocalFrameDeltaTime() const
+	float GetLocalFrameDeltaTime() const
 	{
 		return  m_frameDeltaTime* m_deltaTimeMul;
 	}
 
 	//⊿タイムに乗算される値を設定。
 	//グローバル⊿タイムに乗算される値。この値に0.5を設定するとエネミーの挙動が0.5倍速になる。
-	void SetFrameDeltaTimeMul(const float& mul)
+	void SetFrameDeltaTimeMul(float mul)
 	{
 		m_deltaTimeMul = mul;
 	}

@@ -3,7 +3,9 @@
 #include "SceneManager.h"
 
 //HPƒo[‚Ì‘å‚«‚³B
-const D3DXVECTOR2 HpBarMaxScale = { 3.0f,1.5f };
+namespace {
+	const D3DXVECTOR2 HpBarMaxScale = { 3.0f,1.5f };
+}
 
 PlayerHPBar::PlayerHPBar()
 {

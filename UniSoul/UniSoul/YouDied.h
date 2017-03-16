@@ -17,7 +17,7 @@ public:
 	void Update();
 
 	//TRUE‚ğ“n‚·‚ÆYOU DIED‚Ìƒ¿’l‚ğ‘‚â‚µ‚Ä‚¢‚­B
-	void SetStartFlag(const bool& flag)
+	void SetStartFlag(bool flag)
 	{
 		m_startFlag = flag;
 	}

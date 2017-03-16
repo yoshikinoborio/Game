@@ -2,8 +2,6 @@
 #include "ParticleEmitter.h"
 #include "Particle.h"
 
-extern LPDIRECT3DDEVICE9 g_pd3dDevice;
-
 using namespace std;
 
 CParticleEmitter::CParticleEmitter()

@@ -21,11 +21,6 @@
 
 #define fPI 3.14159265358979323846f
 
-const float g_cTurnSpeed D3DXToRadian(10.0f);
-
-static const int FRAME_BUFFER_WITDH = 1920;			//フレームバッファのサイズ。
-static const int FRAME_BUFFER_HEIGHT = 1080;		//フレームバッファのサイズ。
-
 
 /*!
 *@brief	仮想ボタン定義。
@@ -53,6 +48,7 @@ enum EnButton{
 
 //ほとんどのゲッターをconst参照にしているのは、
 //const参照にすると早くなる、
+//なぜ早いかと言うとD3DXVECTOR3などの構造体を値渡しにするとfloat＊3要素のコピーが発生するが参照渡しにすると構造体のアドレス分(4バイトもしくは8バイト)のコピーで済むから。
 //D3DXVECTORは参照の方が早い、
 //SIMDという128ビットの変数があるアーキテクチャは値渡しの方が早い、
 //ただ今はSIMDがあるアーキテクチャの方が多いから。
@@ -70,12 +66,19 @@ enum EnButton{
 
 //0.0fを書くのを繰り返すのがめんどうなのでグローバルで定義。
 namespace {
+	const float g_cTurnSpeed D3DXToRadian(10.0f);
+
+	static const int FRAME_BUFFER_WITDH = 1920;			//フレームバッファのサイズ。
+	static const int FRAME_BUFFER_HEIGHT = 1080;		//フレームバッファのサイズ。
+
+
 	const D3DXVECTOR3 Vector3Zero = { 0.0f,0.0f,0.0f };
 	const D3DXVECTOR3 Vector3One = { 1.0f,1.0f ,1.0f };
 	const D3DXVECTOR3 Vector3Up = { 0.0f, 1.0f ,0.0f };
 	const D3DXVECTOR3 Vector3Right = { 1.0f,0.0f,0.0f };
 	const D3DXVECTOR3 Vector3Left = { -1.0f,0.0f,0.0f };
-	
+	const D3DXVECTOR3 Vector3Forward = { 0.0f,0.0f,1.0f };
+	const D3DXVECTOR3 Vector3Back = { 0.0f,0.0f,-1.0f };
 	const D3DXVECTOR2 Vector2Zero = { 0.0f,0.0f};
 	const D3DXVECTOR2 Vector2One = { 1.0f,1.0f };
 }

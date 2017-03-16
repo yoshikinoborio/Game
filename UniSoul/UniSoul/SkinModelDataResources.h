@@ -14,7 +14,6 @@ public:
 	//デストラクタ。
 	~SkinModelDataResources();
 
-
 	//モデルのロード。
 	//モデルのファイルパス。
 	//アニメーション。

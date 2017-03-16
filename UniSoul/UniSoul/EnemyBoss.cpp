@@ -4,16 +4,19 @@
 
 EnemyBoss::EnemyBoss()
 {
-	m_position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_position = Vector3Zero;
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-	m_scale = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_scale =Vector3Zero;
+	m_move = Vector3Zero;
 	m_height = 0.0f;
 	m_radius = 0.0f;
-	m_state = EnemyBossStateSearch;
+	m_state = EnemyBossState::StateSearch;
 	m_currentBossAnimSetNo = enBossAnimInvalid;
 	m_hp = 0;
 	m_isDead = FALSE;
+	m_unitytyan = g_pScenes->GetUnityChan();
+	m_posDifference = Vector3Zero;
+	m_isTurn = FALSE;
 }
 
 
@@ -22,12 +25,11 @@ EnemyBoss::~EnemyBoss()
 	delete m_skinModelData;
 }
 
-void EnemyBoss::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNION rotation, D3DXVECTOR3 scale)
+void EnemyBoss::Initialize(const char* modelPath,const D3DXVECTOR3& pos,const D3DXQUATERNION& rotation,const D3DXVECTOR3& scale)
 {
 	//モデルのロード。
 	m_skinModelData = static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load(modelPath, &m_animation);
-	//m_skinModelDataResources.Load(modelPath, &m_animation);
-	//m_skinModelData.LoadModelData(modelPath, &m_animation);
+	
 	m_skinModel.Initialize(m_skinModelData);
 
 	//ライトの設定。
@@ -52,6 +54,9 @@ void EnemyBoss::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNIO
 	//高さフォグのフラグを設定
 	m_skinModel.SetFogHeightFlag(FALSE);
 
+	//アニメーションの設定。
+	m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
+
 
 	//Unityで出力した情報を元に設定。
 	m_position = pos;
@@ -59,12 +64,15 @@ void EnemyBoss::Initialize(const char* modelPath, D3DXVECTOR3 pos, D3DXQUATERNIO
 	m_scale = scale;
 
 	//半径と高さ。
-	m_height = 1.0f;
+	m_height = 2.0f;
 	m_radius = 1.5f;
 
-	m_hp = 10;
+	m_hp = 2000;
+	m_maxhp = m_hp;
 
-	m_dropEXP = 100;
+	m_state = EnemyBossState::StateSearch;
+
+	m_dropEXP =50000;
 
 	m_characterController.Initialize(m_radius, m_height, m_position);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
@@ -74,11 +82,90 @@ void EnemyBoss::Update()
 {
 	m_animation.Update(GetLocalFrameDeltaTime());
 
-	if (m_state == EnemyBossStateSearch)
+	m_move = m_characterController.GetMoveSpeed();
+
+	m_posDifference = m_unitytyan->GetUnityChanPos() - m_position;
+
+	//距離判定に使う変数。
+	D3DXVECTOR3 PosDiff = m_posDifference;
+
+	switch (m_state)
+	{
+	case EnemyBossState::StateSearch: {
+		// スケルトンのワールド行列を取得。
+		D3DXMATRIX& BossPos = m_skinModel.GetWorldMatrix();
+		//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
+		//自分の向きベクトル。
+		D3DXVECTOR3 Dir = D3DXVECTOR3(BossPos.m[3][0], BossPos.m[3][1], BossPos.m[3][2]);
+		//プレイヤーへの向きベクトル。
+		D3DXVECTOR3 PlayerDir = PosDiff;
+		//二つのベクトルを正規化。
+		D3DXVec3Normalize(&Dir, &Dir);
+		D3DXVec3Normalize(&PlayerDir, &PlayerDir);
+
+		//正規化した二つのベクトルの内積を計算。
+		float dot = D3DXVec3Dot(&Dir, &PlayerDir);
+		//内積の値の逆余弦からラジアンを求める。
+		float rad = acos(dot);
+		//ラジアンから角度に変換し実際の角度差を求める。
+		float selfangle D3DXToDegree(rad);
+		//自分の視野角にいるかつ距離が500以下の時。
+		if (selfangle < 50.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
+		{
+			//発見。
+			m_state = EnemyBossState::StateFind;
+			break;
+		}
+	}
+		break;
+	case EnemyBossState::StateFind:
+	{
+		m_posDifference.y = 0.0f;
+
+		//キャラが向いている方向を正規化。
+		D3DXVec3Normalize(&m_posDifference, &m_posDifference);
+
+		//敵をプレイヤーの向きに進ませる。
+		m_move.x = m_moveSpeed*m_posDifference.x;
+		m_move.z = m_moveSpeed*m_posDifference.z;
+
+		//回転の処理。
+		if (D3DXVec3Length(&m_posDifference) > 0.0f)
+		{
+			//回転量の計算。
+			m_targetAngleY = acos(D3DXVec3Dot(&Vector3Forward, &m_posDifference));
+			D3DXVECTOR3 axis;
+			//ベクトルとベクトルの外積を取って+,-どちらに回すかを決める。
+			D3DXVec3Cross(&axis, &Vector3Forward, &m_posDifference);
+			D3DXVec3Normalize(&axis, &axis);
+			//負数の時は+にする。
+			if (axis.y < 0.0f)
+			{
+				m_targetAngleY *= -1.0f;
+			}
+			//向きたい方向と上方向から軸を作りその軸を回転軸としてクォータニオンを回転。
+			D3DXQuaternionRotationAxis(&m_rotation, &axis, m_currentAngleY);
+		}
+	}
+		break;
+	case EnemyBossState::StateAttack: {
+
+	}
+		break;
+	case EnemyBossState::StateDamage: {
+
+	}
+		break;
+	case EnemyBossState::StateDead: {
+
+	}
+		break;
+	}
+
+	if (m_state == EnemyBossState::StateSearch)
 	{
 		m_currentBossAnimSetNo = enBossAnimWait;
 	}
-	
 
 	RigidBody* rb = m_characterController.GetRigidBody();
 	//どこかに発生している当たり判定を探している。
@@ -94,19 +181,12 @@ void EnemyBoss::Update()
 		if (m_hp <= 0.0f) {
 			//死亡
 			m_hp = 0;
-			m_state = EnemyBossStateDead;
+			m_state = EnemyBossState::StateDead;
 		}
 		else {
-			m_state = EnemyBossStateDamage;
+			m_state = EnemyBossState::StateDamage;
 		}
 	}
-
-	if (m_state== EnemyBossStateSearch)
-	{
-		m_currentBossAnimSetNo = enBossAnimWait;
-	}
-
-	m_move = m_characterController.GetMoveSpeed();
 
 	//キャラクタが動く速度を設定。
 	m_characterController.SetMoveSpeed(m_move);
@@ -114,6 +194,9 @@ void EnemyBoss::Update()
 	m_characterController.Execute(GetLocalFrameDeltaTime());
 	//キャラクターコントロールで計算した位置をエネミーの位置に反映。
 	m_position = m_characterController.GetPosition();
+
+	//計算させた回転の反映。
+	m_currentAngleY = m_turn.Update(m_isTurn, m_targetAngleY);
 
 	m_animation.PlayAnimation(m_currentBossAnimSetNo, 0.1f);
 

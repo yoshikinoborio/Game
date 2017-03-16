@@ -16,6 +16,7 @@
 #include "YouDied.h"
 #include "Black.h"
 #include "CollisionCreat.h"
+#include "BossEnemyHPBar.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -67,12 +68,12 @@ public:
 	}
 
 	//TRUEにするとUpdateが止まる。
-	void SetStopFlag(const bool& Flg) 
+	void SetStopFlag(bool Flg) 
 	{
 		m_stopFlag = Flg;
 	}
 
-	const bool& GetStopFlag() const
+	bool GetStopFlag() const
 	{
 		return m_stopFlag;
 	}
@@ -134,4 +135,5 @@ private:
 	Black					m_black;					//画面がだんだん見えなくなるor見えてくる処理に使う画像。
 	//CollisionCreat	m_collisionCreat;				//見えない当たり判定。
 	SkinModelDataResources	m_skinModelDataResources;	//スキンモデルリソース。
+	BossEnemyHPBar			m_bossEnemyHPBar;			//ボスの体力バー。
 };

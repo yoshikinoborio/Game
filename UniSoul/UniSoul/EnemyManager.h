@@ -37,9 +37,14 @@ public:
 		return m_enemyskeletonList;
 	}
 
+	EnemyBoss& GetBoss() 
+	{
+		return *m_enemyBoss;
+	}
+
 	//⊿タイムに乗算される値を設定。
 	//グローバル⊿タイムに乗算される値。この値に0.5を設定するとエネミーの挙動が0.5倍速になる。
-	void SetFrameDeltaTimeMul(const float& mul);
+	void SetFrameDeltaTimeMul(float mul);
 private:
 	std::vector< EnemySkeleton*>	m_enemyskeletonList;	//骨型の敵の可変長配列。
 	std::vector< EnemyGoblin*>		m_enemyGoblinList;		//ゴブリン型の可変長配列。

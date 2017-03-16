@@ -1,6 +1,5 @@
 #pragma once
 #include "AnimationModel3D.h"
-#include "Light.h"
 
 //ステージクラス
 class Stage :public AnimationModel3D
@@ -26,5 +25,4 @@ private:
 	D3DXVECTOR3		m_position;			//座標。
 	D3DXVECTOR3     m_scale;			//スケール。
 	D3DXQUATERNION  m_rotation;			//回転行列。
-	Light			m_light;
 };

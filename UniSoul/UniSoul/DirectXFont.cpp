@@ -46,7 +46,7 @@ void CFont::Release()
 	*@param[in]	pos_x		表示するx座標。
 	*@param[in]	pos_y		表示するy座標。
 	*/
-void CFont::Draw(const char* text, int pos_x, int pos_y)
+void CFont::Draw(const char* text,const int& pos_x,const int& pos_y)
 {
 	if (font != nullptr) {
 		int textLen = (int)strlen(text);

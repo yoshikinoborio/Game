@@ -21,13 +21,13 @@ public:
 	*@param[in]	multiSampleQuality	マルチサンプリングの品質。
 	*/
 	void Create(
-		const int& w,
-		const int& h,
-		const int& mipLevel,
+		int w,
+		int h,
+		int mipLevel,
 		const D3DFORMAT& colorFormat,
 		const D3DFORMAT& depthStencilFormat,
 		const D3DMULTISAMPLE_TYPE& multiSampleType,
-		const int& multiSampleQuality);
+		int multiSampleQuality);
 
 	//サーフェスの取得
 	const LPDIRECT3DSURFACE9& GetSurface() const
@@ -48,13 +48,13 @@ public:
 	}
 
 	//幅を取得。
-	const int& GetWidth() const
+	int GetWidth() const
 	{
 		return m_width;
 	}
 
 	//高さを取得
-	const int& GetHeight() const
+	int GetHeight() const
 	{
 		return m_height;
 	}

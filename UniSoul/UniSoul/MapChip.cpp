@@ -2,17 +2,20 @@
 #include "MapChip.h"
 #include "SceneManager.h"
 
+//コンストラクタ。
 MapChip::MapChip()
 {
 	m_position = Vector3Zero;
 	m_scale = Vector3Zero;
 }
 
+//デストラクタ。
 MapChip::~MapChip()
 {
 	delete m_skinModelData;
 }
 
+//初期化。
 void MapChip::Initialize(const char* modelPath, const D3DXVECTOR3& pos, const D3DXQUATERNION& rotation)
 {
 	m_position = pos;
@@ -68,12 +71,14 @@ void MapChip::Initialize(const char* modelPath, const D3DXVECTOR3& pos, const D3
 
 }
 
+//更新。
 void MapChip::Update()
 {
 	//マップオブジェクトを更新。
 	m_skinModel.Update(m_position, m_rotation, m_scale);
 }
 
+//描画。
 void MapChip::Draw(
 	D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,

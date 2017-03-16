@@ -274,6 +274,9 @@ void GameScene::Initialize()
 	//ブラックアウトの画像の初期化。
 	m_black.Initialize();
 
+	//ボスの体力バーの初期化。
+	m_bossEnemyHPBar.Initialize();
+
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
 }
@@ -386,6 +389,9 @@ void GameScene::Draw()
 
 	//ブラックアウトの画像の描画。
 	m_black.Render();
+
+	//ボスの体力バーの描画。
+	m_bossEnemyHPBar.Render();
 
 	//FPSの計測された値を文字列に変換して描画。、
 	double counter = m_stopWatch.GetElapsed();
@@ -521,6 +527,9 @@ void GameScene::Update()
 
 		//ブラックアウトの画像の更新。
 		m_black.Update();
+
+		//ボスの体力バーの更新。
+		m_bossEnemyHPBar.Update();
 	}
 }
 //-----------------------------------------------------------------------------
