@@ -529,6 +529,7 @@ void UnityChan::DeadProcess()
 	if (!m_animation.IsPlay())
 	{
 		static_cast<GameScene*>(g_pScenes)->GetYouDied()->SetStartFlag(true);
+		m_characterController.RemoveRigidBoby();
 	}
 }
 

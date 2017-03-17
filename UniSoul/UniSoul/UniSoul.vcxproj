@@ -166,6 +166,8 @@
     <ClCompile Include="Black.cpp" />
     <ClCompile Include="Bloom.cpp" />
     <ClCompile Include="BossEnemyHPBar.cpp" />
+    <ClCompile Include="BossEnemyHPBarBack.cpp" />
+    <ClCompile Include="BossEnemyHPBarFrame.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="CharacterController.cpp" />
@@ -227,6 +229,8 @@
     <ClInclude Include="Black.h" />
     <ClInclude Include="Bloom.h" />
     <ClInclude Include="BossEnemyHPBar.h" />
+    <ClInclude Include="BossEnemyHPBarBack.h" />
+    <ClInclude Include="BossEnemyHPBarFrame.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="CharacterController.h" />

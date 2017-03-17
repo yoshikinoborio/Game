@@ -20,6 +20,8 @@ TitleCursor::TitleCursor()
 	m_scale = Vector2Zero;
 	m_backColor = D3DCOLOR_ARGB(0, 0, 0, 0);
 	m_cursorMoveTime = 0;
+	m_gameStratFlag = FALSE;
+	m_gameEndFlag = FALSE;
 }
 
 //デストラクタ。
@@ -39,6 +41,8 @@ void TitleCursor::Initialize()
 	C2DImage::Initialize();
 	//カーソルの移動時のSEの初期化。
 	m_cursorMoveSE.Init("image/UniSoul_CursorMoveSE.wav");
+	//ボタンが押された時の決定音の初期化。
+	m_cursorDecideSE.Init("image/UniSoul_CursorDecideSE.wav");
 }
 
 
@@ -54,6 +58,9 @@ void TitleCursor::Update()
 	//カーソルの移動時のSEの更新。
 	m_cursorMoveSE.Update();
 
+	//ボタンが押された時の決定音の更新。。
+	m_cursorDecideSE.Update();
+
 	this->SetupMatrices();
 }
 
@@ -68,12 +75,24 @@ void TitleCursor::MenuProcess()
 	case (int)TitleMenu::enGameStart:
 		if (g_pad.IsTrigger(enButtonA))
 		{
+			DecideSE();
+			m_gameStratFlag = TRUE;
+		}
+		//音声再生が終了かつゲーム開始フラグがTRUE。
+		if (m_cursorDecideSE.GetIsPlaying() == FALSE&&m_gameStratFlag == TRUE)
+		{
 			g_sceneManager->ChangeScene(2);
 		}
 		break;
 		//ゲーム終了。
 	case (int)TitleMenu::enGameEnd:
 		if (g_pad.IsTrigger(enButtonA))
+		{
+			DecideSE();
+			m_gameEndFlag = TRUE;
+		}
+		//音声再生が終了かつゲーム終了フラグがTRUE。
+		if (m_cursorDecideSE.GetIsPlaying() == FALSE&&m_gameEndFlag == TRUE)
 		{
 			PostQuitMessage(0);
 		}
@@ -91,6 +110,13 @@ void TitleCursor::MoveCursorSE()
 	m_cursorMoveSE.SetVolume(0.25f);
 }
 
+void TitleCursor::DecideSE()
+{
+	//決定音を再生。
+	m_cursorDecideSE.Play(FALSE);
+	m_cursorDecideSE.SetVolume(0.25f);
+}
+
 //カーソルの移動処理。
 void TitleCursor::MoveCursor()
 {
@@ -103,7 +129,7 @@ void TitleCursor::MoveCursor()
 		//一定時間超えないとカーソルは動かない。
 		if (m_nowTime - m_cursorMoveTime > CURSOR_MOVEWAITTIME) {
 			m_cursorMoveTime = m_nowTime;
-
+			
 			//選択するメニューを一つ下げる。
 			m_nowMenu += 1;
 			//下げた結果がメニューの最後よりも値が大きいなら一番上のメニューに移動させる。

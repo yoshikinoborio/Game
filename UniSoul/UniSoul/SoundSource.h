@@ -125,14 +125,14 @@ public:
 	/*!
 	* @brief	音源の座標を取得。
 	*/
-	D3DXVECTOR3 GetPosition() const
+	const D3DXVECTOR3& GetPosition() const
 	{
 		return m_position;
 	}
 	/*!
 	* @brief	音源の移動速度を取得。
 	*/
-	D3DXVECTOR3 GetVelocity() const
+	const D3DXVECTOR3& GetVelocity() const
 	{
 		return m_velocity;
 	}
@@ -159,6 +159,10 @@ public:
 	}
 	bool GetIsDestroy() {
 		return m_isDestroy;
+	}
+	bool GetIsPlaying()
+	{
+		return m_isPlaying;
 	}
 private:
 	void InitCommon();

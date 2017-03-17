@@ -17,6 +17,7 @@ EnemyBoss::EnemyBoss()
 	m_unitytyan = g_pScenes->GetUnityChan();
 	m_posDifference = Vector3Zero;
 	m_isTurn = FALSE;
+	m_atrTime = 0.0f;
 }
 
 
@@ -86,14 +87,18 @@ void EnemyBoss::Update()
 
 	m_posDifference = m_unitytyan->GetUnityChanPos() - m_position;
 
+	m_isTurn = FALSE;
+
+	//ボスのワールド行列を取得。
+	D3DXMATRIX& BossPos = m_skinModel.GetWorldMatrix();
+
 	//距離判定に使う変数。
 	D3DXVECTOR3 PosDiff = m_posDifference;
 
 	switch (m_state)
 	{
 	case EnemyBossState::StateSearch: {
-		// スケルトンのワールド行列を取得。
-		D3DXMATRIX& BossPos = m_skinModel.GetWorldMatrix();
+		
 		//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
 		//自分の向きベクトル。
 		D3DXVECTOR3 Dir = D3DXVECTOR3(BossPos.m[3][0], BossPos.m[3][1], BossPos.m[3][2]);
@@ -116,10 +121,15 @@ void EnemyBoss::Update()
 			m_state = EnemyBossState::StateFind;
 			break;
 		}
+		m_currentBossAnimSetNo = enBossAnimWait;
+		m_move.x = m_moveSpeed;
+		m_move.z = m_moveSpeed;
 	}
 		break;
 	case EnemyBossState::StateFind:
 	{
+		m_moveSpeed = BOSSRUNSPEED;
+		m_isTurn = TRUE;
 		m_posDifference.y = 0.0f;
 
 		//キャラが向いている方向を正規化。
@@ -132,24 +142,62 @@ void EnemyBoss::Update()
 		//回転の処理。
 		if (D3DXVec3Length(&m_posDifference) > 0.0f)
 		{
+			D3DXVECTOR3 forward = Vector3Forward;
 			//回転量の計算。
-			m_targetAngleY = acos(D3DXVec3Dot(&Vector3Forward, &m_posDifference));
+			m_targetAngleY = acos(D3DXVec3Dot(&forward, &m_posDifference));
 			D3DXVECTOR3 axis;
 			//ベクトルとベクトルの外積を取って+,-どちらに回すかを決める。
-			D3DXVec3Cross(&axis, &Vector3Forward, &m_posDifference);
+			D3DXVec3Cross(&axis, &forward, &m_posDifference);
 			D3DXVec3Normalize(&axis, &axis);
-			//負数の時は+にする。
+			
 			if (axis.y < 0.0f)
 			{
-				m_targetAngleY *= -1.0f;
+				m_targetAngleY *= 1.0f;
 			}
 			//向きたい方向と上方向から軸を作りその軸を回転軸としてクォータニオンを回転。
 			D3DXQuaternionRotationAxis(&m_rotation, &axis, m_currentAngleY);
 		}
+		m_currentBossAnimSetNo = enBossAnimRun;;
+		//索敵範囲内にプレイヤーを発見。
+		//発見中に近くに行くと攻撃する。
+		if (D3DXVec3LengthSq(&PosDiff) < 10.0f)
+		{
+			m_state = EnemyBossState::StateAttack;
+		}
+
+		if (D3DXVec3LengthSq(&PosDiff) > 500.0f)
+		{
+			m_state = EnemyBossState::StateSearch;
+			m_moveSpeed = BOSSNWAITSPEED;
+		}
 	}
 		break;
 	case EnemyBossState::StateAttack: {
+		m_animation.SetAnimationLoopFlag(enAnimAttack, TRUE);
+		m_atrTime += DeltaTime;
+		//攻撃時に当たり判定を生成。
+		//スケルトンの前方向に当たり判定を発生させる。
+		if (m_atrTime >= 0.7f)
+		{
+			//g_damageCollisionWorld->Add(2.0f, D3DXVECTOR3(BossPos.m[3][0], BossPos.m[3][1], BossPos.m[3][2]), 1.7f, 20, g_damageCollisionWorld->enDamageToPlayer, 0);
+			m_atrTime = 0.0f;
 
+		}
+		//攻撃中にプレイヤーが攻撃可能範囲外に移動したら追跡。
+		if (D3DXVec3LengthSq(&PosDiff) > 11.0f)
+		{
+			//攻撃が終わってから移動開始。
+			if (!m_animation.IsPlay())
+			{
+				m_state = EnemyBossState::StateFind;
+				m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
+				m_moveSpeed = BOSSRUNSPEED;
+			}
+
+		}
+		m_currentBossAnimSetNo = enBossAnimAttack;
+		//攻撃中は移動しない。
+		m_move = Vector3Zero;
 	}
 		break;
 	case EnemyBossState::StateDamage: {
@@ -160,11 +208,6 @@ void EnemyBoss::Update()
 
 	}
 		break;
-	}
-
-	if (m_state == EnemyBossState::StateSearch)
-	{
-		m_currentBossAnimSetNo = enBossAnimWait;
 	}
 
 	RigidBody* rb = m_characterController.GetRigidBody();
@@ -181,10 +224,10 @@ void EnemyBoss::Update()
 		if (m_hp <= 0.0f) {
 			//死亡
 			m_hp = 0;
-			m_state = EnemyBossState::StateDead;
+			//m_state = EnemyBossState::StateDead;
 		}
 		else {
-			m_state = EnemyBossState::StateDamage;
+			//m_state = EnemyBossState::StateDamage;
 		}
 	}
 

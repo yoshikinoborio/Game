@@ -2,7 +2,7 @@
 #include "BossEnemyHPBar.h"
 #include "SceneManager.h"
 
-//HPバーの大きさ。
+//ボスのHPバーの大きさ。
 namespace {
 	const D3DXVECTOR2 HpBarMaxScale = { 10.0f,1.5f };
 }

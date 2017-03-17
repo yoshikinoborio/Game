@@ -199,7 +199,6 @@ GameScene::~GameScene()
 	m_physicsWorld.Release();
 	GameScene::Terminate();
 	m_stopFlag = FALSE;
-	delete g_damageCollisionWorld;
 	delete g_enemyManager;
 }
 
@@ -276,6 +275,12 @@ void GameScene::Initialize()
 
 	//ボスの体力バーの初期化。
 	m_bossEnemyHPBar.Initialize();
+
+	//ボスの体力のHPバーのフレームの初期化。
+	m_bossEnemyHPBarFrame.Initialize();
+
+	//ボスの体力バーの背景の更新。
+	m_bossEnemyHPBarBack.Initialize();
 
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
@@ -382,32 +387,16 @@ void GameScene::Draw()
 	{
 		//プレイヤーの体力描画。
 		m_playerHPBar.Render();
-	}
 
-	//YouDiedの描画。
-	m_youDied.Render();
+		//ボスの体力バーの背景の更新。
+		m_bossEnemyHPBarBack.Render();
 
-	//ブラックアウトの画像の描画。
-	m_black.Render();
+		//ボスの体力バーの描画。
+		m_bossEnemyHPBar.Render();
 
-	//ボスの体力バーの描画。
-	m_bossEnemyHPBar.Render();
+		//ボスの体力バーのフレームの描画。
+		m_bossEnemyHPBarFrame.Render();
 
-	//FPSの計測された値を文字列に変換して描画。、
-	double counter = m_stopWatch.GetElapsed();
-	counter = 1.0f / counter;
-	std::string FPS;
-	FPS = "FPS = ";
-	FPS = FPS + std::to_string(counter);
-	
-#ifdef _DEBUG
-	m_font.Draw(FPS.c_str(), 1650, 0);
-
-#endif // DEBUG
-
-	
-	if (m_camera.GetCameraFreeFlag()==FALSE)
-	{
 		//プレイヤーのHPを表示。
 		int HP = m_unitychan.GetHP();
 		std::string str;
@@ -421,6 +410,7 @@ void GameScene::Draw()
 		lv = "Lv ";
 		lv = lv + std::to_string(Lv);
 		m_font.Draw(lv.c_str(), 0, 0);
+
 	}
 	else
 	{
@@ -451,7 +441,24 @@ void GameScene::Draw()
 			m_font.Draw(FreeCameraPositionZ.c_str(), 0, 60);
 		}
 	}
+
+	//YouDiedの描画。
+	m_youDied.Render();
+
+	//ブラックアウトの画像の描画。
+	m_black.Render();
+
+	//FPSの計測された値を文字列に変換して描画。、
+	double counter = m_stopWatch.GetElapsed();
+	counter = 1.0f / counter;
+	std::string FPS;
+	FPS = "FPS = ";
+	FPS = FPS + std::to_string(counter);
 	
+#ifdef _DEBUG
+	m_font.Draw(FPS.c_str(), 1650, 0);
+
+#endif // DEBUG
 
 	//シーンの描画が完了したのでレンダリングターゲットをフレームバッファに戻す。
 	g_pd3dDevice->SetRenderTarget(0, frameBufferRT);
@@ -530,6 +537,12 @@ void GameScene::Update()
 
 		//ボスの体力バーの更新。
 		m_bossEnemyHPBar.Update();
+
+		//ボスの体力バーのフレームの更新。
+		m_bossEnemyHPBarFrame.Update();
+
+		//ボスの体力バーの背景の更新。
+		m_bossEnemyHPBarBack.Update();
 	}
 }
 //-----------------------------------------------------------------------------

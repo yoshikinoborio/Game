@@ -36,6 +36,9 @@ public:
 	//カーソルの移動音の再生。
 	void MoveCursorSE();
 
+	//ボタンを押された時の決定音の再生。
+	void DecideSE();
+
 	//各メニューの処理。
 	void MenuProcess();
 private:
@@ -44,4 +47,7 @@ private:
 	DWORD			m_nowTime;			//現在の時間を格納。
 	DWORD			m_cursorMoveTime;	//カーソル移動後経過時間。
 	CSoundSource	m_cursorMoveSE;		//カーソルの移動音。
+	CSoundSource	m_cursorDecideSE;	//ボタンを押された時の決定音。
+	bool			m_gameStratFlag;	//スタートで決定ボタンを押すとTRUEになる。
+	bool			m_gameEndFlag;		//ゲーム終了で決定ボタンを押すとTRUEになる。
 };

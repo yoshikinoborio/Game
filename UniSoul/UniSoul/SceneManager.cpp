@@ -16,7 +16,7 @@ SceneManager::SceneManager()
 
 SceneManager::~SceneManager()
 {
-
+	delete g_damageCollisionWorld;
 }
 
 void SceneManager::Initialize()

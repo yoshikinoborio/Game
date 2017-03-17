@@ -17,6 +17,8 @@
 #include "Black.h"
 #include "CollisionCreat.h"
 #include "BossEnemyHPBar.h"
+#include "BossEnemyHPBarFrame.h"
+#include "BossEnemyHPBarBack.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -136,4 +138,6 @@ private:
 	//CollisionCreat	m_collisionCreat;				//見えない当たり判定。
 	SkinModelDataResources	m_skinModelDataResources;	//スキンモデルリソース。
 	BossEnemyHPBar			m_bossEnemyHPBar;			//ボスの体力バー。
+	BossEnemyHPBarFrame		m_bossEnemyHPBarFrame;		//ボスの体力バーのフレーム。
+	BossEnemyHPBarBack		m_bossEnemyHPBarBack;		//ボスの体力バーの背景。
 };

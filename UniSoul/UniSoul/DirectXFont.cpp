@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "DirectXFont.h"
 
-const int FONT_WIDTH = 16;	//フォントの幅。
-const int FONT_HEIGHT = 24;	//フォントの高さ。
+namespace {
+	const int FONT_WIDTH = 16;	//フォントの幅。
+	const int FONT_HEIGHT = 24;	//フォントの高さ。
+};
 
 CFont::CFont() :
 	font(nullptr)
@@ -27,7 +29,7 @@ void CFont::Init()
 		OUT_DEFAULT_PRECIS,			// 出力制度は普通
 		PROOF_QUALITY,				// 文字品質を重視
 		FIXED_PITCH | FF_SCRIPT,	// ピッチとファミリ
-		TEXT("ＭＳ　Ｐゴシック"),		// フォント名
+		TEXT("ＭＳ　Ｐゴシック"),	// フォント名
 		&font);
 }
 	/*!

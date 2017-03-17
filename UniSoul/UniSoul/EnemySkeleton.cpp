@@ -340,10 +340,10 @@ void EnemySkeleton::FindMove()
 		//ベクトルとベクトルの外積を取って+,-どちらに回すかを決める。
 		D3DXVec3Cross(&axis, &Vector3Forward, &m_posDifference);
 		D3DXVec3Normalize(&axis, &axis);
-		//負数の時は+にする。
+		
 		if (axis.y < 0.0f)
 		{
-			m_targetAngleY *= -1.0f;
+			m_targetAngleY *= 1.0f;
 		}
 		//向きたい方向と上方向から軸を作りその軸を回転軸としてクォータニオンを回転。
 		D3DXQuaternionRotationAxis(&m_rotation, &axis, m_currentAngleY);
@@ -354,6 +354,9 @@ void EnemySkeleton::FindMove()
 void EnemySkeleton::SearchMove()
 {
 	m_state = SkeletonState::StateSearch;
+
+	m_move.x = m_moveSpeed;
+	m_move.z = m_moveSpeed;
 	//コース定義に従った移動の処理。
 	//{
 	//	//コース定義に向かうベクトルを求める
@@ -385,7 +388,7 @@ void EnemySkeleton::SearchMove()
 void EnemySkeleton::Damage()
 {
 	//死んでいたら何もしない。
-	if (m_state == SkeletonState::StateDamage /*|| m_state == SkeletonState::StateDead*/)
+	if (/*m_state == SkeletonState::StateDamage ||*/ m_state == SkeletonState::StateDead)
 	{
 		return;
 	}

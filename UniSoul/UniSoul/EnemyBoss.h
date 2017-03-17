@@ -1,6 +1,12 @@
 #pragma once
 #include "EnemyBase.h"
 
+namespace {
+	const float BOSSNWAITSPEED = 0.0f;
+	const float BOSSWALKSPEED = 0.02f*60.0f;
+	const float BOSSRUNSPEED = 0.2f*60.0f;
+}
+
 class UnityChan;
 
 class EnemyBoss : public EnemyBase
@@ -35,4 +41,5 @@ private:
 	EnemyBossState						m_state;				//ボス敵の状態。
 	UnityChan*							m_unitytyan;			//プレイヤーのインスタンス。
 	D3DXVECTOR3							m_posDifference;		//プレイヤーとの距離。
+	float								m_atrTime;				//この時間以上になったら当たりを発生させる。
 };
