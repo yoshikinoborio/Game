@@ -4,13 +4,16 @@
 #include "EnemyGoblin.h"
 #include "EnemyBoss.h"
 
-//エネミーの配置情報。
-struct EnemyManagerLocInfo {
-	const char* modelName;		//モデルのパス。
-	D3DXVECTOR3	pos;			//座標。
-	D3DXQUATERNION	rotation;	//回転。
-	D3DXVECTOR3 scale;			//スケール。
-};
+namespace
+{
+	//エネミーの配置情報。
+	struct EnemyManagerLocInfo {
+		const char* modelName;		//モデルのパス。
+		D3DXVECTOR3	pos;			//座標。
+		D3DXQUATERNION	rotation;	//回転。
+		D3DXVECTOR3 scale;			//スケール。
+	};
+}
 
 //エネミーの配置情報のテーブル。
 EnemyManagerLocInfo EnemyChipLocInfoTable[] = {
@@ -19,6 +22,8 @@ EnemyManagerLocInfo EnemyChipLocInfoTable[] = {
 
 EnemyManager::EnemyManager()
 {
+	m_createEnemyFlag = FALSE;
+	m_createPos = Vector3Zero;
 }
 
 EnemyManager::~EnemyManager()
@@ -117,6 +122,14 @@ void EnemyManager::Update()
 	}
 	//ボスの更新。
 	m_enemyBoss->Update();
+
+	if (m_createEnemyFlag == TRUE)
+	{
+		EnemySkeleton* newEnemy = new EnemySkeleton;
+		newEnemy->Initialize("image\\Skeleton@Skin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
+		m_enemyskeletonList.push_back(newEnemy);
+		m_createEnemyFlag = FALSE;
+	}
 }
 
 void EnemyManager::Draw(D3DXMATRIX viewMatrix,

@@ -3,10 +3,13 @@
 #include "DamageCollisionWorld.h"
 #include "SceneManager.h"
 
-//プレイヤーの配置情報
-PlayerInfo PlayerInfoTable= {
+namespace {
+	//プレイヤーの配置情報
+	PlayerInfo PlayerInfoTable = {
 #include "PlayerInfo.h"
-};
+	};
+}
+
 
 UnityChan::UnityChan()
 {
@@ -528,7 +531,7 @@ void UnityChan::DeadProcess()
 	m_move.y = 10.0f;
 	if (!m_animation.IsPlay())
 	{
-		static_cast<GameScene*>(g_pScenes)->GetYouDied()->SetStartFlag(true);
+		m_isDead = TRUE;
 		m_characterController.RemoveRigidBoby();
 	}
 }

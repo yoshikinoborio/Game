@@ -19,6 +19,7 @@
 #include "BossEnemyHPBar.h"
 #include "BossEnemyHPBarFrame.h"
 #include "BossEnemyHPBarBack.h"
+#include "BossEnemyName.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -140,4 +141,5 @@ private:
 	BossEnemyHPBar			m_bossEnemyHPBar;			//ボスの体力バー。
 	BossEnemyHPBarFrame		m_bossEnemyHPBarFrame;		//ボスの体力バーのフレーム。
 	BossEnemyHPBarBack		m_bossEnemyHPBarBack;		//ボスの体力バーの背景。
+	BossEnemyName			m_bossEnemyName;			//ボスの名前を表示。
 };

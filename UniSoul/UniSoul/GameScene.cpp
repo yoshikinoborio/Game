@@ -282,6 +282,9 @@ void GameScene::Initialize()
 	//ボスの体力バーの背景の更新。
 	m_bossEnemyHPBarBack.Initialize();
 
+	//ボスの名前の初期化。
+	m_bossEnemyName.Initialize();
+
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
 }
@@ -381,21 +384,27 @@ void GameScene::Draw()
 
 	//ブルームの描画。
 	m_bloom.Render();
-
+	
 
 	if (m_camera.GetCameraFreeFlag() == FALSE)
 	{
 		//プレイヤーの体力描画。
 		m_playerHPBar.Render();
 
-		//ボスの体力バーの背景の更新。
-		m_bossEnemyHPBarBack.Render();
+		if (m_unitychan.GetIsDead() == FALSE &&g_enemyManager->GetBoss().GetBossBattleFlag() == TRUE)
+		{
+			//ボスの体力バーの背景の更新。
+			m_bossEnemyHPBarBack.Render();
 
-		//ボスの体力バーの描画。
-		m_bossEnemyHPBar.Render();
+			//ボスの体力バーの描画。
+			m_bossEnemyHPBar.Render();
 
-		//ボスの体力バーのフレームの描画。
-		m_bossEnemyHPBarFrame.Render();
+			//ボスの体力バーのフレームの描画。
+			m_bossEnemyHPBarFrame.Render();
+
+			//ボスの名前の描画。
+			m_bossEnemyName.Render();
+		}
 
 		//プレイヤーのHPを表示。
 		int HP = m_unitychan.GetHP();
@@ -535,14 +544,20 @@ void GameScene::Update()
 		//ブラックアウトの画像の更新。
 		m_black.Update();
 
-		//ボスの体力バーの更新。
-		m_bossEnemyHPBar.Update();
+		if (m_unitychan.GetIsDead() == FALSE && g_enemyManager->GetBoss().GetBossBattleFlag() == TRUE)
+		{
+			//ボスの体力バーの更新。
+			m_bossEnemyHPBar.Update();
 
-		//ボスの体力バーのフレームの更新。
-		m_bossEnemyHPBarFrame.Update();
+			//ボスの体力バーのフレームの更新。
+			m_bossEnemyHPBarFrame.Update();
 
-		//ボスの体力バーの背景の更新。
-		m_bossEnemyHPBarBack.Update();
+			//ボスの体力バーの背景の更新。
+			m_bossEnemyHPBarBack.Update();
+
+			//ボスの名前の更新。
+			m_bossEnemyName.Update();
+		}
 	}
 }
 //-----------------------------------------------------------------------------

@@ -76,25 +76,9 @@ public:
 		m_deltaTimeMul = mul;
 	}
 protected:
-	D3DXVECTOR3			m_position;							//座標。
-	D3DXVECTOR3			m_scale;							//スケール。
-	D3DXMATRIX			m_world;							//ワールド行列。
-	CharacterController	m_characterController;				//キャラクタコントローラ。
 	D3DXVECTOR3			m_move;								//移動量。
 	EnemyAnimation		m_currentAnimSetNo;					//現在再生しているアニメーション。
 	BossEnemyAnimation	m_currentBossAnimSetNo;				//ボス専用。
-	D3DXQUATERNION		m_rotation;							//回転行列。
 	D3DXVECTOR3			m_moveDir;							//方向。
-	float				m_moveSpeed;						//移動速度(歩く時と走る時の速度調整用)。
-	float				m_currentAngleY;					//現在の方向。
-	float				m_targetAngleY;						//向きたい方向。
-	bool				m_isTurn;							//回転フラグ。
-	float				m_height;							//敵の高さ。
-	float				m_radius;							//敵の半径。
-	float				m_frameDeltaTime = 1.0f / 60.0f;	//1フレームの経過時間。
-	float				m_deltaTimeMul = 1.0f;				//⊿タイムに乗算される値。
-	int					m_hp;								//ヒットポイント。
-	int					m_maxhp;							//最大ヒットポイント。
 	int					m_dropEXP;							//倒された時に落とす経験値量。
-	bool				m_isDead;							//死んだ。
 };

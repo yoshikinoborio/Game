@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "SceneManager.h"
+#include "GameScene.h"
 #include "YouDied.h"
 
 //コンストラクタ。
 YouDied::YouDied()
 {
 	m_alph = 0;
-	m_startFlag = FALSE;
 }
 
 //デストラクタ。
@@ -29,7 +29,7 @@ void YouDied::Initialize()
 void YouDied::Update()
 {
 	//フラグがTRUEになったらα値の計算開始。
-	if (m_startFlag == TRUE)
+	if (static_cast<GameScene*>(g_pScenes)->GetUnityChan()->GetIsDead() == TRUE)
 	{
 		//α値を少しずつ加算。
 		//255を超えたら255に戻す。
@@ -40,10 +40,10 @@ void YouDied::Update()
 		else
 		{
 			m_alph = 255;
+			//画面を暗くしていく。
 			static_cast<GameScene*>(g_pScenes)->GetBlack()->SetStartFlag(TRUE);
 		}
 	}
-
 	m_backColor = D3DCOLOR_ARGB(m_alph, 255, 255, 255);
 	this->SetupMatrices();
 }

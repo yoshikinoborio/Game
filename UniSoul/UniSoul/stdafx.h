@@ -64,14 +64,14 @@ enum EnButton{
 //enumにclassを付けるとenum内で定義している名前同士の衝突が起きなくなるのでclassを付けいている。
 
 
-//0.0fを書くのを繰り返すのがめんどうなのでグローバルで定義。
+
 namespace {
 	const float g_cTurnSpeed D3DXToRadian(10.0f);
 
 	static const int FRAME_BUFFER_WITDH = 1920;			//フレームバッファのサイズ。
 	static const int FRAME_BUFFER_HEIGHT = 1080;		//フレームバッファのサイズ。
 
-
+	//0.0fを書くのを繰り返すのがめんどうなのでグローバルで定義。
 	const D3DXVECTOR3 Vector3Zero = { 0.0f,0.0f,0.0f };
 	const D3DXVECTOR3 Vector3One = { 1.0f,1.0f ,1.0f };
 	const D3DXVECTOR3 Vector3Up = { 0.0f, 1.0f ,0.0f };
@@ -82,3 +82,12 @@ namespace {
 	const D3DXVECTOR2 Vector2Zero = { 0.0f,0.0f};
 	const D3DXVECTOR2 Vector2One = { 1.0f,1.0f };
 }
+
+
+enum  SceneNum
+{
+	Invalid = -1,
+	SceneNumTitle,
+	SceneNumGame,
+	SceneNumClear
+};

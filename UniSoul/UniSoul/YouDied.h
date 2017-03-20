@@ -16,13 +16,7 @@ public:
 	//更新。
 	void Update();
 
-	//TRUEを渡すとYOU DIEDのα値を増やしていく。
-	void SetStartFlag(bool flag)
-	{
-		m_startFlag = flag;
-	}
 private:
 	int		m_alph;		 //α値の変わり。
-	bool	m_startFlag; //TRUEになったらYOU DIEDが見えるようになる。
 };
 

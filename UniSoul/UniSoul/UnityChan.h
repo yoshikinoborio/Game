@@ -173,6 +173,12 @@ public:
 		m_deltaTimeMul = mul;
 	}
 
+	//死んだフラグの取得。
+	bool GetIsDead() const
+	{
+		return m_isDead;
+	}
+
 	//プレイヤーで再生されるアニメーションの種類。
 	enum PlayerAnimationNo {
 		AnimationWait_00 = 0,	//待機(立ち)。
@@ -214,29 +220,15 @@ public:
 	};
 
 private:
-	D3DXVECTOR3		m_position;							//座標。
-	D3DXVECTOR3     m_scale;							//スケール。
-	D3DXMATRIX		m_world;							//ワールド行列。
 	Camera*         m_camera;							//カメラのインスタンス。
 	int				m_currentAnimSetNo;					//現在再生しているアニメーション。
 	PlayerState     m_state;							//プレイヤーの状態。
-	D3DXQUATERNION  m_rotation;							//回転行列。
 	D3DXVECTOR3     m_moveDir;							//カメラから求めた方向。
-	D3DXVECTOR3     m_move;								//移動量。
-	float           m_moveSpeed;						//移動速度(歩く時と走る時の速度調整用)。
 	float           m_waitAnimetionChangeTime;			//待機アニメーションの切り替え時間。
-	float			m_currentAngleY;					//現在の方向。
-	float			m_targetAngleY;						//向きたい方向。
-	bool			m_isTurn;							//回転フラグ。
 	float           m_saveLStickX;						//左スティックの左右の入力量を格納。
 	float			m_saveLStickY;						//左スティックの前後の入力量を格納。
-	CharacterController m_characterController;			//キャラクタコントローラ。
-	float			m_height;							//プレイヤーの高さ。
-	float			m_radius;							//プレイヤーの半径。
 	bool			m_battleFlag;						//バトル中かのフラグ。
 	float			m_fallTimer;						//落下時間。
-	int				m_hp;								//ヒットポイント。
-	int				m_maxhp;							//最大ヒットポイント。
 	D3DXVECTOR3		m_UniDir;							//プレイヤーの移動ベクトル(敵の移動処理で使う)。
 	float			m_atrTime;							//この時間を超えたら当たりを発生させる。
 	int				m_lv;								//プレイヤーのレベル。
@@ -247,7 +239,5 @@ private:
 	CSoundSource	m_soundSource2;						//レベルアップのSE。
 	long long		m_levelUpExpTable[MAX_LEVEL];		//レベルアップに必要な経験値テーブル。
 	CParticleEmitter* m_pEmitter;
-	float			m_frameDeltaTime;					//1フレームの経過時間。
-	float			m_deltaTimeMul;						//⊿タイムに乗算される値。
 	float			m_time;
 };

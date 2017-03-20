@@ -11,7 +11,6 @@ TitleScene::TitleScene()
 //デストラクタ。
 TitleScene::~TitleScene()
 {
-	Terminate();
 }
 
 //初期化。
@@ -63,7 +62,3 @@ void TitleScene::Draw()
 	
 }
 
-//解放。
-void TitleScene::Terminate()
-{
-}

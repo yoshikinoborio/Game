@@ -2,6 +2,7 @@
 #include "Black.h"
 #include "SceneManager.h"
 
+//コンストラクタ。
 Black::Black()
 {
 	//各変数の初期化。
@@ -13,11 +14,12 @@ Black::Black()
 	m_backColor = D3DCOLOR_ARGB(0, 0, 0, 0);
 }
 
-
+//デストラクタ。
 Black::~Black()
 {
 }
 
+//初期化。
 void Black::Initialize()
 {
 	m_position = D3DXVECTOR2(FRAME_BUFFER_WITDH / 2, FRAME_BUFFER_HEIGHT / 2);
@@ -28,6 +30,7 @@ void Black::Initialize()
 	C2DImage::Initialize();
 }
 
+//更新。
 void Black::Update()
 {
 	//フラグを見て画像のα値を更新。
@@ -53,7 +56,7 @@ void Black::Update()
 		else
 		{
 			m_alph = 255;
-			g_sceneManager->ChangeScene(1);
+			g_sceneManager->ChangeScene(SceneNum::SceneNumTitle);
 		}
 	}
 

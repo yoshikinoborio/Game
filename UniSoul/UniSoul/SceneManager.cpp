@@ -8,55 +8,65 @@ DamageCollisionWorld* g_damageCollisionWorld = NULL;
 EnemyManager* g_enemyManager = NULL;
 Pad g_pad;
 
+//コンストラクタ。
 SceneManager::SceneManager()
 {
 	g_pScenes = NULL;
-	m_nextScene = -1;
 }
 
+//デストラクタ。
 SceneManager::~SceneManager()
 {
 	delete g_damageCollisionWorld;
 }
 
+//初期化。
 void SceneManager::Initialize()
 {
-	SceneManager::ChangeScene(1);
+	SceneManager::ChangeScene(SceneNum::SceneNumClear);
 }
 
+//更新。
 void SceneManager::Update()
 {
 	if (g_pScenes) {
 		g_pScenes->Update();
 	}
-	if (m_nextScene != -1) {
-		if (g_pScenes != NULL)
+	if (m_nextScene != SceneNum::Invalid) {
+		if (m_scenes != NULL)
 		{
 			delete g_pScenes;
 		}
-		if (m_nextScene == 1)
+		if (m_nextScene == SceneNum::SceneNumTitle)
 		{
 			g_pScenes = new TitleScene;
 		}
-		if (m_nextScene == 2)
+		if (m_nextScene == SceneNum::SceneNumGame)
 		{
 			g_pScenes = new GameScene;
 		}
+		if (m_nextScene == SceneNum::SceneNumClear)
+		{
+			g_pScenes = new ClearScene;
+		}
 		g_pScenes->Initialize();
-		m_nextScene = -1;
+		m_nextScene = SceneNum::Invalid;
 	}
 }
 
+//描画。
 void SceneManager::Draw()
 {
 	g_pScenes->Draw();
 }
 
-void SceneManager::ChangeScene(int key)
+//シーンの切り替え。
+void SceneManager::ChangeScene(const int& key)
 {
 	m_nextScene = key;
 }
 
+//解放。
 void SceneManager::Terminate()
 {
 	g_pScenes->Terminate();

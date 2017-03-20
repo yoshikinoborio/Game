@@ -133,22 +133,12 @@ void EnemySkeleton::Update()
 			//地面に着いている時。
 			if (m_characterController.IsOnGround() == TRUE)
 			{
+				//待機中のスピードを設定。
 				m_moveSpeed = SKELETONWAITSPEED;
-				//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
-				//自分の向きベクトル。
-				D3DXVECTOR3 Dir = D3DXVECTOR3(SkePos.m[3][0], SkePos.m[3][1], SkePos.m[3][2]);
-				//プレイヤーへの向きベクトル。
-				D3DXVECTOR3 PlayerDir = PosDiff;
-				//二つのベクトルを正規化。
-				D3DXVec3Normalize(&Dir, &Dir);
-				D3DXVec3Normalize(&PlayerDir, &PlayerDir);
 
-				//正規化した二つのベクトルの内積を計算。
-				float dot = D3DXVec3Dot(&Dir, &PlayerDir);
-				//内積の値の逆余弦からラジアンを求める。
-				float rad = acos(dot);
-				//ラジアンから角度に変換し実際の角度差を求める。
-				float selfangle D3DXToDegree(rad);
+				float selfangle;
+				//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
+				selfangle = m_CreateViewAngle.CreateView(PosDiff, SkePos);
 				//自分の視野角にいるかつ距離が500以下の時。
 				if (selfangle < 50.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
 				{

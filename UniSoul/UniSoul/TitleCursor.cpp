@@ -81,7 +81,7 @@ void TitleCursor::MenuProcess()
 		//音声再生が終了かつゲーム開始フラグがTRUE。
 		if (m_cursorDecideSE.GetIsPlaying() == FALSE&&m_gameStratFlag == TRUE)
 		{
-			g_sceneManager->ChangeScene(2);
+			g_sceneManager->ChangeScene(SceneNum::SceneNumGame);
 		}
 		break;
 		//ゲーム終了。

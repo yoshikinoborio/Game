@@ -148,6 +148,12 @@ void Camera::FreeCameraMode()
 		m_lookatPt = m_eyePt;
 		m_lookatPt.z += 2.0f;
 
+		if (g_pad.IsTrigger(enButtonA))
+		{
+			g_enemyManager->SetCreateEnemyFlag(TRUE);
+			g_enemyManager->SetCreatePos(m_lookatPt);
+		}
+
 		//フリーカメラフラグの操作。
 		FreeCameraFlagChanger();
 	}

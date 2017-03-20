@@ -2,6 +2,10 @@
 #include "EnemyBoss.h"
 #include "SceneManager.h"
 
+namespace {
+	const DamageCollisionWorld::Collision* dmgColli = NULL;
+}
+
 EnemyBoss::EnemyBoss()
 {
 	m_position = Vector3Zero;
@@ -18,6 +22,7 @@ EnemyBoss::EnemyBoss()
 	m_posDifference = Vector3Zero;
 	m_isTurn = FALSE;
 	m_atrTime = 0.0f;
+	m_bossBattleFlag = FALSE;
 }
 
 
@@ -61,14 +66,14 @@ void EnemyBoss::Initialize(const char* modelPath,const D3DXVECTOR3& pos,const D3
 
 	//Unityで出力した情報を元に設定。
 	m_position = pos;
-	this->m_rotation = rotation;
+	
 	m_scale = scale;
 
 	//半径と高さ。
 	m_height = 2.0f;
 	m_radius = 1.5f;
 
-	m_hp = 2000;
+	m_hp = 10;
 	m_maxhp = m_hp;
 
 	m_state = EnemyBossState::StateSearch;
@@ -85,9 +90,13 @@ void EnemyBoss::Update()
 
 	m_move = m_characterController.GetMoveSpeed();
 
+	//プレイヤーに向かうベクトルの計算。
 	m_posDifference = m_unitytyan->GetUnityChanPos() - m_position;
 
 	m_isTurn = FALSE;
+
+	//どこかに発生している当たり判定を探している処理。
+	DamageSearch();
 
 	//ボスのワールド行列を取得。
 	D3DXMATRIX& BossPos = m_skinModel.GetWorldMatrix();
@@ -98,27 +107,15 @@ void EnemyBoss::Update()
 	switch (m_state)
 	{
 	case EnemyBossState::StateSearch: {
-		
+		float selfangle;
 		//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
-		//自分の向きベクトル。
-		D3DXVECTOR3 Dir = D3DXVECTOR3(BossPos.m[3][0], BossPos.m[3][1], BossPos.m[3][2]);
-		//プレイヤーへの向きベクトル。
-		D3DXVECTOR3 PlayerDir = PosDiff;
-		//二つのベクトルを正規化。
-		D3DXVec3Normalize(&Dir, &Dir);
-		D3DXVec3Normalize(&PlayerDir, &PlayerDir);
-
-		//正規化した二つのベクトルの内積を計算。
-		float dot = D3DXVec3Dot(&Dir, &PlayerDir);
-		//内積の値の逆余弦からラジアンを求める。
-		float rad = acos(dot);
-		//ラジアンから角度に変換し実際の角度差を求める。
-		float selfangle D3DXToDegree(rad);
+		selfangle = m_CreateViewAngle.CreateView(PosDiff, BossPos);
 		//自分の視野角にいるかつ距離が500以下の時。
 		if (selfangle < 50.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
 		{
 			//発見。
 			m_state = EnemyBossState::StateFind;
+			
 			break;
 		}
 		m_currentBossAnimSetNo = enBossAnimWait;
@@ -128,6 +125,7 @@ void EnemyBoss::Update()
 		break;
 	case EnemyBossState::StateFind:
 	{
+		m_bossBattleFlag = TRUE;
 		m_moveSpeed = BOSSRUNSPEED;
 		m_isTurn = TRUE;
 		m_posDifference.y = 0.0f;
@@ -164,12 +162,6 @@ void EnemyBoss::Update()
 		{
 			m_state = EnemyBossState::StateAttack;
 		}
-
-		if (D3DXVec3LengthSq(&PosDiff) > 500.0f)
-		{
-			m_state = EnemyBossState::StateSearch;
-			m_moveSpeed = BOSSNWAITSPEED;
-		}
 	}
 		break;
 	case EnemyBossState::StateAttack: {
@@ -201,35 +193,15 @@ void EnemyBoss::Update()
 	}
 		break;
 	case EnemyBossState::StateDamage: {
-
+		DamageProcess();
 	}
 		break;
 	case EnemyBossState::StateDead: {
-
+		g_sceneManager->ChangeScene(SceneNum::SceneNumClear);
+		m_characterController.RemoveRigidBoby();
 	}
 		break;
-	}
-
-	RigidBody* rb = m_characterController.GetRigidBody();
-	//どこかに発生している当たり判定を探している。
-	const DamageCollisionWorld::Collision* dmgColli = g_damageCollisionWorld->FindOverlappedDamageCollision(
-		DamageCollisionWorld::enDamageToEnemy,
-		rb->GetBody()
-	);
-
-	if (dmgColli != NULL)
-	{
-		//ダメージを受けた。
-		m_hp -= dmgColli->damage;
-		if (m_hp <= 0.0f) {
-			//死亡
-			m_hp = 0;
-			//m_state = EnemyBossState::StateDead;
-		}
-		else {
-			//m_state = EnemyBossState::StateDamage;
-		}
-	}
+	}	
 
 	//キャラクタが動く速度を設定。
 	m_characterController.SetMoveSpeed(m_move);
@@ -251,4 +223,39 @@ void EnemyBoss::Draw(D3DXMATRIX viewMatrix,
 	bool isShadowReceiver)
 {
 	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowReceiver);
+}
+
+void EnemyBoss::DamageSearch()
+{
+	RigidBody* rb = m_characterController.GetRigidBody();
+	//どこかに発生している当たり判定を探している。
+	dmgColli = g_damageCollisionWorld->FindOverlappedDamageCollision(
+		DamageCollisionWorld::enDamageToEnemy,
+		rb->GetBody()
+	);
+
+	if (dmgColli != NULL)
+	{
+		m_state = EnemyBossState::StateDamage;
+		m_bossBattleFlag = TRUE;
+	}
+}
+
+void EnemyBoss::DamageProcess() 
+{
+	if (dmgColli != NULL)
+	{
+		//ダメージを受けた。
+		m_hp -= dmgColli->damage;
+		if (m_hp <= 0.0f) {
+			//死亡
+			m_hp = 0;
+			m_state = EnemyBossState::StateDead;
+		}
+		else {
+			m_state = EnemyBossState::StateFind;
+		}
+	}
+
+	
 }

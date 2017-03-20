@@ -30,7 +30,7 @@ void CFont::Init()
 		PROOF_QUALITY,				// 文字品質を重視
 		FIXED_PITCH | FF_SCRIPT,	// ピッチとファミリ
 		TEXT("ＭＳ　Ｐゴシック"),	// フォント名
-		&font);
+		&font);						// ID3DXFontポインタ
 }
 	/*!
 	* @brief	開放。

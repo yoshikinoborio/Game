@@ -168,9 +168,12 @@
     <ClCompile Include="BossEnemyHPBar.cpp" />
     <ClCompile Include="BossEnemyHPBarBack.cpp" />
     <ClCompile Include="BossEnemyHPBarFrame.cpp" />
+    <ClCompile Include="BossEnemyName.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="CharacterController.cpp" />
+    <ClCompile Include="Clear.cpp" />
+    <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="CollisionCreat.cpp" />
     <ClCompile Include="DamageCollisionWorld.cpp" />
     <ClCompile Include="DirectXFont.cpp" />
@@ -217,6 +220,7 @@
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="UnityChan.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="CreateViewAngle.cpp" />
     <ClCompile Include="WaveFile.cpp" />
     <ClCompile Include="WaveFileBank.cpp" />
     <ClCompile Include="YouDied.cpp" />
@@ -231,9 +235,12 @@
     <ClInclude Include="BossEnemyHPBar.h" />
     <ClInclude Include="BossEnemyHPBarBack.h" />
     <ClInclude Include="BossEnemyHPBarFrame.h" />
+    <ClInclude Include="BossEnemyName.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="Clear.h" />
+    <ClInclude Include="ClearScene.h" />
     <ClInclude Include="CollisionAttr.h" />
     <ClInclude Include="CollisionCreat.h" />
     <ClInclude Include="DamageCollisionWorld.h" />
@@ -291,6 +298,7 @@
     <ClInclude Include="UnityChan.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="CreateViewAngle.h" />
     <ClInclude Include="WaveFile.h" />
     <ClInclude Include="WaveFileBank.h" />
     <ClInclude Include="YouDied.h" />
