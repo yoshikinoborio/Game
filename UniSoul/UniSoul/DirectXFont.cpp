@@ -56,7 +56,7 @@ void CFont::Draw(const char* text,const int& pos_x,const int& pos_y)
 			pos_x,
 			pos_y,
 			pos_x + textLen * FONT_WIDTH,
-			pos_y + FONT_HEIGHT
+			pos_y + FONT_HEIGHT+2
 		};
 		font->DrawText(
 			nullptr,

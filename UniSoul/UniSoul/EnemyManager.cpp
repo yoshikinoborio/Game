@@ -3,6 +3,7 @@
 #include "EnemySkeleton.h"
 #include "EnemyGoblin.h"
 #include "EnemyBoss.h"
+#include "SceneManager.h"
 
 namespace
 {
@@ -125,10 +126,29 @@ void EnemyManager::Update()
 
 	if (m_createEnemyFlag == TRUE)
 	{
-		EnemySkeleton* newEnemy = new EnemySkeleton;
-		newEnemy->Initialize("image\\Skeleton@Skin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
-		m_enemyskeletonList.push_back(newEnemy);
-		m_createEnemyFlag = FALSE;
+		int Enemy = g_pScenes->GetCamera()->GetNowObject();
+		switch (Enemy)
+		{
+		case 0: {
+			EnemySkeleton* newEnemy = new EnemySkeleton;
+			newEnemy->Initialize("image\\Skeleton@Skin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
+			m_enemyskeletonList.push_back(newEnemy);
+			m_createEnemyFlag = FALSE;
+			break; 
+		}
+		case 1:
+		{
+			EnemyGoblin* newEnemy = new EnemyGoblin;
+			newEnemy->Initialize("image\\EnemyGoblin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
+			m_enemyGoblinList.push_back(newEnemy);
+			m_createEnemyFlag = FALSE;
+			break;
+		}
+		default:
+			m_createEnemyFlag = FALSE;
+			break;
+		}
+		
 	}
 }
 

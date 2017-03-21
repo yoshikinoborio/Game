@@ -1,15 +1,18 @@
 #include "stdafx.h"
 #include "Map.h"
+#include "SceneManager.h"
 
-//マップチップの配置情報のテーブル。
-MapLocInfo mapChipLocInfoTable[] = {
-#include "locationInfo.h"
-};
+namespace {
+	//マップチップの配置情報のテーブル。
+	MapLocInfo mapChipLocInfoTable[] = {
+	#include "locationInfo.h"
+	};
+}
 
 //コンストラクタ。
 Map::Map()
 {
-	
+	m_createMapFlag = FALSE;
 }
 
 //デストラクタ。
@@ -39,6 +42,56 @@ void Map::Update()
 	for (auto mapList : m_mapChipList)
 	{
 		mapList->Update();
+	}
+
+	if (m_createMapFlag == TRUE)
+	{
+		int MapObject = g_pScenes->GetCamera()->GetNowObject();
+		switch (MapObject)
+		{
+		case 2: {
+			MapChip* newMap = new MapChip;
+			newMap->Initialize("image\\Building_a2.X", m_createPos, D3DXQUATERNION(-0.71f, 0.00f, 0.00f, 0.71f));
+			m_mapChipList.push_back(newMap);
+			m_createMapFlag = FALSE;
+			break;
+		}
+		case 3:
+		{
+			MapChip* newMap = new MapChip;
+			newMap->Initialize("image\\Building_b2.X", m_createPos, D3DXQUATERNION(-0.71f, 0.00f, 0.00f, 0.71f));
+			m_mapChipList.push_back(newMap);
+			m_createMapFlag = FALSE;
+			break;
+		}
+		case 4: {
+			MapChip* newMap = new MapChip;
+			newMap->Initialize("image\\Building_c2.X", m_createPos, D3DXQUATERNION(-0.71f, 0.00f, 0.00f, 0.71f));
+			m_mapChipList.push_back(newMap);
+			m_createMapFlag = FALSE;
+			break;
+		}
+		case 5:
+		{
+			MapChip* newMap = new MapChip;
+			newMap->Initialize("image\\Building_d2.X", m_createPos, D3DXQUATERNION(-0.71f, 0.00f, 0.00f, 0.71f));
+			m_mapChipList.push_back(newMap);
+			m_createMapFlag = FALSE;
+			break;
+		}
+		case 6:
+		{
+			MapChip* newMap = new MapChip;
+			newMap->Initialize("image\\Yashi.X", m_createPos, D3DXQUATERNION(-0.71f, 0.00f, 0.00f, 0.71f));
+			m_mapChipList.push_back(newMap);
+			m_createMapFlag = FALSE;
+			break;
+		}
+		default:
+			m_createMapFlag = FALSE;
+			break;
+		}
+
 	}
 }
 

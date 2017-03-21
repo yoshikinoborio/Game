@@ -42,15 +42,10 @@ public:
 		return *m_enemyBoss;
 	}
 
-	//敵を生成する位置の設定。
-	void SetCreatePos(const D3DXVECTOR3& pos)
+	//敵を生成する位置とフラグの設定。
+	void SetEnemyCreate(const D3DXVECTOR3& pos,bool flg)
 	{
 		m_createPos = pos;
-	}
-
-	//敵生成フラグの設定。
-	void SetCreateEnemyFlag(bool flg)
-	{
 		m_createEnemyFlag = flg;
 	}
 	//⊿タイムに乗算される値を設定。

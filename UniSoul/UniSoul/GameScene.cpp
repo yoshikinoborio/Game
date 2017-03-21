@@ -383,7 +383,7 @@ void GameScene::Draw()
 		FALSE);
 
 	//ブルームの描画。
-	m_bloom.Render();
+	//m_bloom.Render();
 	
 
 	if (m_camera.GetCameraFreeFlag() == FALSE)
@@ -430,24 +430,61 @@ void GameScene::Draw()
 
 		//カメラの位置を表示。
 		{
+			//カメラのX座標を表示。
 			D3DXVECTOR3 pos = m_camera.GetEyePt();
-			float PosX = pos.x;
 			std::string FreeCameraPositionX;
 			FreeCameraPositionX = "Position.X:";
-			FreeCameraPositionX = FreeCameraPositionX + std::to_string(PosX);
+			FreeCameraPositionX = FreeCameraPositionX + std::to_string(pos.x);
 			m_font.Draw(FreeCameraPositionX.c_str(), 0, 20);
 
-			float PosY = pos.y;
+			//カメラのY座標を表示。
 			std::string FreeCameraPositionY;
 			FreeCameraPositionY = "Position.Y:";
-			FreeCameraPositionY = FreeCameraPositionY + std::to_string(PosY);
+			FreeCameraPositionY = FreeCameraPositionY + std::to_string(pos.y);
 			m_font.Draw(FreeCameraPositionY.c_str(), 0, 40);
 
-			float PosZ = pos.z;
+			//カメラのZ座標を表示。
 			std::string FreeCameraPositionZ;
 			FreeCameraPositionZ = "Position.Z:";
-			FreeCameraPositionZ = FreeCameraPositionZ + std::to_string(PosZ);
+			FreeCameraPositionZ = FreeCameraPositionZ + std::to_string(pos.z);
 			m_font.Draw(FreeCameraPositionZ.c_str(), 0, 60);
+		}
+
+		int nowobject = m_camera.GetNowObject();
+		//フリーカメラモードの表示。
+		std::string Object;
+		switch (nowobject)
+		{
+		case 0:
+			Object = "GameObject Enemy : Skeleton";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		case 1:
+			Object = "GameObject Enemy : Goblin";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		case 2:
+			Object = "GameObject Object : House_A";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		case 3:
+			Object = "GameObject Object : House_B";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		case 4:
+			Object = "GameObject Object : House_C";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		case 5:
+			Object = "GameObject Object : House_D";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		case 6:
+			Object = "GameObject Object : Yashi";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		default:
+			break;
 		}
 	}
 

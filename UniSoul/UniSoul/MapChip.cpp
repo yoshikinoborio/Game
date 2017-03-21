@@ -62,13 +62,12 @@ void MapChip::Initialize(const char* modelPath, const D3DXVECTOR3& pos, const D3
 	RigidBodyInfo rbInfo;
 	rbInfo.collider = &m_meshCollider;	//剛体のコリジョンを設定する。
 	rbInfo.mass = 0.0f;					//質量を0にすると動かない剛体になる。
-	rbInfo.pos = pos;
-	rbInfo.rot = rotation;
+	rbInfo.pos = m_position;
+	rbInfo.rot = m_rotation;
 	//剛体を作成。
 	m_rigidBody.Create(rbInfo);
 	//作成した剛体を物理ワールドに追加。
 	static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->AddRigidBody(&m_rigidBody);
-
 }
 
 //更新。

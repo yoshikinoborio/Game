@@ -2,6 +2,11 @@
 #include "SceneManager.h"
 #include "Camera.h"
 
+//次オブジェクトに切り替えができるまで待機する時間。
+namespace {
+	const short SELECTOBJECT_MOVEWAITTIME = 200;
+}
+
 Camera::Camera()
 {
 	m_eyePt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -15,6 +20,7 @@ Camera::Camera()
 	m_rStick_x = 0.0f;
 	m_rStick_y = 0.0f;
 	m_cameraFreeFlag = FALSE;
+	m_nowGameObject = 0;
 }
 
 Camera::~Camera()
@@ -148,10 +154,47 @@ void Camera::FreeCameraMode()
 		m_lookatPt = m_eyePt;
 		m_lookatPt.z += 2.0f;
 
+		//現在の時間の取得。
+		m_nowTime = timeGetTime();
+
+		//一定時間超えないとカーソルは動かない。
+		if (m_nowTime - m_selectMoveTime > SELECTOBJECT_MOVEWAITTIME) {
+			m_selectMoveTime = m_nowTime;
+			if (g_pad.IsPress(enButtonLeft))
+			{
+				m_nowGameObject -= 1;
+				if (m_nowGameObject < (int)GameObject::Skeleton)
+				{
+					m_nowGameObject = (int)GameObject::ObjectNum - 1;
+				}
+			}
+			else
+			{
+				m_selectMoveTime = 0;
+			}
+		}
+
+		//一定時間超えないとカーソルは動かない。
+		if (m_nowTime - m_selectMoveTime > SELECTOBJECT_MOVEWAITTIME) {
+			m_selectMoveTime = m_nowTime;
+			if (g_pad.IsPress(enButtonRight))
+			{
+				m_nowGameObject += 1;
+				if (m_nowGameObject >= (int)GameObject::ObjectNum)
+				{
+					m_nowGameObject = (int)GameObject::Skeleton;
+				}
+			}
+			else
+			{
+				m_selectMoveTime = 0;
+			}
+		}
+
 		if (g_pad.IsTrigger(enButtonA))
 		{
-			g_enemyManager->SetCreateEnemyFlag(TRUE);
-			g_enemyManager->SetCreatePos(m_lookatPt);
+			g_enemyManager->SetEnemyCreate(m_lookatPt, TRUE);
+			static_cast<GameScene*>(g_pScenes)->GetMap()->SetMapObjectCreate(m_lookatPt, TRUE);
 		}
 
 		//フリーカメラフラグの操作。

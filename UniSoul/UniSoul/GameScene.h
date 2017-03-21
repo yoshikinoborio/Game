@@ -116,6 +116,10 @@ public:
 		return &m_skinModelDataResources;
 	}
 
+	Map* GetMap()
+	{
+		return &m_map;
+	}
 private:
 	Stage					m_stage;					//地面。
 	Light					m_light;					//ライト。

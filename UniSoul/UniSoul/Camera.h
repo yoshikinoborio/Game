@@ -6,6 +6,17 @@ class UnityChan;
 class Camera
 {
 public:
+	enum class GameObject
+	{
+		Skeleton = 0,
+		Goblin,
+		House_A,
+		House_B,
+		House_C,
+		House_D,
+		Yashi,
+		ObjectNum,
+	};
 	//コンストラクタ
 	Camera();
 
@@ -41,7 +52,7 @@ public:
 
 
 	//ビュー行列の設定
-	void SetViewMatrix(D3DXMATRIX View)
+	void SetViewMatrix(const D3DXMATRIX& View)
 	{
 		m_viewMatrix = View;
 	}
@@ -146,6 +157,11 @@ public:
 	{
 		return m_cameraFreeFlag;
 	}
+
+	int GetNowObject() const
+	{
+		return m_nowGameObject;
+	}
 private:
 	D3DXMATRIX		m_viewMatrix;			//ビュー行列 カメラ行列とも言う。
 	D3DXMATRIX		m_projectionMatrix;		//プロジェクション行列 ビュー空間から射影空間に変換する行列・
@@ -167,4 +183,7 @@ private:
 	float           m_rStick_y;				//右スティックのY軸の入力量を格納。
 	bool			m_cameraFreeFlag;		//自由なカメラに切り替えるフラグ。
 	D3DXVECTOR3     m_moveDir;				//カメラの向き。
+	int				m_nowGameObject;		//選択されているゲームオブジェクト。
+	DWORD			m_nowTime;				//現在の時間を格納。
+	DWORD			m_selectMoveTime;		//オブジェクトを選択してから経過した時間。
 };
