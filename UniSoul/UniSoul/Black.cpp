@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Black.h"
 #include "SceneManager.h"
+#include "GameScene.h"
 
 //コンストラクタ。
 Black::Black()
@@ -49,14 +50,25 @@ void Black::Update()
 	else
 	{
 		//だんだん画面を黒くしていく。
-		if (m_alph<255)
+		if (m_alph<253)
 		{
 			m_alph += 3;
 		}
 		else
 		{
+			//完全に画面が暗くなったらシーンを切り替える。
 			m_alph = 255;
-			g_sceneManager->ChangeScene(SceneNum::SceneNumTitle);
+
+			//プレイヤーが死んでいたらタイトル画面に切り替え。
+			if (static_cast<GameScene*>(g_pScenes)->GetUnityChan()->GetIsDead()==TRUE)
+			{
+				g_sceneManager->ChangeScene(SceneNum::SceneNumGame);
+			}
+			else //死んでいないならゲームクリア画面に切り替え。
+			{
+				g_sceneManager->ChangeScene(SceneNum::SceneNumClear);
+			}
+			
 		}
 	}
 

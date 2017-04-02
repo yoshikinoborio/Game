@@ -11,6 +11,7 @@ TitleScene::TitleScene()
 //デストラクタ。
 TitleScene::~TitleScene()
 {
+	g_pd3dDevice->Release();
 }
 
 //初期化。

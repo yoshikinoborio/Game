@@ -27,7 +27,7 @@ public:
 	//デストラクタ。
 	~EnemyBoss();
 	//初期化。
-	void Initialize(const char* modelPath,const D3DXVECTOR3& pos, const D3DXQUATERNION& rotation, const D3DXVECTOR3& scale);
+	void Initialize(const char* modelPath,const D3DXVECTOR3& pos, const D3DXQUATERNION& rotation, const D3DXVECTOR3& scale)override;
 
 	//更新。
 	void Update()override;
@@ -35,7 +35,7 @@ public:
 	//描画。
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
-		bool isShadowReceiver);
+		bool isShadowReceiver)override;
 
 	//どこかに発生している当たり判定を探している処理。
 	void DamageSearch();

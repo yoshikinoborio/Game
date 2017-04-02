@@ -285,6 +285,9 @@ void GameScene::Initialize()
 	//ボスの名前の初期化。
 	m_bossEnemyName.Initialize();
 
+	//リスポーン地点の初期化。
+	m_respawn.Initialize();
+
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
 }
@@ -383,7 +386,7 @@ void GameScene::Draw()
 		FALSE);
 
 	//ブルームの描画。
-	//m_bloom.Render();
+	m_bloom.Render();
 	
 
 	if (m_camera.GetCameraFreeFlag() == FALSE)
@@ -450,37 +453,42 @@ void GameScene::Draw()
 			m_font.Draw(FreeCameraPositionZ.c_str(), 0, 60);
 		}
 
+		//フリーカメラモード時に選択されている生成するオブジェクトの数字を取得。
 		int nowobject = m_camera.GetNowObject();
-		//フリーカメラモードの表示。
+		//生成するために選択されているオブジェクトの名前を表示。
 		std::string Object;
 		switch (nowobject)
 		{
-		case 0:
+		case (int)GameObject::Skeleton:
 			Object = "GameObject Enemy : Skeleton";
 			m_font.Draw(Object.c_str(), 0, 80);
 			break;
-		case 1:
+		case (int)GameObject::Goblin:
 			Object = "GameObject Enemy : Goblin";
 			m_font.Draw(Object.c_str(), 0, 80);
 			break;
-		case 2:
+		case (int)GameObject::House_A:
 			Object = "GameObject Object : House_A";
 			m_font.Draw(Object.c_str(), 0, 80);
 			break;
-		case 3:
+		case (int)GameObject::House_B:
 			Object = "GameObject Object : House_B";
 			m_font.Draw(Object.c_str(), 0, 80);
 			break;
-		case 4:
+		case (int)GameObject::House_C:
 			Object = "GameObject Object : House_C";
 			m_font.Draw(Object.c_str(), 0, 80);
 			break;
-		case 5:
+		case (int)GameObject::House_D:
 			Object = "GameObject Object : House_D";
 			m_font.Draw(Object.c_str(), 0, 80);
 			break;
-		case 6:
+		case (int)GameObject::Yashi:
 			Object = "GameObject Object : Yashi";
+			m_font.Draw(Object.c_str(), 0, 80);
+			break;
+		case (int)GameObject::Player:
+			Object = "GameObject Player : ユニティちゃん";
 			m_font.Draw(Object.c_str(), 0, 80);
 			break;
 		default:
@@ -581,6 +589,9 @@ void GameScene::Update()
 		//ブラックアウトの画像の更新。
 		m_black.Update();
 
+		//リスポーン地点の更新。
+		m_respawn.Update();
+
 		if (m_unitychan.GetIsDead() == FALSE && g_enemyManager->GetBoss().GetBossBattleFlag() == TRUE)
 		{
 			//ボスの体力バーの更新。
@@ -602,5 +613,5 @@ void GameScene::Update()
 //-----------------------------------------------------------------------------
 void GameScene::Terminate()
 {
-	//g_pd3dDevice->Release();
+	g_pd3dDevice->Release();
 }

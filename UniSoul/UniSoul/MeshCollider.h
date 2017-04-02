@@ -27,11 +27,16 @@ public:
 	{
 		return meshShape;
 	}
+	btBoxShape* GetBoxBody() override
+	{
+		return box;
+	}
 private:
 	typedef std::vector<D3DXVECTOR3>	VertexBuffer;		//頂点バッファ。
 	typedef std::vector<unsigned int>	IndexBuffer;		//インデックスバッファ。
 	std::vector<VertexBuffer*>		vertexBufferArray;		//頂点バッファの配列。
 	std::vector<IndexBuffer*>		indexBufferArray;		//インデックスバッファの配列。
-	btBvhTriangleMeshShape*			meshShape = NULL;					//メッシュ形状。
+	btBvhTriangleMeshShape*			meshShape = NULL;		//メッシュ形状。
 	btTriangleIndexVertexArray*		stridingMeshInterface = NULL;
+	btBoxShape*						box;
 };

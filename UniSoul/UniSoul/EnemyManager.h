@@ -1,5 +1,6 @@
 #pragma once
 #include "Animation.h"
+class EnemyBase;
 class EnemySkeleton;
 class EnemyGoblin;
 class EnemyBoss;
@@ -8,6 +9,12 @@ class EnemyBoss;
 class EnemyManager
 {
 public:
+	enum  class EnemyType
+	{
+		Skeleton = 0,	//骨型。
+		Goblin,			//ゴブリン。
+		Boss			//ボス。
+	};
 	//コンストラクタ。
 	EnemyManager();
 
@@ -20,23 +27,33 @@ public:
 	//更新。
 	void Update();
 
+	//エネミーリストの更新。
+	void EnemyListUpdate();
+
+	//ボスの更新。
+	void EnemyBossUpdate();
+
 	//描画。
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
 		bool isShadowReceiver);
+
+	//敵を生成する処理。
+	void EnemyCreate();
 	
 	
-	const std::vector<EnemySkeleton*>& GetEnemyList() const
+	const std::vector<EnemyBase*>& GetEnemyList() const
 	{
-		return m_enemyskeletonList;
+		return m_enemyList;
 	}
 
 	//constだと中身を変えたい時に変えれないので変えたい時用のためにもう一つ用意。
-	std::vector<EnemySkeleton*>& GetEnemyList()
+	std::vector<EnemyBase*>& GetEnemyList()
 	{
-		return m_enemyskeletonList;
+		return m_enemyList;
 	}
 
+	//ボスのインスタンス取得。
 	EnemyBoss& GetBoss() 
 	{
 		return *m_enemyBoss;
@@ -52,9 +69,9 @@ public:
 	//グローバル⊿タイムに乗算される値。この値に0.5を設定するとエネミーの挙動が0.5倍速になる。
 	void SetFrameDeltaTimeMul(float mul);
 private:
-	std::vector< EnemySkeleton*>	m_enemyskeletonList;	//骨型の敵の可変長配列。
-	std::vector< EnemyGoblin*>		m_enemyGoblinList;		//ゴブリン型の可変長配列。
+	std::vector< EnemyBase*>		m_enemyList;			//ボス以外を除く敵の可変長配列。
 	EnemyBoss*						m_enemyBoss;			//ボス。
 	bool							m_createEnemyFlag;		//敵を生成するフラグ。
 	D3DXVECTOR3						m_createPos;			//敵を生成する時に使う位置情報を格納。
+	
 };

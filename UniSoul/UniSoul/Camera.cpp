@@ -9,14 +9,15 @@ namespace {
 
 Camera::Camera()
 {
-	m_eyePt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_lookatPt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_upVec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_eyePt =Vector3Zero;
+	m_lookatPt = Vector3Zero;
+	m_upVec = Vector3Zero;
 	m_near = 0.0f;
 	m_far = 0.0f;
 	m_aspect = 0.0f;
 	m_angle = 0.0f;
-	m_toEyeptVector = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_toEyeptVector = Vector3Zero;
+	m_freeToEyeptVector = Vector3Zero;
 	m_rStick_x = 0.0f;
 	m_rStick_y = 0.0f;
 	m_cameraFreeFlag = FALSE;
@@ -36,8 +37,8 @@ void Camera::Initialize()
 	m_aspect = 1920.0f / 1020.0f;
 
 	m_eyePt = D3DXVECTOR3(0.0f, 4.0f, -5.0f);
-	m_lookatPt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_upVec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	m_lookatPt = Vector3Zero;
+	m_upVec = Vector3Up;
 
 	//プレイヤーのインスタンスの取得。
 	m_unitychan = g_pScenes->GetUnityChan();
@@ -127,7 +128,7 @@ void Camera::FreeCameraMode()
 		D3DXVECTOR3 moveDirCameraLocal;
 		moveDirCameraLocal.y = 0.0f;
 		moveDirCameraLocal.x = g_pad.GetLStickXF();
-		moveDirCameraLocal.z = g_pad.GetRStickYF();
+		moveDirCameraLocal.z = g_pad.GetLStickYF();
 
 		D3DXMATRIX& ViewInv = m_viewMatrixInv;//カメラの逆行列を取得。
 											  //カメラ空間から見た奥方向のベクトルを取得。
@@ -148,21 +149,43 @@ void Camera::FreeCameraMode()
 		m_moveDir.z += cameraX.z * moveDirCameraLocal.x + cameraZ.z * moveDirCameraLocal.z;
 
 		m_eyePt.x = m_moveDir.x*2.0f;
-		m_eyePt.y += g_pad.GetLStickYF() *1.0f;
+		m_eyePt.y += g_pad.GetRStickYF() *1.0f;
 		m_eyePt.z = m_moveDir.z*2.0f;
 
 		m_lookatPt = m_eyePt;
 		m_lookatPt.z += 2.0f;
 
+		//右スティックからの入力を取得。
+		m_rStick_x = g_pad.GetRStickXF();
+		//右スティックを使った横のカメラ移動。
+		if (fabsf(m_rStick_x) > 0.0f) {
+			//Y軸周りの回転を計算。
+			D3DXQuaternionRotationAxis(&m_yAxis, &m_upVec, 0.03f * m_rStick_x);//Y軸を任意の回転軸にしてクォータニオンを回転。
+			D3DXMatrixRotationQuaternion(&m_rot, &m_yAxis);//クォータニオンから回転行列を作成。
+			D3DXVec3Transform(&m_v4, &m_freeToEyeptVector, &m_rot);//回転行列を使ってm_toEyeptVectorを回転。
+			m_freeToEyeptVector.x = m_v4.x;
+			m_freeToEyeptVector.y = m_v4.y;
+			m_freeToEyeptVector.z = m_v4.z;
+		}
+
+
+
+		m_eyePt = m_lookatPt + m_freeToEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
+
 		//現在の時間の取得。
 		m_nowTime = timeGetTime();
 
-		//一定時間超えないとカーソルは動かない。
+		//一定時間超えないとオブジェクトの切り替えは発生しない。
 		if (m_nowTime - m_selectMoveTime > SELECTOBJECT_MOVEWAITTIME) {
 			m_selectMoveTime = m_nowTime;
+
+			//十字キー左が押されたら。
 			if (g_pad.IsPress(enButtonLeft))
 			{
+				//選択しているオブジェクトをずらす。
 				m_nowGameObject -= 1;
+
+				//ずらした結果選択出来るオブジェクトの先頭までまで到達したら最後尾に戻す。
 				if (m_nowGameObject < (int)GameObject::Skeleton)
 				{
 					m_nowGameObject = (int)GameObject::ObjectNum - 1;
@@ -170,16 +193,22 @@ void Camera::FreeCameraMode()
 			}
 			else
 			{
+				//何も押されていない間は0にする。
 				m_selectMoveTime = 0;
 			}
 		}
 
-		//一定時間超えないとカーソルは動かない。
+		//一定時間超えないとオブジェクトの切り替えは発生しない。
 		if (m_nowTime - m_selectMoveTime > SELECTOBJECT_MOVEWAITTIME) {
 			m_selectMoveTime = m_nowTime;
+
+			//十字キー右が押されたら。
 			if (g_pad.IsPress(enButtonRight))
 			{
+				//選択しているオブジェクトをずらす。
 				m_nowGameObject += 1;
+
+				//ずらした結果選択出来るオブジェクトの最後尾にまで到達したら先頭に戻す。
 				if (m_nowGameObject >= (int)GameObject::ObjectNum)
 				{
 					m_nowGameObject = (int)GameObject::Skeleton;
@@ -187,14 +216,24 @@ void Camera::FreeCameraMode()
 			}
 			else
 			{
+				//何も押されていない間は0にする。
 				m_selectMoveTime = 0;
 			}
 		}
 
-		if (g_pad.IsTrigger(enButtonA))
+		//Aボタンを押すと敵を生成。
+		if (g_pad.IsTrigger(enButtonRB1))
 		{
+			//敵を生成するフラグの切り替え。
 			g_enemyManager->SetEnemyCreate(m_lookatPt, TRUE);
+
+			//マップオブジェクトを生成するフラグの切り替え。
 			static_cast<GameScene*>(g_pScenes)->GetMap()->SetMapObjectCreate(m_lookatPt, TRUE);
+
+			if (m_nowGameObject == (int)GameObject::Player)
+			{
+				m_unitychan->SetPos(m_eyePt);
+			}
 		}
 
 		//フリーカメラフラグの操作。
@@ -262,6 +301,9 @@ void Camera::FreeCameraFlagChanger()
 {
 	if (g_pad.IsTrigger(enButtonUp))
 	{
+		D3DXVECTOR3 FreeEyePt = D3DXVECTOR3(0.0f, 2.04f, 0.0f);
+		D3DXVECTOR3 FreeLookatPt = D3DXVECTOR3(0.0f, 2.04f, 2.0f);
+		m_freeToEyeptVector = FreeEyePt - FreeLookatPt;
 		m_cameraFreeFlag = TRUE;
 	}
 

@@ -39,6 +39,23 @@ public:
 	{
 	}
 
+	//初期化。
+	virtual void Initialize(const char* modelPath, const D3DXVECTOR3& pos, const D3DXQUATERNION& rotation, const D3DXVECTOR3& scale) {
+
+	}
+
+	//更新。
+	virtual void Update() {
+
+	}
+
+	//描画。
+	virtual void Draw(D3DXMATRIX viewMatrix,
+		D3DXMATRIX projMatrix,
+		bool isShadowReceiver) {
+
+	}
+
 	//HPの取得。
 	int GetHP() const
 	{
@@ -49,6 +66,12 @@ public:
 	int GetMaxHP() const
 	{
 		return m_maxhp;
+	}
+
+	//TREUなら死んでいる、FALSEなら生きている。
+	bool GetIsDead() const
+	{
+		return m_isDead;
 	}
 
 	//同じアニメーションが再生されていても気にせずにでも最初から流す。
@@ -74,6 +97,11 @@ public:
 	void SetFrameDeltaTimeMul(float mul)
 	{
 		m_deltaTimeMul = mul;
+	}
+
+	const D3DXVECTOR3& GetPos() const
+	{
+		return m_position;
 	}
 protected:
 	D3DXVECTOR3			m_move;								//移動量。

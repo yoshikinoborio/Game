@@ -100,11 +100,11 @@ public:
 		return &m_rigidBody;
 	}
 	/*!
-	* @brief	剛体を物理エンジンから削除。。
+	* @brief	剛体を物理エンジンから削除。
 	*/
 	void RemoveRigidBoby();
 	/*!
-	* @brief	剛体の半径を設定。。
+	* @brief	剛体の半径を設定。
 	*/
 	void SetRadius(float radius)
 	{

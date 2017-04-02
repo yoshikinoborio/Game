@@ -78,7 +78,7 @@ void EnemyBoss::Initialize(const char* modelPath,const D3DXVECTOR3& pos,const D3
 
 	m_state = EnemyBossState::StateSearch;
 
-	m_dropEXP =50000;
+	m_dropEXP =500000;
 
 	m_characterController.Initialize(m_radius, m_height, m_position);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
@@ -192,12 +192,19 @@ void EnemyBoss::Update()
 		m_move = Vector3Zero;
 	}
 		break;
+		//ダメージを受けている。
 	case EnemyBossState::StateDamage: {
 		DamageProcess();
 	}
 		break;
+		//死んだ状態。
 	case EnemyBossState::StateDead: {
-		g_sceneManager->ChangeScene(SceneNum::SceneNumClear);
+		m_moveSpeed = 0.0f;
+		//完全に死んだらプレイヤーに経験値を渡す。
+		m_unitytyan->AddPlayerEXP(m_dropEXP);
+		//エネミーマネージャーに死んだことを伝えるフラグをTRUEにする。
+		m_isDead = TRUE;
+		//キャラクターコントローラーの解放。
 		m_characterController.RemoveRigidBoby();
 	}
 		break;
@@ -223,6 +230,9 @@ void EnemyBoss::Draw(D3DXMATRIX viewMatrix,
 	bool isShadowReceiver)
 {
 	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowReceiver);
+
+	//１フレームの経過時間の取得。
+	m_frameDeltaTime = static_cast<GameScene*>(g_pScenes)->GetFrameDeltaTime();
 }
 
 void EnemyBoss::DamageSearch()

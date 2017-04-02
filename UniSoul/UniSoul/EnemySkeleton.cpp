@@ -5,7 +5,6 @@
 //コンストラクタ。
 EnemySkeleton::EnemySkeleton()
 {
-	m_initPos = Vector3Zero;
 	m_position = Vector3Zero;
 	m_rotation = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
 	m_scale = Vector3Zero;
@@ -67,7 +66,6 @@ void EnemySkeleton::Initialize(const char* modelPath,const D3DXVECTOR3& pos, con
 
 	//Unityで出力した情報を元に設定。
 	m_position = pos;
-	m_initPos = m_position;
 	this->m_rotation = rotation;
 	m_scale = scale;
 
@@ -101,11 +99,17 @@ void EnemySkeleton::Initialize(const char* modelPath,const D3DXVECTOR3& pos, con
 	m_characterController.Initialize(m_radius, m_height, m_position);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
 
+	m_lightFlag = FALSE;
 }
 
 //更新。
 void EnemySkeleton::Update()
 {
+	if (m_lightFlag==TRUE)
+	{
+		m_light.SetAmbientLight(D3DXVECTOR4(1.3f, 0.3f, 0.3f, 1.0f));
+	}
+	
 	if (m_isDead != TRUE)
 	{
 		m_animation.Update(GetLocalFrameDeltaTime());
@@ -201,7 +205,6 @@ void EnemySkeleton::Update()
 			}
 			break;
 		case SkeletonState::StateDead:
-			//m_move = Vector3Zero;
 			m_moveSpeed = 0.0f;
 			if (!m_animation.IsPlay()) {
 
@@ -259,6 +262,8 @@ void EnemySkeleton::Update()
 
 		//キャラクタが動く速度を設定。
 		m_characterController.SetMoveSpeed(m_move);
+		//１フレームの経過時間の取得。
+		m_frameDeltaTime = static_cast<GameScene*>(g_pScenes)->GetFrameDeltaTime();
 		//キャラクタコントローラーを実行。
 		m_characterController.Execute(GetLocalFrameDeltaTime());
 		//キャラクターコントロールで計算した位置をエネミーの位置に反映。
@@ -378,7 +383,7 @@ void EnemySkeleton::SearchMove()
 void EnemySkeleton::Damage()
 {
 	//死んでいたら何もしない。
-	if (/*m_state == SkeletonState::StateDamage ||*/ m_state == SkeletonState::StateDead)
+	if (m_state == SkeletonState::StateDamage || m_state == SkeletonState::StateDead)
 	{
 		return;
 	}

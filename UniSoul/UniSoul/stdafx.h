@@ -81,6 +81,19 @@ namespace {
 	const D3DXVECTOR3 Vector3Back = { 0.0f,0.0f,-1.0f };
 	const D3DXVECTOR2 Vector2Zero = { 0.0f,0.0f};
 	const D3DXVECTOR2 Vector2One = { 1.0f,1.0f };
+
+	enum class GameObject
+	{
+		Skeleton = 0,
+		Goblin,
+		House_A,
+		House_B,
+		House_C,
+		House_D,
+		Yashi,
+		Player,
+		ObjectNum,
+	};
 }
 
 

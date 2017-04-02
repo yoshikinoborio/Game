@@ -16,6 +16,8 @@ public:
 	//更新。
 	void Update();
 
+	//You Deadの文字を描画する処理。
+	void YouDiedDrawProcess();
 private:
 	int		m_alph;		 //α値の変わり。
 };

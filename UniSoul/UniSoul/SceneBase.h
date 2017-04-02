@@ -54,7 +54,6 @@ public:
 	{
 		return &m_renderTarget;
 	}
-
 protected:
 	UnityChan		m_unitychan;		//プレイヤーのインスタンス。
 	CSoundEngine*	m_soundEngine;		//サウンドエンジンのインスタンス。

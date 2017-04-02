@@ -57,11 +57,27 @@ void PhysicsWorld::Update()
 {
 	dynamicWorld->stepSimulation(1.0f/60.0f);
 }
+
+//剛体の追加。
 void PhysicsWorld::AddRigidBody(RigidBody* rb)
 {
 	dynamicWorld->addRigidBody(rb->GetBody());
 }
+
+//剛体の削除。
 void PhysicsWorld::RemoveRigidBody(RigidBody* rb)
 {
 	dynamicWorld->removeRigidBody(rb->GetBody());
+}
+
+//ゴーストオブジェクトの追加
+void PhysicsWorld::AddGhostObject(btGhostObject* ghost)
+{
+	dynamicWorld->addCollisionObject(ghost);
+}
+
+//ゴーストオブジェクトの削除。
+void PhysicsWorld::RemoveGhostObject(btGhostObject* ghost)
+{
+	dynamicWorld->removeCollisionObject(ghost);
 }

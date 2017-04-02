@@ -6,17 +6,7 @@ class UnityChan;
 class Camera
 {
 public:
-	enum class GameObject
-	{
-		Skeleton = 0,
-		Goblin,
-		House_A,
-		House_B,
-		House_C,
-		House_D,
-		Yashi,
-		ObjectNum,
-	};
+	
 	//コンストラクタ
 	Camera();
 
@@ -173,6 +163,7 @@ private:
 	float			m_near;					//近平面(ニアー)。
 	float			m_aspect;				//アスペクト比。
 	D3DXVECTOR3		m_toEyeptVector;		//注視点からカメラの座標に向かうベクトル。
+	D3DXVECTOR3		m_freeToEyeptVector;	//フリーカメラ時の注視点からカメラの座標に向かうベクトル。
 	UnityChan*      m_unitychan;			//プレイヤーのインスタンス。
 	float			m_angle;				//回転。
 	D3DXQUATERNION	m_yAxis;				//Y軸回転のクォータニオン。

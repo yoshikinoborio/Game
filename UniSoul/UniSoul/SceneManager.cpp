@@ -33,7 +33,7 @@ void SceneManager::Update()
 		g_pScenes->Update();
 	}
 	if (m_nextScene != SceneNum::Invalid) {
-		if (m_scenes != NULL)
+		if (g_pScenes != NULL)
 		{
 			delete g_pScenes;
 		}
@@ -64,6 +64,17 @@ void SceneManager::Draw()
 void SceneManager::ChangeScene(const int& key)
 {
 	m_nextScene = key;
+	if (g_pScenes != NULL)
+	{
+		if (m_nextScene == SceneNum::SceneNumGame)
+		{
+			delete g_pScenes;
+			g_pScenes = new GameScene;
+			g_pScenes->Initialize();
+			m_nextScene = SceneNum::Invalid;
+			return;
+		}
+	}
 }
 
 //‰ğ•úB

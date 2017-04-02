@@ -178,12 +178,11 @@
     <ClCompile Include="DamageCollisionWorld.cpp" />
     <ClCompile Include="DirectXFont.cpp" />
     <ClCompile Include="EffectManager.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyGoblin.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="EnemyBoss.cpp" />
     <ClCompile Include="EnemySkeleton.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="FileOperation.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -201,6 +200,7 @@
     <ClCompile Include="PlayerHPBar.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="Respawn.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -245,7 +245,6 @@
     <ClInclude Include="CollisionCreat.h" />
     <ClInclude Include="DamageCollisionWorld.h" />
     <ClInclude Include="EffectManager.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBase.h" />
     <ClInclude Include="EnemyGoblin.h" />
     <ClInclude Include="EnemyManager.h" />
@@ -253,7 +252,7 @@
     <ClInclude Include="EnemyPosInfo.h" />
     <ClInclude Include="EnemySkeleton.h" />
     <ClInclude Include="DirectXFont.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="FileOperation.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="ICollider.h" />
@@ -277,6 +276,7 @@
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="Respawn.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneManager.h" />

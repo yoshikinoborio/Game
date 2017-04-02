@@ -28,12 +28,17 @@ void YouDied::Initialize()
 //更新。
 void YouDied::Update()
 {
+	YouDiedDrawProcess();
+}
+
+void YouDied::YouDiedDrawProcess()
+{
 	//フラグがTRUEになったらα値の計算開始。
 	if (static_cast<GameScene*>(g_pScenes)->GetUnityChan()->GetIsDead() == TRUE)
 	{
 		//α値を少しずつ加算。
 		//255を超えたら255に戻す。
-		if (m_alph < 255)
+		if (m_alph < 254)
 		{
 			m_alph += 2;
 		}
@@ -44,6 +49,8 @@ void YouDied::Update()
 			static_cast<GameScene*>(g_pScenes)->GetBlack()->SetStartFlag(TRUE);
 		}
 	}
+
 	m_backColor = D3DCOLOR_ARGB(m_alph, 255, 255, 255);
+
 	this->SetupMatrices();
 }

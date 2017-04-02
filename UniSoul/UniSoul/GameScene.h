@@ -4,7 +4,6 @@
 #include "Light.h"
 #include "Map.h"
 #include "Sky.h"
-#include "Enemy.h"
 #include "EnemyManager.h"
 #include "DirectXFont.h"
 #include "Stopwatch.h"
@@ -20,6 +19,8 @@
 #include "BossEnemyHPBarFrame.h"
 #include "BossEnemyHPBarBack.h"
 #include "BossEnemyName.h"
+#include "Respawn.h"
+#include "FileOperation.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -111,24 +112,48 @@ public:
 		return &m_black;
 	}
 
+	//スキンモデルリソースの取得。
 	SkinModelDataResources* GetSkinModelDataResources()
 	{
 		return &m_skinModelDataResources;
 	}
 
+	//マップを取得。
 	Map* GetMap()
 	{
 		return &m_map;
 	}
+
+	FileOperation* GetFileOperation()
+	{
+		return &m_fileOperation;
+	}
+
+	//1フレームの経過時間を取得(単位:秒)。
+	double GetFrameDeltaTime() const
+	{
+		//上限を越したら1.0f/20.0fに調整。
+		if (1.0f / 20.0f < m_stopWatch.GetElapsed())
+		{
+			return 1.0f / 20.0f;
+		}
+		//下限を下回ったら1.0f/60.0fに調整。
+		else if (m_stopWatch.GetElapsed() < 1.0f / 60.0f)
+		{
+			return 1.0f / 60.0f;
+		}
+		//何も問題ないならそのまま返す。
+		return m_stopWatch.GetElapsed();
+	}
+	
 private:
 	Stage					m_stage;					//地面。
 	Light					m_light;					//ライト。
 	Map						m_map;						//マップに配置されているオブジェクト。
 	Sky						m_sky;						//スカイボックス。
-	Enemy					m_enemy;					//エネミー。
 	bool					m_stopFlag;					//スタートボタンを押したらカメラ以外の処理を止まるフラグ。
 	CFont					m_font;						//DirectXのフォント機能。
-	CStopwatch				m_stopWatch;
+	CStopwatch				m_stopWatch;				//FPSを計測する。
 	PlayerHPBar				m_playerHPBar;				//プレイヤーの体力バー。
 	PhysicsWorld			m_physicsWorld;				//物理ワールド。
 	//ポストエフェクトを使うための変数たち。
@@ -146,4 +171,6 @@ private:
 	BossEnemyHPBarFrame		m_bossEnemyHPBarFrame;		//ボスの体力バーのフレーム。
 	BossEnemyHPBarBack		m_bossEnemyHPBarBack;		//ボスの体力バーの背景。
 	BossEnemyName			m_bossEnemyName;			//ボスの名前を表示。
+	Respawn					m_respawn;					//リスポーン地点。
+	FileOperation			m_fileOperation;			//ファイル操作を行うクラス。
 };

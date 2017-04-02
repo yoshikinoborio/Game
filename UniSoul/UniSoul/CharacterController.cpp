@@ -6,13 +6,12 @@
 #include "CharacterController.h"
 #include "CollisionAttr.h"
 
-
 namespace {
 	const float cPI = 3.14159265358979323846f;
 	//衝突したときに呼ばれる関数オブジェクト(地面用)
 	struct SweepResultGround : public btCollisionWorld::ConvexResultCallback
 	{
-		bool isHit = false;									//衝突フラグ。
+		bool isHit = false;		//衝突フラグ。
 		D3DXVECTOR3 hitPos = {0.0f, 0.0f, 0.0f};			//衝突点。
 		D3DXVECTOR3 startPos = {0.0f, 0.0f, 0.0f};			//レイの始点。
 		D3DXVECTOR3 hitNormal ={0.0f, 0.0f, 0.0f};			//衝突点の法線。
@@ -22,6 +21,12 @@ namespace {
 															//衝突したときに呼ばれるコールバック関数。
 		virtual	btScalar	addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 		{
+			if ( convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Respawn)
+			{
+				D3DXVECTOR3* pos = (D3DXVECTOR3*)convexResult.m_hitCollisionObject->getUserPointer();
+				static_cast<GameScene*>(g_pScenes)->GetFileOperation()->OutPutText(*pos);
+				return 0.0f;
+			}
 			if (convexResult.m_hitCollisionObject == me
 				|| convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Character
 				) {
@@ -58,6 +63,7 @@ namespace {
 	struct SweepResultWall : public btCollisionWorld::ConvexResultCallback
 	{
 		bool isHit = false;								//衝突フラグ。
+		bool isRespawn = false;
 		D3DXVECTOR3 hitPos = {0.0f, 0.0f, 0.0f};		//衝突点。
 		D3DXVECTOR3 startPos = {0.0f, 0.0f, 0.0f};		//レイの始点。
 		float dist = FLT_MAX;							//衝突点までの距離。一番近い衝突点を求めるため。FLT_MAXは単精度の浮動小数点が取りうる最大の値。
@@ -70,6 +76,12 @@ namespace {
 		{
 			if (convexResult.m_hitCollisionObject == me) {
 				//自分に衝突した。or 地面に衝突した。
+				return 0.0f;
+			}
+			if (convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Respawn)
+			{
+				D3DXVECTOR3* pos = (D3DXVECTOR3*)convexResult.m_hitCollisionObject->getUserPointer();
+				static_cast<GameScene*>(g_pScenes)->GetFileOperation()->OutPutText(*pos);
 				return 0.0f;
 			}
 			//衝突点の法線を引っ張ってくる。
@@ -125,6 +137,8 @@ void CharacterController::Initialize(float radius, float height, const D3DXVECTO
 	static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->AddRigidBody(&m_rigidBody);
 
 }
+
+
 void CharacterController::Execute(float deltaTime)
 {
 	//速度に重力加速度を加える。
@@ -261,6 +275,7 @@ void CharacterController::Execute(float deltaTime)
 		if (fabsf(addPos.y) > FLT_EPSILON) {
 			static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);
 		}
+
 		if (callback.isHit) {
 			//当たった。
 			m_moveSpeed.y = 0.0f;
@@ -283,11 +298,14 @@ void CharacterController::Execute(float deltaTime)
 	trans.setOrigin(btVector3(m_position.x, m_position.y, m_position.z));
 	//@todo 未対応。 trans.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z));
 }
+
+
 /*!
 * @brief	死亡したことを通知。
 */
 void CharacterController::RemoveRigidBoby()
 {
 	static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->RemoveRigidBody(&m_rigidBody);
+	//static_cast<GameScene*>(g_pScenes)->GetPhysicsWorld()->RemoveGhostObject(m_rigidBody.GetGhostObject());
+	
 }
-

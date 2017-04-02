@@ -18,7 +18,6 @@ void Bloom::UpdateWeight(float dispersion)
 
 Bloom::Bloom()
 {
-	//g_m_effectManager = new m_effectManager;
 	//ブルームのシェーダーをロード
 	m_effect = g_effectManager->LoadEffect("Assets/Shader/bloom.fx");
 	//輝度抽出用のレンダリングターゲットを作成する。

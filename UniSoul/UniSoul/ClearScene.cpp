@@ -10,6 +10,7 @@ ClearScene::ClearScene()
 //デストラクタ。
 ClearScene::~ClearScene()
 {
+	g_pd3dDevice->Release();
 }
 
 //初期化。
@@ -53,5 +54,4 @@ void ClearScene::Draw()
 	//バックバッファ(画面を書き換え中のバッファ)、フロントバッファ(画面に描画されているバッファ)。
 	// バックバッファとフロントバッファを入れ替える。
 	g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
-
 }

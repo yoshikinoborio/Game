@@ -27,6 +27,9 @@ public:
 		m_createPos = pos;
 		m_createMapFlag = flg;
 	}
+	
+	//マップオブジェクトを生成する処理。
+	void CreateMapObject();
 private:
 	std::vector<MapChip*> m_mapChipList;	//マップチップのリスト。
 	bool				  m_createMapFlag;	//マップ作成フラグ。

@@ -26,8 +26,19 @@ public:
 	{
 		return dynamicWorld;
 	}
+
+	//剛体の追加。
 	void AddRigidBody(RigidBody* rb);
+
+	//剛体の削除。
 	void RemoveRigidBody(RigidBody* rb);
+
+	//ゴーストオブジェクトの追加。
+	void AddGhostObject(btGhostObject* ghost);
+
+	//ゴーストオブジェクトの削除。
+	void RemoveGhostObject(btGhostObject* ghost);
+
 	void ConvexSweepTest(
 		const btConvexShape* castShape,
 		const btTransform& convexFromWorld,

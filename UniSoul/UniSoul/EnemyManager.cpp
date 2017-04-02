@@ -1,9 +1,10 @@
 #include "stdafx.h"
+#include "SceneManager.h"
 #include "EnemyManager.h"
+#include "EnemyBase.h"
 #include "EnemySkeleton.h"
 #include "EnemyGoblin.h"
 #include "EnemyBoss.h"
-#include "SceneManager.h"
 
 namespace
 {
@@ -13,174 +14,194 @@ namespace
 		D3DXVECTOR3	pos;			//座標。
 		D3DXQUATERNION	rotation;	//回転。
 		D3DXVECTOR3 scale;			//スケール。
+		short		type;			//敵のタイプ。
+	};
+
+	//エネミーの配置情報のテーブル。
+	EnemyManagerLocInfo EnemyChipLocInfoTable[] = {
+#include "EnemyPosInfo.h"
 	};
 }
 
-//エネミーの配置情報のテーブル。
-EnemyManagerLocInfo EnemyChipLocInfoTable[] = {
-#include "EnemyPosInfo.h"
-};
-
+//コンストラクタ。
 EnemyManager::EnemyManager()
 {
 	m_createEnemyFlag = FALSE;
 	m_createPos = Vector3Zero;
 }
 
+//デストラクタ。
 EnemyManager::~EnemyManager()
 {
-	for (auto enemy : m_enemyskeletonList)
+	//エネミーの削除。
+	for (auto enemy : m_enemyList)
 	{
 		delete enemy;
 	}
 
-	for (auto enemy : m_enemyGoblinList)
+	//ボスが削除されてないなら削除。
+	if (m_enemyBoss != NULL)
 	{
-		delete enemy;
+		delete	m_enemyBoss;
 	}
-
-	delete m_enemyBoss;
 }
 
+//初期化。
 void EnemyManager::Initialize()
 {
+
 	//Unityから出力された情報から敵を生成する処理。
 	for (EnemyManagerLocInfo& enemyinfo : EnemyChipLocInfoTable) {
-		
+
 		//ボスの初期化。
-		if (enemyinfo.modelName == "image\\EnemyBoss.X")
+		if (enemyinfo.type == (short)EnemyType::Boss)
 		{
 			m_enemyBoss = new EnemyBoss;
 			m_enemyBoss->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
-		}//骨型の敵の初期化。
-		else if (enemyinfo.modelName == "image\\Skeleton@Skin.X")
+		}//スケルトンの初期化。
+		else if (enemyinfo.type == (short)EnemyType::Skeleton)
 		{
-			EnemySkeleton* newEnemy = new EnemySkeleton;
+			EnemyBase* newEnemy = new EnemySkeleton;
 			newEnemy->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
-			m_enemyskeletonList.push_back(newEnemy);
+			//エネミーリストに追加。
+			m_enemyList.push_back(newEnemy);
 		}//ゴブリンの初期化。
-		else if (enemyinfo.modelName == "image\\EnemyGoblin.X")
+		else if (enemyinfo.type == (short)EnemyType::Goblin)
 		{
-			EnemyGoblin* newEnemy = new EnemyGoblin;
+			EnemyBase* newEnemy = new EnemyGoblin;
 			newEnemy->Initialize(enemyinfo.modelName, enemyinfo.pos, enemyinfo.rotation, enemyinfo.scale);
-			m_enemyGoblinList.push_back(newEnemy);
+			//エネミーリストに追加。
+			m_enemyList.push_back(newEnemy);
 		}
-			
+
 	}
 }
 
+//更新。
 void EnemyManager::Update()
 {
-	//骨の更新処理。
-	{//エネミーの先頭を確保。
-		auto it = m_enemyskeletonList.begin();
-		//エネミーのリストの最後まで。
-		while (it != m_enemyskeletonList.end())
-		{
-			//エネミーがTRUEを返して来たら削除。
-			if (TRUE == (*it)->GetDead()) {
-				//エネミーの解放。
-				delete *it;
-				//解放した次のエネミーを確保。
-				//erase関数が返り値が有効なイテレータを返してくれる。
-				it = m_enemyskeletonList.erase(it);
-			}
-			else
-			{
-				//次に進む処理。
-				it++;
-			}
-		}
-		for (auto enemy : m_enemyskeletonList) {
-			enemy->Update();
-		}
-	}
+	//エネミーリストの更新。
+	EnemyListUpdate();
 
-	//ゴブリンの更新処理。
-	{
-		//エネミーの先頭を確保。
-		auto it = m_enemyGoblinList.begin();
-		//エネミーのリストの最後まで。
-		while (it != m_enemyGoblinList.end())
-		{
-			//エネミーがTRUEを返して来たら削除。
-			if (TRUE == (*it)->GetDead()) {
-				//エネミーの解放。
-				delete *it;
-				//解放した次のエネミーを確保。
-				//erase関数が返り値が有効なイテレータを返してくれる。
-				it = m_enemyGoblinList.erase(it);
-			}
-			else
-			{
-				//次に進む処理。
-				it++;
-			}
-		}
-		for (auto enemy : m_enemyGoblinList) {
-			enemy->Update();
-		}
-	}
 	//ボスの更新。
-	m_enemyBoss->Update();
+	EnemyBossUpdate();
 
-	if (m_createEnemyFlag == TRUE)
-	{
-		int Enemy = g_pScenes->GetCamera()->GetNowObject();
-		switch (Enemy)
-		{
-		case 0: {
-			EnemySkeleton* newEnemy = new EnemySkeleton;
-			newEnemy->Initialize("image\\Skeleton@Skin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
-			m_enemyskeletonList.push_back(newEnemy);
-			m_createEnemyFlag = FALSE;
-			break; 
-		}
-		case 1:
-		{
-			EnemyGoblin* newEnemy = new EnemyGoblin;
-			newEnemy->Initialize("image\\EnemyGoblin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
-			m_enemyGoblinList.push_back(newEnemy);
-			m_createEnemyFlag = FALSE;
-			break;
-		}
-		default:
-			m_createEnemyFlag = FALSE;
-			break;
-		}
-		
-	}
+	//敵を生成する処理。
+	EnemyCreate();
+	
 }
 
+//描画。
 void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
 	bool isShadowReceiver)
 {
-	//骨型の描画。
-	for (auto enemy: m_enemyskeletonList)
+
+	//エネミーリストの描画。
+	for (auto enemylist : m_enemyList)
 	{
-		enemy->Draw(viewMatrix, projMatrix, isShadowReceiver);
+			enemylist->Draw(viewMatrix, projMatrix, isShadowReceiver);
 	}
 
-	//ゴブリンの描画。
-	for (auto enemy : m_enemyGoblinList)
-	{
-		enemy->Draw(viewMatrix, projMatrix, isShadowReceiver);
-	}
-	//ボスの描画。
-	m_enemyBoss->Draw(viewMatrix, projMatrix, isShadowReceiver);
 	
+	//ボスが削除されていないなら描画。
+	if (m_enemyBoss->GetIsDead() == FALSE)
+	{
+		//ボスの描画。
+		m_enemyBoss->Draw(viewMatrix, projMatrix, isShadowReceiver);
+	}	
 }
 
+//エネミーリストの更新。
+void EnemyManager::EnemyListUpdate()
+{
+	//エネミーの先頭を確保。
+	auto it = m_enemyList.begin();
+	//エネミーのリストの最後まで。
+	while (it != m_enemyList.end())
+	{
+
+		//エネミーがTRUEを返して来たら削除。
+		if (TRUE == (*it)->GetIsDead()) {
+			//エネミーの解放。
+			delete *it;
+			//解放した次のエネミーを確保。
+			//erase関数が返り値が有効なイテレータを返してくれる。
+			it = m_enemyList.erase(it);
+		}
+		else
+		{
+			//次に進む処理。
+			it++;
+		}
+	}
+
+	//更新処理。
+	for (auto enemylist : m_enemyList)
+	{
+		enemylist->Update();
+	}
+}
+
+//ボスの更新。
+void EnemyManager::EnemyBossUpdate()
+{
+	//生きているなら更新。
+	if (m_enemyBoss->GetIsDead() == FALSE)
+	{
+		//ボスの更新。
+		m_enemyBoss->Update();
+	}
+
+}
+
+//⊿タイムに乗算される値を設定。
 void EnemyManager::SetFrameDeltaTimeMul(float mul)
 {
-	for (auto enemy : m_enemyskeletonList) {
+	for (auto enemy : m_enemyList) {
 		enemy->SetFrameDeltaTimeMul(mul);
 	}
 
-	for (auto enemy : m_enemyGoblinList) {
-		enemy->SetFrameDeltaTimeMul(mul);
-	}
+	
 	m_enemyBoss->SetFrameDeltaTimeMul(mul);
+}
 
+void EnemyManager::EnemyCreate()
+{
+	//敵を生成するフラグがTRUEなら敵を作成。
+	if (m_createEnemyFlag == TRUE)
+	{
+		//フリーカメラモード時に選択されている生成するオブジェクトの数字を取得。
+		int Enemy = g_pScenes->GetCamera()->GetNowObject();
+		switch (Enemy)
+		{
+		case (int)EnemyType::Skeleton:
+		{
+			//スケルトンの生成。
+			EnemyBase* newEnemy = new EnemySkeleton;
+			newEnemy->Initialize("image\\Skeleton@Skin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
+			//エネミーリストに追加。
+			m_enemyList.push_back(newEnemy);
+			//生成し終わったのでフラグをFALSEにする。
+			m_createEnemyFlag = FALSE;
+			break;
+		}
+		case (int)EnemyType::Goblin:
+		{
+			//ゴブリン生成。
+			EnemyBase* newEnemy = new EnemyGoblin;
+			newEnemy->Initialize("image\\EnemyGoblin.X", m_createPos, D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f), Vector3One);
+			//エネミーリストに追加。
+			m_enemyList.push_back(newEnemy);
+			//生成し終わったのでフラグをFALSEにする。
+			m_createEnemyFlag = FALSE;
+			break;
+		}
+		default:
+			//スケルトンでもゴブリンでもない数字の時は生成しないのでフラグをFALSEにする。
+			m_createEnemyFlag = FALSE;
+			break;
+		}
+
+	}
 }

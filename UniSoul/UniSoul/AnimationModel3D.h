@@ -41,7 +41,7 @@ protected:
 	D3DXMATRIX				m_world;					//ワールド行列。
 	D3DXQUATERNION			m_rotation;					//回転行列。
 	CharacterController		m_characterController;		//キャラクタコントローラ。
-	float					 m_moveSpeed;				//移動速度(歩く時と走る時の速度調整用)。
+	float					m_moveSpeed;				//移動速度(歩く時と走る時の速度調整用)。
 	bool					m_isTurn;					//回転フラグ。
 	float					m_height;					//キャラクターの高さ。
 	float					m_radius;					//キャラクター敵の半径。

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "SkinModelData.h"
 #include "Animation.h"
-//#define _CRT_SECURE_NO_WARNINGS
 
 // Deleteä÷òAÅB
 #ifndef SAFE_DELETE

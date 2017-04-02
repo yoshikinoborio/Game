@@ -4,6 +4,7 @@
 #include "ParticleEmitter.h"
 #include "SoundSource.h"
 
+
 //このnamespaceを使うとstaticの時に発生する同名との衝突が起きなくなる。そう言う言語の使用。
 namespace {
 	const float WALKSPEED = 0.02f*60.0f;	//歩くスピード。
@@ -76,11 +77,11 @@ public:
 	//攻撃状態での処理。
 	void AttackProcess();
 
-	//マップシフト状態での処理。
-	void MapShiftProcess();
+	//勝利した時の処理。
+	void WinProcess();
 
-	//マップシフトの処理。
-	void MapShift();
+	//勝利して待機している時の処理。
+	void WinWaitProcess();
 
 	//ジャンプ処理。
 	void Jump();
@@ -163,7 +164,7 @@ public:
 	//ローカル⊿タイムを取得。
 	float GetLocalFrameDeltaTime() const
 	{
-		return  m_frameDeltaTime* m_deltaTimeMul;
+		return  m_frameDeltaTime * m_deltaTimeMul;
 	}
 
 	//⊿タイムに乗算される値を設定。
@@ -177,6 +178,12 @@ public:
 	bool GetIsDead() const
 	{
 		return m_isDead;
+	}
+
+	//位置を設定。
+	void SetPos(const D3DXVECTOR3& pos)
+	{
+		m_characterController.SetPosition(pos);
 	}
 
 	//プレイヤーで再生されるアニメーションの種類。
@@ -200,6 +207,8 @@ public:
 		AnimationDaiLanding,	//高所からの着地。
 		AnimationDownFly,		//吹っ飛び。
 		AnimationDamage_00,		//ダメージ。
+		AnimationWin,			//勝利ポーズアニメーション。
+		AnimationWinWait,		//勝利ポーズのまま待機するアニメーション。
 	};
 
 	//プレイヤーの状態遷移の種類。
@@ -216,7 +225,8 @@ public:
 		StateDamage,		//ダメージを受けている。
 		StateDead,			//死んでいる。
 		StateAttack,		//攻撃中。
-		StateMapShift		//マップシフト。
+		StateWin,			//勝利。
+		StateWinWait		//勝利ポーズのまま待機。
 	};
 
 private:
