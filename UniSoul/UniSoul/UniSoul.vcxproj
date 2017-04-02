@@ -277,6 +277,7 @@
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Respawn.h" />
+    <ClInclude Include="RespawnInfo.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneManager.h" />

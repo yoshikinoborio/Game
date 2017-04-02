@@ -55,5 +55,13 @@ class UnityWindow : EditorWindow
             Collition.ShowWindow();
             Debug.Log("コリジョンの配置情報が無事出力できました。");
         }
+
+        //リスポーンの配置情報のボタンが押されtureが返って来る。
+        if (GUILayout.Button("リスポーンの配置情報 出力"))
+        {
+            //リスポーンの配置情報出力の処理
+            RespwanInfo.ShowWindow();
+            Debug.Log("リスポーンの配置情報が無事出力できました。");
+        }
     }
 }
