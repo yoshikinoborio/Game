@@ -107,6 +107,8 @@ public:
 	//エネミーの動きを止めるor再開させる処理。
 	void EnemyPlayChanger();
 
+	void CheckFallTime();
+
 	//プレイヤーの位置の取得。
 	const D3DXVECTOR3& GetUnityChanPos () const
 	{
@@ -238,7 +240,8 @@ private:
 	float           m_saveLStickX;						//左スティックの左右の入力量を格納。
 	float			m_saveLStickY;						//左スティックの前後の入力量を格納。
 	bool			m_battleFlag;						//バトル中かのフラグ。
-	float			m_fallTimer;						//落下時間。
+	float			m_fallDeltaTime;					//落下時間の増分。
+	float			m_landingTime;						//この値を見て着地のアニメーションを変える。
 	D3DXVECTOR3		m_UniDir;							//プレイヤーの移動ベクトル(敵の移動処理で使う)。
 	float			m_atrTime;							//この時間を超えたら当たりを発生させる。
 	int				m_lv;								//プレイヤーのレベル。
@@ -249,5 +252,4 @@ private:
 	CSoundSource	m_soundSource2;						//レベルアップのSE。
 	long long		m_levelUpExpTable[MAX_LEVEL];		//レベルアップに必要な経験値テーブル。
 	CParticleEmitter* m_pEmitter;
-	float			m_time;
 };

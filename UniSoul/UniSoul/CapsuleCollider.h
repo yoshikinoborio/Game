@@ -28,18 +28,6 @@ public:
 	{
 		return shape;
 	}
-
-	//BoxçÏê¨ÅB
-	void CreateBox(const D3DXVECTOR3& size)
-	{
-		box = new btBoxShape(btVector3(size.x*0.5f, size.y*0.5f, size.z*0.5f));
-	}
-
-	btBoxShape* GetBoxBody() override
-	{
-		return box;
-	}
 private:
 	btCapsuleShape*		shape;
-	btBoxShape*			box;
 };

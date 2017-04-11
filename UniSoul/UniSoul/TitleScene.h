@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include "Title.h"
 #include "TitleCursor.h"
+#include "SoundSource.h"
 
 //タイトルシーン
 class TitleScene : public SceneBase
@@ -22,10 +23,9 @@ public:
 	//描画。
 	void Draw();
 private:
-	//タイトルの画像。
-	Title m_title;
-	//タイトルに表示されているカーソル。
-	TitleCursor m_titleCursor;
+	Title			m_title;		//タイトルの画像。
+	TitleCursor		m_titleCursor;	//タイトルに表示されているカーソル。
+	CSoundSource	m_soundTitleBgm;//タイトル画面のBGM。
 };
 
 //どこでも使えるようにextern

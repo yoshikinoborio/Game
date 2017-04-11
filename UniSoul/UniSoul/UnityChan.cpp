@@ -9,7 +9,6 @@ namespace {
 	PlayerInfo PlayerInfoTable = {
 #include "PlayerInfo.h"
 	};
-
 	const DamageCollisionWorld::Collision* dmgColli = NULL;
 }
 
@@ -29,7 +28,7 @@ UnityChan::UnityChan()
 	m_radius = 0.0f;
 	m_isTurn = FALSE;
 	m_battleFlag = FALSE;
-	m_fallTimer = 0.0f;
+	m_fallDeltaTime = 0.0f;
 	m_hp = 0;
 	m_maxhp = 0;
 	m_atrTime = 0.0f;
@@ -39,8 +38,7 @@ UnityChan::UnityChan()
 	m_getEXP = 0;
 	m_hp = 0;
 	m_maxhp = 0;
-	m_time = 0.0f;
-
+	m_landingTime = 0.0f;
 }
 
 UnityChan::~UnityChan()
@@ -60,10 +58,10 @@ void UnityChan::Initialize()
 	m_light.SetDiffuseLightDirection(2, D3DXVECTOR4(0.0f, 0.707f, -0.707f, 1.0f));
 	m_light.SetDiffuseLightDirection(3, D3DXVECTOR4(0.0f, -0.707f, -0.707f, 1.0f));
 
-	m_light.SetDiffuseLightColor(0, D3DXVECTOR4(0.4f, 0.4f, 0.4f, 1.0f));
-	m_light.SetDiffuseLightColor(1, D3DXVECTOR4(0.4f, 0.4f, 0.4f, 1.0f));
-	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
-	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.4f, 0.4f, 0.4f, 1.0f));
+	m_light.SetDiffuseLightColor(0, D3DXVECTOR4(0.1f, 0.1f, 0.1f, 1.0f));
+	m_light.SetDiffuseLightColor(1, D3DXVECTOR4(0.1f, 0.1f, 0.1f, 1.0f));
+	m_light.SetDiffuseLightColor(2, D3DXVECTOR4(0.1f, 0.1f, 0.1f, 1.0f));
+	m_light.SetDiffuseLightColor(3, D3DXVECTOR4(0.1f, 0.1f, 0.1f, 1.0f));
 
 	m_light.SetAmbientLight(D3DXVECTOR4(0.3f, 0.3f, 0.3f, 1.0f));
 	m_skinModel.SetLight(&m_light);
@@ -116,6 +114,7 @@ void UnityChan::Initialize()
 	//プレイヤーの高さと半径。
 	m_height = 1.0f;
 	m_radius = 0.5f;
+	//デバッグ時の処理。
 #ifdef _DEBUG
 	//キャラクタコントローラを初期化。
 	//第一引数が半径、第二引数が高さ、第三引数が位置。
@@ -123,6 +122,7 @@ void UnityChan::Initialize()
 	m_characterController.SetGravity(-20.0f);	//重力強め。
 #endif // DEBUG
 
+	//リリース時の処理。
 #ifndef _DEBUG
 	m_position = static_cast<GameScene*>(g_pScenes)->GetFileOperation()->ReadText();
 	//キャラクタコントローラを初期化。
@@ -131,20 +131,15 @@ void UnityChan::Initialize()
 	m_characterController.SetGravity(-20.0f);	//重力強め。
 #endif // !_DEBUG
 
-
-
-	
-	
-
 	//Unityから出力したプレイヤーの回転情報で初期化。
 	m_rotation = PlayerInfoTable.rotation;
 
 	//パーティクルの設定。
 	//D3DXMATRIX& UniPos = m_skinModel.GetWorldMatrix();
-	/*m_pEmitter = CParticleEmitter::EmitterCreate(
-		"ParticleEmitterStart",
-		ParicleType::Star,
-		m_position);*/
+	//m_pEmitter = CParticleEmitter::EmitterCreate(
+	//	"ParticleEmitterStart",
+	//	ParicleType::Star,
+	//	m_position);
 
 	m_lv = 1;
 	m_lvUpEXP = 10;
@@ -361,7 +356,7 @@ void UnityChan::PadMove()
 	//回転の処理。
 	if (D3DXVec3Length(&m_moveDir) > 0.0f)
 	{
-		D3DXVECTOR3 forward = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+		D3DXVECTOR3 forward = Vector3Forward;
 		m_targetAngleY = acos(D3DXVec3Dot(&forward, &m_moveDir));
 		D3DXVECTOR3 axis;
 		D3DXVec3Cross(&axis, &forward, &m_moveDir);
@@ -400,7 +395,7 @@ void UnityChan::WaitProcess()
 	}
 	else
 	{
-		m_state = StateFall;
+		CheckFallTime();
 	}
 }
 
@@ -447,7 +442,7 @@ void UnityChan::MoveProcess()
 	}
 	else
 	{
-		m_state = StateFall;
+		CheckFallTime();
 	}
 }
 
@@ -471,7 +466,7 @@ void UnityChan::SLIDProcess()
 	}
 	else
 	{
-		m_state = StateFall;
+		CheckFallTime();
 	}
 }
 
@@ -502,12 +497,13 @@ void UnityChan::FallProcess()
 	{
 		//落下中。
 		m_state = StateFall;
-		m_fallTimer += 1.0f / 60.0f;
+		m_landingTime += 1.0f / 60.0f;
 	}
 }
 
 void UnityChan::LandingProcess()
 {
+
 	if (m_characterController.IsOnGround() == TRUE)
 	{
 		PadMove();
@@ -516,11 +512,17 @@ void UnityChan::LandingProcess()
 		if (D3DXVec3LengthSq(&m_moveDir) > 0.0001f)
 		{
 			m_state = StateRun;
+
+			m_landingTime = 0.0f;
+			//落下時間の初期化。
+			m_fallDeltaTime = 0.0f;
 		}
 		else
 		{
 			//地面に着地して入力をされていなかったら着地に遷移。
 			m_state = StateLanding;
+			//落下時間の初期化。
+			m_fallDeltaTime = 0.0f;
 
 		}
 
@@ -528,12 +530,10 @@ void UnityChan::LandingProcess()
 		if (!m_animation.IsPlay()) {
 			m_state = StateWait;
 		}
-		//落下時間を0に戻す。
-		m_fallTimer = 0.0f;
 	}
 	else
 	{
-		m_state = StateFall;
+		CheckFallTime();
 	}
 }
 
@@ -552,7 +552,7 @@ void UnityChan::BackStepProcess()
 	}
 	else
 	{
-		m_state = StateFall;
+		CheckFallTime();
 	}
 }
 
@@ -561,7 +561,13 @@ void UnityChan::DamageProcess()
 	//HPからダメージ分を減らす。
 	if (dmgColli != NULL)
 	{
-		m_hp -= dmgColli->damage;
+		//ダメージを受けて体力を減らした結果0にならなければ体力を引く。
+		if (m_hp > 0.0f)
+		{
+			//ダメージを受けた。
+			m_hp -= dmgColli->damage;
+		}
+
 		//ダメージを食らってHPが0になれば死ぬ。
 		if (m_hp <= 0.0f) {
 			m_hp = 0;
@@ -569,6 +575,7 @@ void UnityChan::DamageProcess()
 		}
 		else
 		{
+			
 			m_state = StateDamage;
 		}
 	}
@@ -614,20 +621,22 @@ void UnityChan::DamageJudge()
 	{
 		return;
 	}
-
-	RigidBody* rb = m_characterController.GetRigidBody();
-	//どこかに発生している当たり判定を探している。
-	dmgColli = g_damageCollisionWorld->FindOverlappedDamageCollision(
-		DamageCollisionWorld::enDamageToPlayer,
-		rb->GetBody()
-	);
-
-	//当たり判定に当たった。
-	if (dmgColli != NULL)
+	else
 	{
-		//ダメージを受ける状態に遷移。
-		m_state = StateDamage;
-	}
+		RigidBody* rb = m_characterController.GetRigidBody();
+		//どこかに発生している当たり判定を探している。
+		dmgColli = g_damageCollisionWorld->FindOverlappedDamageCollision(
+			DamageCollisionWorld::enDamageToPlayer,
+			rb->GetBody()
+		);
+
+		//当たり判定に当たった。
+		if (dmgColli != NULL)
+		{
+			//ダメージを受ける状態に遷移。
+			m_state = StateDamage;
+		}
+	}	
 }
 
 void UnityChan::BackStep()
@@ -723,12 +732,14 @@ void UnityChan::AnimationSelectPlay()
 		//着地中。
 		if (m_state == StateLanding)
 		{
-			if (m_fallTimer > 1.0f)
+			if (m_landingTime > 0.8f)
 			{
+				//ダイナミックな着地。
 				m_currentAnimSetNo = AnimationDaiLanding;
 			}
 			else
 			{
+				//普通の着地。
 				m_currentAnimSetNo = AnimationLanding;
 			}
 		}
@@ -822,4 +833,17 @@ void UnityChan::WinWaitProcess()
 	//画面を暗くしていくフラグをTRUEにする。
 	static_cast<GameScene*>(g_pScenes)->GetBlack()->SetStartFlag(TRUE);
 	
+}
+
+//落下している時間を加算し一定値を超えたら落下状態にする。
+void UnityChan::CheckFallTime()
+{
+	//落下している時間を加算。
+	m_fallDeltaTime += 1.0f / 60.0f;
+	float FallTime = 0.9f;
+	//ある値を超えたら落下状態にする。
+	if (m_fallDeltaTime > FallTime)
+	{
+		m_state = StateFall;
+	}
 }

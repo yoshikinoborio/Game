@@ -255,8 +255,13 @@ void EnemyBoss::DamageProcess()
 {
 	if (dmgColli != NULL)
 	{
-		//ダメージを受けた。
-		m_hp -= dmgColli->damage;
+		//ダメージを受けて体力を減らした結果0にならなければ体力を引く。
+		if (m_hp > 0.0f)
+		{
+			//ダメージを受けた。
+			m_hp -= dmgColli->damage;
+		}
+		
 		if (m_hp <= 0.0f) {
 			//死亡
 			m_hp = 0;

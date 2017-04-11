@@ -183,6 +183,7 @@
     <ClCompile Include="EnemyBoss.cpp" />
     <ClCompile Include="EnemySkeleton.cpp" />
     <ClCompile Include="FileOperation.cpp" />
+    <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="ClearScene.h" />
     <ClInclude Include="CollisionAttr.h" />
     <ClInclude Include="CollisionCreat.h" />
+    <ClInclude Include="CollisionInfo.h" />
     <ClInclude Include="DamageCollisionWorld.h" />
     <ClInclude Include="EffectManager.h" />
     <ClInclude Include="EnemyBase.h" />
@@ -253,6 +255,7 @@
     <ClInclude Include="EnemySkeleton.h" />
     <ClInclude Include="DirectXFont.h" />
     <ClInclude Include="FileOperation.h" />
+    <ClInclude Include="GameMenu.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="ICollider.h" />

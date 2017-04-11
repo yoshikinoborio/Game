@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "ParticleEmitter.h"
+
 //リスポーンクラス。
 class Respawn
 {
@@ -15,7 +17,14 @@ public:
 
 	//更新。
 	void Update();
+
+	//描画。
+	void Draw(D3DXMATRIX viewMatrix,
+		D3DXMATRIX projMatrix,
+		bool isShadowReceiver);
 private:
-	std::vector<btGhostObject*>		m_ghostObjectList;	//ゴースト。剛体の変わりになるもの。
+	std::vector<btGhostObject*>		m_ghostObjectList;	//ゴーストオブジェクト。
+	CParticleEmitter*				m_pEmitter;
+	D3DXVECTOR3						m_postion;
 };
 

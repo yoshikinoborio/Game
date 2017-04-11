@@ -29,6 +29,7 @@ namespace {
 				static_cast<GameScene*>(g_pScenes)->GetFileOperation()->OutPutText(*pos);
 				return 0.0f;
 			}
+
 			if (convexResult.m_hitCollisionObject == me
 				|| convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Character
 				) {
@@ -65,7 +66,6 @@ namespace {
 	struct SweepResultWall : public btCollisionWorld::ConvexResultCallback
 	{
 		bool isHit = false;								//衝突フラグ。
-		bool isRespawn = false;
 		D3DXVECTOR3 hitPos = {0.0f, 0.0f, 0.0f};		//衝突点。
 		D3DXVECTOR3 startPos = {0.0f, 0.0f, 0.0f};		//レイの始点。
 		float dist = FLT_MAX;							//衝突点までの距離。一番近い衝突点を求めるため。FLT_MAXは単精度の浮動小数点が取りうる最大の値。
@@ -88,6 +88,7 @@ namespace {
 				static_cast<GameScene*>(g_pScenes)->GetFileOperation()->OutPutText(*pos);
 				return 0.0f;
 			}
+
 			//衝突点の法線を引っ張ってくる。
 			D3DXVECTOR3 hitNormalTmp;
 			hitNormalTmp = { convexResult.m_hitNormalLocal.x(), convexResult.m_hitNormalLocal.y(), convexResult.m_hitNormalLocal.z() };
@@ -97,6 +98,7 @@ namespace {
 			angle = fabsf(acosf(angle));
 			if (angle >= cPI * 0.3f		//地面の傾斜が54度以上なので壁とみなす。
 				|| convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Character	//もしくはコリジョン属性がキャラクタなので壁とみなす。
+				|| convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Wall
 				) {
 				isHit = true;
 				D3DXVECTOR3 hitPosTmp;

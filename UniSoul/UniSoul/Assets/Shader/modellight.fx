@@ -256,7 +256,7 @@ float4 PSMain( VS_OUTPUT In ) : COLOR
 		float z = length(In.worldPos_depth.xyz - vEyePos);
 		z = max(z - g_fogDistParam.x, 0.0f);
 		float t = min( z / g_fogDistParam.y, 1.0f);
-		color.xyz = lerp(color.xyz, float3(0.65f, 0.65f, 0.95f), t);
+		color.xyz = lerp(color.xyz, float3(0.95f, 0.65f, 0.35f), t);
 	}
 	
 	return color;

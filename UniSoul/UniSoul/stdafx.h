@@ -72,6 +72,7 @@ namespace {
 	static const int FRAME_BUFFER_HEIGHT = 1080;		//フレームバッファのサイズ。
 
 	//0.0fを書くのを繰り返すのがめんどうなのでグローバルで定義。
+	const D3DXQUATERNION RotationZero = { 0.0f,0.0f,0.0f,1.0f };
 	const D3DXVECTOR3 Vector3Zero = { 0.0f,0.0f,0.0f };
 	const D3DXVECTOR3 Vector3One = { 1.0f,1.0f ,1.0f };
 	const D3DXVECTOR3 Vector3Up = { 0.0f, 1.0f ,0.0f };

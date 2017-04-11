@@ -26,6 +26,11 @@ void TitleScene::Initialize()
 
 	//カーソルの初期化。
 	m_titleCursor.Initialize();
+
+	//タイトル画面で流れるBGMの初期化。
+	m_soundTitleBgm.InitStreaming("image/UniSoulOpBGM.wav");
+	m_soundTitleBgm.Play(TRUE);
+	m_soundTitleBgm.SetVolume(0.25f);
 }
 
 
@@ -34,12 +39,23 @@ void TitleScene::Update()
 {
 	//サウンドの更新。
 	m_soundEngine->Update();
+
 	//パッドの更新。
 	g_pad.Update();
+
 	//タイトル画像の更新。
 	m_title.Update();
+
 	//カーソルの更新。
 	m_titleCursor.Update();
+
+	//タイトル画面のBGMnの更新。
+	m_soundTitleBgm.Update();
+
+	if (g_pad.IsTrigger(enButtonA))
+	{
+		m_soundTitleBgm.Stop();
+	}
 }
 
 

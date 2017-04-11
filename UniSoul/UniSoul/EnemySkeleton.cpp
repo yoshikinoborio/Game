@@ -144,7 +144,7 @@ void EnemySkeleton::Update()
 				//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
 				selfangle = m_CreateViewAngle.CreateView(PosDiff, SkePos);
 				//自分の視野角にいるかつ距離が500以下の時。
-				if (selfangle < 50.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
+				if (selfangle < 60.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
 				{
 					//発見。
 					m_state = SkeletonState::StateFind;

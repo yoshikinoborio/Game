@@ -21,6 +21,7 @@
 #include "BossEnemyName.h"
 #include "Respawn.h"
 #include "FileOperation.h"
+#include "GameMenu.h"
 
 //ゲームシーン。
 class GameScene : public SceneBase
@@ -165,7 +166,7 @@ private:
 	ShadowMapCamera			m_shadowmapcamera;			//シャドウカメラ(影描画用カメラ)。
 	YouDied					m_youDied;					//プレイヤーが死んだ時に出る文字。
 	Black					m_black;					//画面がだんだん見えなくなるor見えてくる処理に使う画像。
-	//CollisionCreat	m_collisionCreat;				//見えない当たり判定。
+	CollisionCreat			m_collisionCreat;			//見えない当たり判定。
 	SkinModelDataResources	m_skinModelDataResources;	//スキンモデルリソース。
 	BossEnemyHPBar			m_bossEnemyHPBar;			//ボスの体力バー。
 	BossEnemyHPBarFrame		m_bossEnemyHPBarFrame;		//ボスの体力バーのフレーム。
@@ -173,4 +174,10 @@ private:
 	BossEnemyName			m_bossEnemyName;			//ボスの名前を表示。
 	Respawn					m_respawn;					//リスポーン地点。
 	FileOperation			m_fileOperation;			//ファイル操作を行うクラス。
+	CSoundSource			m_gameBgm;					//ゲーム画面のBGM。
+	bool					m_changeBgmFlag = FALSE;	//BGMを切り替えるフラグ。
+	bool					m_gameClearFlag = FALSE;	//ゲームをクリアしたかのフラグ。
+	float					m_clearBgmVolume = 0.25f;	//クリアBGMのボリューム。
+	GameMenu				m_gameMenu;					//ゲームのメニュー画面。
+	bool					m_gameMenuFlag = FALSE;		//メニュー画面中かのフラグ。
 };

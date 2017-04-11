@@ -23,11 +23,6 @@ public:
 	{
 		return shape;
 	}
-	btBoxShape* GetBoxBody() override
-	{
-		return box;
-	}
 private:
 	btSphereShape*		shape;
-	btBoxShape*			box;
 };

@@ -62,7 +62,7 @@ void ShadowMapCamera::ShadowCameraMatrixUpadate()
 void ShadowMapCamera::ShadowCameraTargetPlayer()
 {
 	m_shadowmapcameraeyePt = m_unitychan->GetUnityChanPos();
-	m_shadowmapcameraeyePt.y += 20.0f;
+	m_shadowmapcameraeyePt.y += 100.0f;
 	m_shadowmapcameralookatPt = m_unitychan->GetUnityChanPos();
 
 }

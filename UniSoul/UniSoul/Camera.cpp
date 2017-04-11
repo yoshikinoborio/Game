@@ -5,6 +5,7 @@
 //次オブジェクトに切り替えができるまで待機する時間。
 namespace {
 	const short SELECTOBJECT_MOVEWAITTIME = 200;
+	const float CameraRotationSpeed = 0.1f;
 }
 
 Camera::Camera()
@@ -79,6 +80,28 @@ void Camera::Update()
 	
 	//ゲームの終了。
 	GameEnd();
+
+	/*if (m_cameraHokan < 1.0f)
+	{
+		m_cameraHokan += 0.05f;
+	}*/
+
+	//D3DXVec3Hermite(&m_eyePt, &Vector3Zero, &Vector3One, &g_enemyManager->GetBoss().GetPos(),
+	//	&D3DXVECTOR3(g_enemyManager->GetBoss().GetPos().x + 5.0f, g_enemyManager->GetBoss().GetPos().y + 5.0f, g_enemyManager->GetBoss().GetPos().z + 5.0f),
+	//	m_cameraHokan);
+	//D3DXVECTOR3 pos1(114.0f, 40.0f, 490.0f);
+	//D3DXVECTOR3 pos2(38.0f, 18.0f, 412.0f);
+	//D3DXVECTOR3 pos3(m_unitychan->GetUnityChanPos());
+	//D3DXVECTOR3 V1 = pos3 - pos1;
+	//D3DXVec3Normalize(&V1, &V1);
+	//D3DXVECTOR3 T1(pos1.x + 10.0f, pos1.y, pos1.z);
+	//D3DXVECTOR3 T2 = V1 + T1;
+	//D3DXVec3Normalize(&T2, &T2);
+
+	//D3DXVec3Hermite(&m_eyePt, &pos1, &V1,&pos3, &T2, m_cameraHokan);
+	//D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
+	//V.y += 2.0f;
+	//m_lookatPt = V;	//注視点をプレイヤーの少し上に設定。
 }
 
 void Camera::PadUseRotation()
@@ -91,7 +114,7 @@ void Camera::PadUseRotation()
 	if (fabsf(m_rStick_y) > 0.0f) {
 		D3DXVECTOR3 Cross;
 		D3DXVec3Cross(&Cross, &m_upVec, &m_toEyeptVector);//上方向と横方向に直行するベクトルを求める。
-		D3DXQuaternionRotationAxis(&m_zAxis, &Cross, 0.03f*m_rStick_y);//上で求めたベクトルを回転軸にしてクォータニオンを回転。
+		D3DXQuaternionRotationAxis(&m_zAxis, &Cross, CameraRotationSpeed*m_rStick_y);//上で求めたベクトルを回転軸にしてクォータニオンを回転。
 		D3DXMatrixRotationQuaternion(&m_rot, &m_zAxis);//クォータニオンから回転行列を作成。
 		D3DXVec3Transform(&m_v4, &m_toEyeptVector, &m_rot);//回転行列を使ってm_toEyeptVectorを回転。
 		D3DXVECTOR3 m_toEyeptVectorOld = m_toEyeptVector;
@@ -100,7 +123,7 @@ void Camera::PadUseRotation()
 		m_toEyeptVector.z = m_v4.z;
 		D3DXVECTOR3 toPosDir;
 		D3DXVec3Normalize(&toPosDir, &m_toEyeptVector);
-		if (toPosDir.y < -0.5f) {
+		if (toPosDir.y < -0.2f) {
 			//カメラが上向きすぎ。
 			m_toEyeptVector = m_toEyeptVectorOld;
 		}
@@ -113,7 +136,7 @@ void Camera::PadUseRotation()
 	//右スティックを使った横のカメラ移動。
 	if (fabsf(m_rStick_x) > 0.0f) {
 		//Y軸周りの回転を計算。
-		D3DXQuaternionRotationAxis(&m_yAxis, &m_upVec, 0.03f * m_rStick_x);//Y軸を任意の回転軸にしてクォータニオンを回転。
+		D3DXQuaternionRotationAxis(&m_yAxis, &m_upVec, CameraRotationSpeed * m_rStick_x);//Y軸を任意の回転軸にしてクォータニオンを回転。
 		D3DXMatrixRotationQuaternion(&m_rot, &m_yAxis);//クォータニオンから回転行列を作成。
 		D3DXVec3Transform(&m_v4, &m_toEyeptVector, &m_rot);//回転行列を使ってm_toEyeptVectorを回転。
 		m_toEyeptVector.x = m_v4.x;
@@ -160,16 +183,13 @@ void Camera::FreeCameraMode()
 		//右スティックを使った横のカメラ移動。
 		if (fabsf(m_rStick_x) > 0.0f) {
 			//Y軸周りの回転を計算。
-			D3DXQuaternionRotationAxis(&m_yAxis, &m_upVec, 0.03f * m_rStick_x);//Y軸を任意の回転軸にしてクォータニオンを回転。
+			D3DXQuaternionRotationAxis(&m_yAxis, &m_upVec, CameraRotationSpeed * m_rStick_x);//Y軸を任意の回転軸にしてクォータニオンを回転。
 			D3DXMatrixRotationQuaternion(&m_rot, &m_yAxis);//クォータニオンから回転行列を作成。
 			D3DXVec3Transform(&m_v4, &m_freeToEyeptVector, &m_rot);//回転行列を使ってm_toEyeptVectorを回転。
 			m_freeToEyeptVector.x = m_v4.x;
 			m_freeToEyeptVector.y = m_v4.y;
 			m_freeToEyeptVector.z = m_v4.z;
 		}
-
-
-
 		m_eyePt = m_lookatPt + m_freeToEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
 
 		//現在の時間の取得。
@@ -221,7 +241,7 @@ void Camera::FreeCameraMode()
 			}
 		}
 
-		//Aボタンを押すと敵を生成。
+		//Aボタンを押すとゲームオブジェクトを生成。
 		if (g_pad.IsTrigger(enButtonRB1))
 		{
 			//敵を生成するフラグの切り替え。
@@ -241,6 +261,7 @@ void Camera::FreeCameraMode()
 	}
 }
 
+//ゲームの停止。
 void Camera::GameStop()
 {
 	//ゲームでしか使わないのでキャストゲームシーンクラスにキャスト。
@@ -262,6 +283,7 @@ void Camera::GameStop()
 	}
 }
 
+//カメラのビュー行列とパースペクティブ射影行列の作成。
 void Camera::CameraMatrixUpadate()
 {
 	//左手座標系ビュー行列を作成する。
@@ -280,6 +302,7 @@ void Camera::CameraMatrixUpadate()
 	);
 }
 
+//カメラがプレイヤーを追いかける処理。
 void Camera::TargetPlayer()
 {
 	D3DXVECTOR3 V = m_unitychan->GetUnityChanPos();
@@ -288,6 +311,7 @@ void Camera::TargetPlayer()
 	m_eyePt = V + m_toEyeptVector;	//カメラをプレイヤーを中心にして移動させる。
 }
 
+//ゲームの終了。
 void Camera::GameEnd()
 {
 	//パッドのセレクトボタンでゲーム終了。
@@ -297,16 +321,22 @@ void Camera::GameEnd()
 	}
 }
 
+//フリーカメラモードフラグの操作処理。
 void Camera::FreeCameraFlagChanger()
 {
+	//フリーカメラモードに変更。
 	if (g_pad.IsTrigger(enButtonUp))
 	{
-		D3DXVECTOR3 FreeEyePt = D3DXVECTOR3(0.0f, 2.04f, 0.0f);
-		D3DXVECTOR3 FreeLookatPt = D3DXVECTOR3(0.0f, 2.04f, 2.0f);
-		m_freeToEyeptVector = FreeEyePt - FreeLookatPt;
+		//フリーカメラになったのでカメラが向くベクトルの再計算。
+		{
+			D3DXVECTOR3 FreeEyePt = D3DXVECTOR3(0.0f, 2.04f, 0.0f);
+			D3DXVECTOR3 FreeLookatPt = D3DXVECTOR3(0.0f, 2.04f, 2.0f);
+			m_freeToEyeptVector = FreeEyePt - FreeLookatPt;
+		}
 		m_cameraFreeFlag = TRUE;
 	}
 
+	//フリーカメラモードにを終了。
 	if (g_pad.IsTrigger(enButtonDown))
 	{
 		m_cameraFreeFlag = FALSE;

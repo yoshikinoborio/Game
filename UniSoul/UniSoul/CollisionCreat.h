@@ -2,23 +2,20 @@
 #include <vector>
 #include "RigidBody.h"
 
-//コリジョンの配置情報。
-struct CollsionInfo {
-	D3DXVECTOR3	pos;			//座標。
-	D3DXQUATERNION	rotation;	//回転。
-	D3DXVECTOR3 scale;			//スケール。
-};
-
 //見えない当たり判定を作成するクラス。
 class CollisionCreat
 {
 public:
+	//コンストラクタ。
 	CollisionCreat();
+
+	//デストラクタ。
 	~CollisionCreat();
+
+	//初期化。
 	void Initialize();
 private:
-	//ここからbulletPhysicsの剛体を使用するために必要な変数。
-	std::vector<btBoxShape*>	m_cllisionShape;	//コリジョン形状。
-	RigidBody		m_rigidBody;	//剛体。
+	std::vector<btGhostObject*>		m_ghostObjectList;	//ゴースト。剛体の変わりになるもの。
+	//std::vector<RigidBody*>			m_rigidBodyList;	//剛体。
+	//RigidBody						m_rigidBody;	//剛体。
 };
-

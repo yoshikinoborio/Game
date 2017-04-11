@@ -58,7 +58,7 @@ void TitleCursor::Update()
 	//カーソルの移動時のSEの更新。
 	m_cursorMoveSE.Update();
 
-	//ボタンが押された時の決定音の更新。。
+	//ボタンが押された時の決定音の更新。
 	m_cursorDecideSE.Update();
 
 	this->SetupMatrices();

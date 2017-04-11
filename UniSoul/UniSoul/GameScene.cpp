@@ -253,7 +253,7 @@ void GameScene::Initialize()
 	m_sky.Initialize();
 
 	//見えない当たり判定の作成。
-	//m_collisionCreat.Initialize();
+	m_collisionCreat.Initialize();
 
 	//レンダリングターゲットの作成。
 	m_renderTarget.Create(2480,
@@ -288,8 +288,16 @@ void GameScene::Initialize()
 	//リスポーン地点の初期化。
 	m_respawn.Initialize();
 
+	//ゲームのメニュー画面の初期化。
+	m_gameMenu.Initialize();
+
 	//FPS表示用のフォントの初期化。
 	m_font.Init();
+
+	//ゲーム画面のBGMの初期化。
+	m_gameBgm.InitStreaming("image/UniSoulGameBGM.wav");
+	m_gameBgm.Play(TRUE);
+	m_gameBgm.SetVolume(0.25f);
 }
 
 //-----------------------------------------------------------------------------
@@ -360,15 +368,26 @@ void GameScene::Draw()
 	g_pd3dDevice->SetDepthStencilSurface(m_mainRenderTarget->GetDepthStencilBuffer());
 	// レンダリングターゲットをクリア。
 	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
+
 	//空の描画
 	m_sky.Draw(m_camera.GetViewMatrix(),
 		m_camera.GetProjectionMatrix(),
 		FALSE);
 
+	//ステージの描画。
+	m_stage.Draw(m_camera.GetViewMatrix(),
+		m_camera.GetProjectionMatrix(),
+		FALSE);
+
 	//マップにあるオブジェクトの描画。
 	m_map.Draw(m_camera.GetViewMatrix(),
-	m_camera.GetProjectionMatrix(),
-	FALSE);
+		m_camera.GetProjectionMatrix(),
+		FALSE);
+
+	//リスポーン地点の描画。
+	m_respawn.Draw(m_camera.GetViewMatrix(),
+		m_camera.GetProjectionMatrix(),
+		FALSE);
 
 	//エネミーマネージャーの描画。
 	g_enemyManager->Draw(m_camera.GetViewMatrix(),
@@ -380,14 +399,9 @@ void GameScene::Draw()
 		m_camera.GetProjectionMatrix(),
 		FALSE);
 
-	//ステージの描画。
-	m_stage.Draw(m_camera.GetViewMatrix(),
-		m_camera.GetProjectionMatrix(),
-		FALSE);
-
 	//ブルームの描画。
 	m_bloom.Render();
-	
+
 
 	if (m_camera.GetCameraFreeFlag() == FALSE)
 	{
@@ -559,6 +573,9 @@ void GameScene::Update()
 		//サウンドエンジンの更新。
 		m_soundEngine->Update();
 
+		//リスポーン地点の更新。
+		m_respawn.Update();
+
 		//ステージの更新。
 		m_stage.Update();
 
@@ -589,9 +606,43 @@ void GameScene::Update()
 		//ブラックアウトの画像の更新。
 		m_black.Update();
 
-		//リスポーン地点の更新。
-		m_respawn.Update();
+		//ゲームのメニュー画面の初期化。
+		m_gameMenu.Update();
 
+		//ボスとの戦闘が始まったのでBGMの切り替え。
+		if (g_enemyManager->GetBoss().GetBossBattleFlag() == TRUE&&m_changeBgmFlag == FALSE)
+		{
+			//BGMを停止。
+			m_gameBgm.Stop();
+
+			//ボス用のBGMを読み込み。
+			m_gameBgm.InitStreaming("image/UniSoulBossBGM.wav");
+			m_gameBgm.Play(TRUE);
+			m_gameBgm.SetVolume(0.25f);
+			m_changeBgmFlag = TRUE;
+
+		}
+
+		//ボスが死んだかつクリアフラグがFALSE。
+		if (g_enemyManager->GetBoss().GetIsDead() == TRUE&&m_gameClearFlag == FALSE)
+		{
+			//BGMを停止。
+			m_gameBgm.Stop();
+
+			//勝利用のBGMを読み込み。
+			m_gameBgm.InitStreaming("image/UniSoulGameClearBGM.wav");
+			m_gameBgm.Play(TRUE);
+			m_gameBgm.SetVolume(m_clearBgmVolume);
+			m_gameClearFlag = TRUE;
+		}
+
+		if (m_gameClearFlag == TRUE&&m_clearBgmVolume > 0.0f)
+		{
+			m_clearBgmVolume -= 0.001f;
+			m_gameBgm.SetVolume(m_clearBgmVolume);
+		}
+
+		//プレイヤーが死んでないかつボス戦が始まった。
 		if (m_unitychan.GetIsDead() == FALSE && g_enemyManager->GetBoss().GetBossBattleFlag() == TRUE)
 		{
 			//ボスの体力バーの更新。
@@ -606,6 +657,9 @@ void GameScene::Update()
 			//ボスの名前の更新。
 			m_bossEnemyName.Update();
 		}
+
+		//ゲーム画面のBGMの更新。
+		m_gameBgm.Update();
 	}
 }
 //-----------------------------------------------------------------------------

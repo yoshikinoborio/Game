@@ -10,5 +10,4 @@
 class ICollider {
 public:
 	virtual btCollisionShape* GetBody() = 0;
-	virtual btBoxShape* GetBoxBody() = 0;
 };

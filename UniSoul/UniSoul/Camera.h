@@ -177,4 +177,5 @@ private:
 	int				m_nowGameObject;		//選択されているゲームオブジェクト。
 	DWORD			m_nowTime;				//現在の時間を格納。
 	DWORD			m_selectMoveTime;		//オブジェクトを選択してから経過した時間。
+	float			m_cameraHokan = 0.0f;	//曲線キーフレーム用の補間位置。0.0だと始点1.0fなら終点。
 };
