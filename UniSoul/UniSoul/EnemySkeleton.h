@@ -1,12 +1,6 @@
 #pragma once
 #include "EnemyBase.h"
 
-namespace {
-	const float SKELETONWAITSPEED = 0.0f;
-	const float SKELETONWALKSPEED = 0.02f*60.0f;
-	const float SKELETONRUNSPEED = 0.2f*60.0f;
-}
-
 class UnityChan;
 
 static D3DXVECTOR3 EnemyCource[] = {
@@ -17,15 +11,6 @@ static D3DXVECTOR3 EnemyCource[] = {
 class EnemySkeleton : public EnemyBase
 {
 public:
-	//スケルトンの状態遷移の種類。
-	enum class SkeletonState {
-		StateSearch = 0,//索敵中。
-		StateFind,		//発見。
-		StateAttack,	//攻撃。
-		StateDamage,	//ダメージを受けている。
-		StateDead,		//死。
-	};
-
 	//コンストラクタ。
 	EnemySkeleton();
 
@@ -57,7 +42,6 @@ public:
 		m_lightFlag = flg;
 	}
 private:
-	SkeletonState		m_state;					//骨の敵の状態。
 	UnityChan*			m_unitytyan;				//プレイヤーのインスタンス。
 	D3DXVECTOR3			m_unityPos;					//プレイヤーの位置。
 	D3DXVECTOR3			m_posDifference;			//プレイヤーとの距離。

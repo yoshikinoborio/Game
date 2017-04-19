@@ -6,7 +6,12 @@
 //コンストラクタ。
 YouDied::YouDied()
 {
+	//各変数の初期化。
 	m_alph = 0;
+	m_position = Vector2Zero;
+	m_angle = 0;
+	m_scale = Vector2Zero;
+	m_backColor = D3DCOLOR_ARGB(0, 0, 0, 0);
 }
 
 //デストラクタ。

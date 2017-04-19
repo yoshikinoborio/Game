@@ -1,13 +1,12 @@
 #pragma once
 #include "AnimationModel3D.h"
-#include "CharacterController.h"
 
 //エネミーの基底クラス。
 class EnemyBase : public AnimationModel3D
 {
 public:
-	//ボス以外の状態遷移の種類。
-	enum EnemyAnimation {
+	//敵のアニメーションの種類。
+	enum class EnemyAnimation {
 		enAnimInvalid = -1,
 		enAnimWait,		//待機中。
 		enAnimWalk,		//歩き中。
@@ -17,17 +16,19 @@ public:
 		enAnimDead,		//死。
 		enAnimJump,		//ジャンプ。
 		enAnimFall,		//落下中。
-		enAnimLanding,	//着地。
-		
+		enAnimLanding,	//着地。	
 	};
 
-	//ボス専用の状態遷移の種類。
-	enum BossEnemyAnimation {
-		enBossAnimInvalid = -1,
-		enBossAnimWait,		//待機中。
-		enBossAnimWalk,		//歩き中。
-		enBossAnimRun,		//走り中。
-		enBossAnimAttack,	//攻撃中。
+	//敵の状態遷移の種類。
+	enum class EnemyState {
+		enStateSearch = 0,	//索敵中。
+		enStateFind,		//発見。
+		enStateAttack,		//攻撃。
+		enStateDamage,		//ダメージを受けている。
+		enStateDead,		//死。
+		enStateJump,		//ジャンプ。
+		enStateFall,		//落下。
+		enStateLanding,		//着地。
 	};
 
 	//コンストラクタ。
@@ -77,7 +78,7 @@ public:
 	//同じアニメーションが再生されていても気にせずにでも最初から流す。
 	virtual void PlayAnimationForce(EnemyAnimation animNo)
 	{
-		m_animation.PlayAnimation(animNo, 0.3f);
+		m_animation.PlayAnimation((int)animNo, 0.3f);
 		m_currentAnimSetNo = animNo;
 	}
 
@@ -99,14 +100,28 @@ public:
 		m_deltaTimeMul = mul;
 	}
 
+	//位置の取得。
 	const D3DXVECTOR3& GetPos() const
 	{
 		return m_position;
 	}
+
+	//第一引数は待機状態での移動スピード。
+	//第二引数は歩き状態での移動スピード。
+	//第三引数は走り状態での移動スピード。
+	void SetMoveSpeed(float wait, float walk, float run)
+	{
+		m_waitSpeed = wait;
+		m_walkSpeed = walk;
+		m_runSpeed = run;
+	}
 protected:
-	D3DXVECTOR3			m_move;								//移動量。
-	EnemyAnimation		m_currentAnimSetNo;					//現在再生しているアニメーション。
-	BossEnemyAnimation	m_currentBossAnimSetNo;				//ボス専用。
-	D3DXVECTOR3			m_moveDir;							//方向。
-	int					m_dropEXP;							//倒された時に落とす経験値量。
+	D3DXVECTOR3			m_move;						//移動量。
+	EnemyAnimation		m_currentAnimSetNo;			//現在再生しているアニメーション。
+	D3DXVECTOR3			m_moveDir;					//方向。
+	int					m_dropEXP;					//倒された時に落とす経験値量。
+	EnemyState			m_state;					//敵の状態。
+	float				m_waitSpeed;				//待機状態の移動スピード。
+	float				m_walkSpeed;				//歩き状態の移動スピード。
+	float				m_runSpeed;					//走り状態の移動スピード。
 };

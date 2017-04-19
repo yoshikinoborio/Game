@@ -42,7 +42,7 @@ public:
 	//描画。
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
-		bool isShadowReceiver);
+		bool isShadowCaster);
 
 	//パッドによるカメラの奥に移動する処理。
 	void PadMove();
@@ -182,6 +182,12 @@ public:
 		return m_isDead;
 	}
 
+	//レベルアップしているかのフラグの取得。
+	bool GetIsLvUpFlag() const
+	{
+		return m_lvUpFlag;
+	}
+
 	//位置を設定。
 	void SetPos(const D3DXVECTOR3& pos)
 	{
@@ -248,8 +254,9 @@ private:
 	int				m_lvUpEXP;							//レベルアップに必要な経験値。
 	int				m_holdEXP;							//プレイヤーが持っている経験値。
 	int				m_getEXP;							//敵から取得した経験値。
-	CSoundSource	m_soundSource;						//着地のSE。
-	CSoundSource	m_soundSource2;						//レベルアップのSE。
+	CSoundSource	m_landingSe;						//着地のSE。
+	CSoundSource	m_lvUpSe;						//レベルアップのSE。
 	long long		m_levelUpExpTable[MAX_LEVEL];		//レベルアップに必要な経験値テーブル。
 	CParticleEmitter* m_pEmitter;
+	bool			m_lvUpFlag;							//レベルアップしているかのフラグ。
 };

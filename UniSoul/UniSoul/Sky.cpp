@@ -53,7 +53,7 @@ void Sky::Update()
 
 void Sky::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
-	bool isShadowReceiver)
+	bool isShadowCaster)
 {
-	m_skinModel.Draw(&viewMatrix, &projMatrix,isShadowReceiver);
+	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowCaster);
 }

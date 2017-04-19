@@ -86,8 +86,7 @@ void Respawn::Update()
 
 //•`‰æB
 void Respawn::Draw(D3DXMATRIX viewMatrix,
-	D3DXMATRIX projMatrix,
-	bool isShadowReceiver) 
+	D3DXMATRIX projMatrix) 
 {
 	m_pEmitter->Render(&viewMatrix, &projMatrix);
 }

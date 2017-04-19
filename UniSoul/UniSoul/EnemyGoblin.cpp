@@ -10,8 +10,8 @@ EnemyGoblin::EnemyGoblin()
 	m_move = Vector3Zero;
 	m_height = 0.0f;
 	m_radius = 0.0f;
-	m_state = EnemyGoblinState::StateSearch;
-	m_currentAnimSetNo = enAnimInvalid;
+	m_state = EnemyState::enStateSearch;
+	m_currentAnimSetNo = EnemyAnimation::enAnimInvalid;
 	m_hp = 0;
 	m_isDead = FALSE;
 	m_isTurn = FALSE;
@@ -55,11 +55,11 @@ void EnemyGoblin::Initialize(const char* modelPath, const D3DXVECTOR3& pos, cons
 	m_skinModel.SetFogHeightFlag(FALSE);
 
 	//アニメーションループの設定。
-	m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
-	m_animation.SetAnimationLoopFlag(enAnimDamage, FALSE);
-	m_animation.SetAnimationLoopFlag(enAnimDead, FALSE);
-	m_animation.SetAnimationLoopFlag(enAnimJump, FALSE);
-	m_animation.SetAnimationLoopFlag(enAnimLanding, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimAttack, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimDamage, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimDead, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimJump, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimLanding, FALSE);
 
 	//Unityで出力した情報を元に設定。
 	m_position = pos;
@@ -76,6 +76,9 @@ void EnemyGoblin::Initialize(const char* modelPath, const D3DXVECTOR3& pos, cons
 	
 	m_characterController.Initialize(m_radius, m_height, m_position);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
+
+	//各状態での移動スピードを設定。
+	this->SetMoveSpeed(0.0f, 0.005f*60.0f, 0.05f*60.0f);
 }
 
 void EnemyGoblin::Update()
@@ -98,17 +101,17 @@ void EnemyGoblin::Update()
 	Damage();
 
 	//ジャンプ中にジャンプさせないための処理。
-	//if (m_state==EnemyGoblinState::StateSearch && m_characterController.IsOnGround() == TRUE)
+	//if (m_state==EnemyState::enStateSearch && m_characterController.IsOnGround() == TRUE)
 	//{
 	//	//ジャンプの初速度。
 	//	m_move.y = 10.0f;
 	//	m_characterController.Jump();
-	//	m_state = EnemyGoblinState::StateJump;
+	//	m_state = EnemyState::enStateJump;
 	//}
 
 	switch (m_state)
 	{
-	case EnemyGoblinState::StateSearch:
+	case EnemyState::enStateSearch:
 		if (m_characterController.IsOnGround() == TRUE)
 		{
 			float selfangle;
@@ -118,7 +121,7 @@ void EnemyGoblin::Update()
 			if (selfangle < 50.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
 			{
 				//発見。
-				m_state = EnemyGoblinState::StateFind;
+				m_state = EnemyState::enStateFind;
 				break;
 			}
 			m_move.x = m_moveSpeed;
@@ -126,13 +129,13 @@ void EnemyGoblin::Update()
 		}
 		else
 		{
-			m_state = EnemyGoblinState::StateFall;
+			m_state = EnemyState::enStateFall;
 		}
 		break;
-	case EnemyGoblinState::StateFind:
+	case EnemyState::enStateFind:
 		if (m_characterController.IsOnGround() == TRUE)
 		{
-			m_moveSpeed = GOBLINRUNSPEED;
+			m_moveSpeed = m_runSpeed;
 			m_isTurn = TRUE;
 			m_posDifference.y = 0.0f;
 
@@ -166,16 +169,16 @@ void EnemyGoblin::Update()
 			//発見中に近くに行くと攻撃する。
 			if (D3DXVec3LengthSq(&PosDiff) < 2.5f)
 			{
-				m_state = EnemyGoblinState::StateAttack;
+				m_state = EnemyState::enStateAttack;
 			}
 		}
 		else
 		{
-			m_state = EnemyGoblinState::StateFall;
+			m_state = EnemyState::enStateFall;
 		}
 		break;
-	case EnemyGoblinState::StateAttack:
-		m_animation.SetAnimationLoopFlag(enAnimAttack, TRUE);
+	case EnemyState::enStateAttack:
+		m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimAttack, TRUE);
 		m_atrTime += DeltaTime;
 		//攻撃時に当たり判定を生成。
 		//ゴブリンの前方向に当たり判定を発生させる。
@@ -191,57 +194,57 @@ void EnemyGoblin::Update()
 			//攻撃が終わってから移動開始。
 			if (!m_animation.IsPlay())
 			{
-				m_state = EnemyGoblinState::StateFind;
-				m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
-				m_moveSpeed = GOBLINRUNSPEED;
+				m_state = EnemyState::enStateFind;
+				m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimAttack, FALSE);
+				m_moveSpeed = m_runSpeed;
 			}
 
 		}
 		//攻撃中は移動しない。
 		m_move = Vector3Zero;
 		break;
-	case EnemyGoblinState::StateJump:
+	case EnemyState::enStateJump:
 		//ジャンプのアニメーションが終わったら落下に遷移。
 		if (!m_animation.IsPlay())
 		{
-			m_state = EnemyGoblinState::StateFall;
+			m_state = EnemyState::enStateFall;
 		}
 		break;
-	case EnemyGoblinState::StateFall:
+	case EnemyState::enStateFall:
 		//落下中に地面に着地。
 		if (m_characterController.IsOnGround() == TRUE)
 		{
 			//着地に遷移。
-			m_state = EnemyGoblinState::StateLanding;
+			m_state = EnemyState::enStateLanding;
 			//着地した。
 		}
 		else
 		{
 			//落下中。
-			m_state = EnemyGoblinState::StateFall;
+			m_state = EnemyState::enStateFall;
 		}
 		break;
-	case EnemyGoblinState::StateLanding:
+	case EnemyState::enStateLanding:
 		if (m_characterController.IsOnGround() == TRUE)
 		{
 			//着地のアニメーションが終わったら待機かプレイヤーを追跡中にする。
 			if (!m_animation.IsPlay()) {
-				m_state = EnemyGoblinState::StateSearch;
+				m_state = EnemyState::enStateSearch;
 			}
 		}
 		else
 		{
-			m_state = EnemyGoblinState::StateFall;
+			m_state = EnemyState::enStateFall;
 		}
 		break;
-	case EnemyGoblinState::StateDamage:
+	case EnemyState::enStateDamage:
 		//ダメージを受けたらプレイヤー発見状態にする。
 		if (!m_animation.IsPlay())
 		{
-			m_state = EnemyGoblinState::StateFind;
+			m_state = EnemyState::enStateFind;
 		}
 		break;
-	case EnemyGoblinState::StateDead:
+	case EnemyState::enStateDead:
 		m_moveSpeed = 0.0f;
 		if (!m_animation.IsPlay()) {
 			//完全に死んだらプレイヤーに経験値を渡す。
@@ -255,61 +258,61 @@ void EnemyGoblin::Update()
 	}
 
 	//エネミーの状態を見て再生するアニメーションを設定。
-	if (m_state == EnemyGoblinState::StateSearch)
+	if (m_state == EnemyState::enStateSearch)
 	{
 		//止まっていたら待機で動いていたら歩きモーションを設定。
-		if (m_moveSpeed > GOBLINWAITSPEED)
+		if (m_moveSpeed > m_waitSpeed)
 		{
 			//歩きを設定。
 			//歩きモーション。
-			m_currentAnimSetNo = enAnimWalk;
+			m_currentAnimSetNo = EnemyAnimation::enAnimWalk;
 		}
 		else
 		{
 			//待機を設定。
 			//待機モーション。
-			m_currentAnimSetNo = enAnimWait;
+			m_currentAnimSetNo = EnemyAnimation::enAnimWait;
 		}
 	}
 	//プレイヤーを発見。
-	else if (m_state == EnemyGoblinState::StateFind)
+	else if (m_state == EnemyState::enStateFind)
 	{
 		//走りモーション。
-		m_currentAnimSetNo = enAnimRun;
+		m_currentAnimSetNo = EnemyAnimation::enAnimRun;
 	}
 	//攻撃を設定。
-	else if (m_state == EnemyGoblinState::StateAttack)
+	else if (m_state == EnemyState::enStateAttack)
 	{
 		//攻撃モーション。
-		m_currentAnimSetNo = enAnimAttack;
+		m_currentAnimSetNo = EnemyAnimation::enAnimAttack;
 	}
 	//ダメージ状態を設定。
-	else if (m_state == EnemyGoblinState::StateDamage)
+	else if (m_state == EnemyState::enStateDamage)
 	{
 		//ダメージモーション。
-		m_currentAnimSetNo = enAnimDamage;
+		m_currentAnimSetNo = EnemyAnimation::enAnimDamage;
 	}
 	//死状態を設定。
-	else if (m_state == EnemyGoblinState::StateDead)
+	else if (m_state == EnemyState::enStateDead)
 	{
 		//死モーション。
-		m_currentAnimSetNo = enAnimDead;
+		m_currentAnimSetNo = EnemyAnimation::enAnimDead;
 	}
 	//落下状態。
-	else if (m_state == EnemyGoblinState::StateFall)
+	else if (m_state == EnemyState::enStateFall)
 	{
 		//落下モーション。
-		m_currentAnimSetNo = enAnimFall;
+		m_currentAnimSetNo = EnemyAnimation::enAnimFall;
 	}
 	//ジャンプ状態。
-	else if (m_state == EnemyGoblinState::StateJump)
+	else if (m_state == EnemyState::enStateJump)
 	{
 		//ジャンプアニメーション。
-		m_currentAnimSetNo = enAnimJump;
+		m_currentAnimSetNo = EnemyAnimation::enAnimJump;
 	}
-	else if (m_state == EnemyGoblinState::StateLanding)
+	else if (m_state == EnemyState::enStateLanding)
 	{
-		m_currentAnimSetNo = enAnimLanding;
+		m_currentAnimSetNo = EnemyAnimation::enAnimLanding;
 	}
 
 	//キャラクタが動く速度を設定。
@@ -325,7 +328,7 @@ void EnemyGoblin::Update()
 	//計算させた回転の反映。
 	m_currentAngleY = m_turn.Update(m_isTurn, m_targetAngleY);
 
-	m_animation.PlayAnimation(m_currentAnimSetNo, 0.1f);
+	m_animation.PlayAnimation((int)m_currentAnimSetNo, 0.1f);
 
 	m_skinModel.Update(m_position, m_rotation, m_scale);
 }
@@ -340,7 +343,7 @@ void EnemyGoblin::Draw(D3DXMATRIX viewMatrix,
 void EnemyGoblin::Damage()
 {
 	//死んでいたら何もしない。
-	if (m_state == EnemyGoblinState::StateDamage || m_state == EnemyGoblinState::StateDead)
+	if (m_state == EnemyState::enStateDamage || m_state == EnemyState::enStateDead)
 	{
 		return;
 	}
@@ -358,10 +361,10 @@ void EnemyGoblin::Damage()
 		if (m_hp <= 0.0f) {
 			//死亡
 			m_hp = 0;
-			m_state = EnemyGoblinState::StateDead;
+			m_state = EnemyState::enStateDead;
 		}
 		else {
-			m_state = EnemyGoblinState::StateDamage;
+			m_state = EnemyState::enStateDamage;
 		}
 	}
 }

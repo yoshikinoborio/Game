@@ -39,6 +39,7 @@ UnityChan::UnityChan()
 	m_hp = 0;
 	m_maxhp = 0;
 	m_landingTime = 0.0f;
+	m_lvUpFlag = FALSE;
 }
 
 UnityChan::~UnityChan()
@@ -125,6 +126,8 @@ void UnityChan::Initialize()
 	//リリース時の処理。
 #ifndef _DEBUG
 	m_position = static_cast<GameScene*>(g_pScenes)->GetFileOperation()->ReadText();
+	m_position = D3DXVECTOR3(67.5f, 3.31f, 76.42f);
+	//m_position.x = m_position.x + 3.0f;
 	//キャラクタコントローラを初期化。
 	//第一引数が半径、第二引数が高さ、第三引数が位置。
 	m_characterController.Initialize(m_radius, m_height, m_position);
@@ -144,20 +147,23 @@ void UnityChan::Initialize()
 	m_lv = 1;
 	m_lvUpEXP = 10;
 	m_holdEXP = 0;
-	m_hp = 30;
+	m_hp = 100;
 	m_maxhp = m_hp;
 
 	//経験値テーブルの中身の初期化。
 	int nextLevelPoint = 10;
 	m_levelUpExpTable[0] = 0;
-	for (int i = 1; i < 100; i++) {
+	for (int i = 1; i < MAX_LEVEL; i++) {
 		nextLevelPoint *= 1.1f;
 		m_levelUpExpTable[i] = m_levelUpExpTable[i - 1] + nextLevelPoint;
 	}
 	//SEの初期化。
 	//オンメモリ再生。
-	m_soundSource.Init("image/landing.wav");
-	m_soundSource2.Init("image/LvUpSE.wav");
+	m_landingSe.Init("image/landing.wav");
+	m_lvUpSe.Init("image/UniSoulBGM.wav");
+
+	//ユニティちゃんを進む方向に向けるための処理。
+	m_rotation = D3DXQUATERNION(0.0f, 0.06f, 0.0f, 0.998f);
 
 }
 void UnityChan::Update()
@@ -173,8 +179,18 @@ void UnityChan::Update()
 	//計算された移動速度を取得。
 	m_move = m_characterController.GetMoveSpeed();
 
+
 	//レベルアップの処理。
 	LevelUp();
+
+	if (m_lvUpSe.GetIsPlaying()==TRUE)
+	{
+		m_lvUpFlag = TRUE;
+	}
+	else
+	{
+		m_lvUpFlag = FALSE;
+	}
 
 	m_isTurn = FALSE;
 
@@ -281,10 +297,10 @@ void UnityChan::Update()
 
 void UnityChan::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
-	bool isShadowReceiver)
+	bool isShadowCaster)
 {
 	//m_pEmitter->Render(&viewMatrix, &projMatrix);
-	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowReceiver);
+	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowCaster);
 
 	//１フレームの経過時間の取得。
 	m_frameDeltaTime = static_cast<GameScene*>(g_pScenes)->GetFrameDeltaTime();
@@ -300,9 +316,16 @@ void UnityChan::LevelUp()
 	while (m_holdEXP >= m_levelUpExpTable[m_lv])
 	{
 		//レベルの加算。
-		m_lv += 1;
-		m_soundSource2.Play(FALSE);
-		m_soundSource2.SetVolume(0.25f);
+		//レベルが100を超えたらレベルの加算は行わない。
+		if (m_lv < MAX_LEVEL)
+		{
+			m_lv += 1;
+			//レベルアップをしているフラグをTRUEにする。
+			m_lvUpFlag = TRUE;
+		}
+		//レベルアップの音。
+		m_lvUpSe.Play(FALSE);
+		m_lvUpSe.SetVolume(0.4f);
 	}
 }
 
@@ -354,7 +377,7 @@ void UnityChan::PadMove()
 	D3DXVec3Normalize(&m_moveDir, &m_moveDir);
 
 	//回転の処理。
-	if (D3DXVec3Length(&m_moveDir) > 0.0f)
+	if (D3DXVec3Length(&m_UniDir) > 0.0f)
 	{
 		D3DXVECTOR3 forward = Vector3Forward;
 		m_targetAngleY = acos(D3DXVec3Dot(&forward, &m_moveDir));
@@ -490,8 +513,8 @@ void UnityChan::FallProcess()
 		m_state = StateLanding;
 		//着地した。
 		//着地音を再生。
-		m_soundSource.Play(FALSE);
-		m_soundSource.SetVolume(0.25f);
+		m_landingSe.Play(FALSE);
+		m_landingSe.SetVolume(0.25f);
 	}
 	else
 	{
@@ -788,8 +811,8 @@ void UnityChan::AnimationSelectPlay()
 void UnityChan::PlayerSEUpdate()
 {
 	//着地、レベルアップのSEの更新。
-	m_soundSource.Update();
-	m_soundSource2.Update();
+	m_landingSe.Update();
+	m_lvUpSe.Update();
 }
 
 void UnityChan::CharacterControllerUpdate()
@@ -825,13 +848,17 @@ void UnityChan::WinProcess()
 	{
 		m_state = StateWinWait;
 	}
-	m_moveSpeed = 0.0f;
+	m_move.x = 0.0f;
+	m_move.z = 0.0f;
 }
 
 void UnityChan::WinWaitProcess()
 {
 	//画面を暗くしていくフラグをTRUEにする。
 	static_cast<GameScene*>(g_pScenes)->GetBlack()->SetStartFlag(TRUE);
+
+	m_move.x = 0.0f;
+	m_move.z = 0.0f;
 	
 }
 

@@ -20,8 +20,7 @@ public:
 
 	//描画。
 	void Draw(D3DXMATRIX viewMatrix,
-		D3DXMATRIX projMatrix,
-		bool isShadowReceiver);
+		D3DXMATRIX projMatrix);
 private:
 	std::vector<btGhostObject*>		m_ghostObjectList;	//ゴーストオブジェクト。
 	CParticleEmitter*				m_pEmitter;

@@ -94,13 +94,13 @@ void EnemyManager::Update()
 //描画。
 void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
-	bool isShadowReceiver)
+	bool isShadowCaster)
 {
 
 	//エネミーリストの描画。
 	for (auto enemylist : m_enemyList)
 	{
-			enemylist->Draw(viewMatrix, projMatrix, isShadowReceiver);
+			enemylist->Draw(viewMatrix, projMatrix, isShadowCaster);
 	}
 
 	
@@ -108,7 +108,7 @@ void EnemyManager::Draw(D3DXMATRIX viewMatrix,
 	if (m_enemyBoss->GetIsDead() == FALSE)
 	{
 		//ボスの描画。
-		m_enemyBoss->Draw(viewMatrix, projMatrix, isShadowReceiver);
+		m_enemyBoss->Draw(viewMatrix, projMatrix, isShadowCaster);
 	}	
 }
 

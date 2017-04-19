@@ -37,7 +37,7 @@ void Camera::Initialize()
 	m_far = 10000.0f;
 	m_aspect = 1920.0f / 1020.0f;
 
-	m_eyePt = D3DXVECTOR3(0.0f, 4.0f, -5.0f);
+	m_eyePt = D3DXVECTOR3(0.0f, 0.0f, -5.0f);
 	m_lookatPt = Vector3Zero;
 	m_upVec = Vector3Up;
 

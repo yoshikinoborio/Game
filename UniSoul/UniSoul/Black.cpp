@@ -9,9 +9,9 @@ Black::Black()
 	//äeïœêîÇÃèâä˙âªÅB
 	m_alph = 255;
 	m_alphFlag = FALSE;
-	m_position = D3DXVECTOR2(0.0f, 0.0f);
+	m_position = Vector2Zero;
 	m_angle = 0;
-	m_scale = D3DXVECTOR2(0.0f, 0.0f);
+	m_scale =Vector2Zero;
 	m_backColor = D3DCOLOR_ARGB(0, 0, 0, 0);
 }
 

@@ -31,5 +31,5 @@ public:
 	//•`‰æ
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
-		bool isShadowReceiver);
+		bool isShadowCaster);
 };

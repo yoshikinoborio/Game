@@ -25,6 +25,7 @@ namespace {
 			{
 				//リスポーン地点の当たりと当たった。
 				D3DXVECTOR3* pos = (D3DXVECTOR3*)convexResult.m_hitCollisionObject->getUserPointer();
+				
 				//当たったゴーストオブジェクトの位置をバイナリファイルに吐き出す。
 				static_cast<GameScene*>(g_pScenes)->GetFileOperation()->OutPutText(*pos);
 				return 0.0f;
@@ -84,6 +85,7 @@ namespace {
 			{
 				//リスポーン地点の当たりと当たった。
 				D3DXVECTOR3* pos = (D3DXVECTOR3*)convexResult.m_hitCollisionObject->getUserPointer();
+				
 				//当たったゴーストオブジェクトの位置をバイナリファイルに吐き出す。
 				static_cast<GameScene*>(g_pScenes)->GetFileOperation()->OutPutText(*pos);
 				return 0.0f;

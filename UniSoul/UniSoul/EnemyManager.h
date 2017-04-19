@@ -9,6 +9,7 @@ class EnemyBoss;
 class EnemyManager
 {
 public:
+	//エネミーのタイプ。
 	enum  class EnemyType
 	{
 		Skeleton = 0,	//骨型。
@@ -36,11 +37,10 @@ public:
 	//描画。
 	void Draw(D3DXMATRIX viewMatrix,
 		D3DXMATRIX projMatrix,
-		bool isShadowReceiver);
+		bool isShadowCaster);
 
 	//敵を生成する処理。
 	void EnemyCreate();
-	
 	
 	const std::vector<EnemyBase*>& GetEnemyList() const
 	{
@@ -73,5 +73,4 @@ private:
 	EnemyBoss*						m_enemyBoss;			//ボス。
 	bool							m_createEnemyFlag;		//敵を生成するフラグ。
 	D3DXVECTOR3						m_createPos;			//敵を生成する時に使う位置情報を格納。
-	
 };

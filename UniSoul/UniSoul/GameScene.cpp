@@ -35,8 +35,8 @@ void GameScene::InitMainRenderTarget()
 	m_mainRenderTarget->Create(
 		FRAME_BUFFER_WITDH,			//レンダリングターゲットの幅と高さはフレームバッファと同じにしておく。(必ずしも同じである必要はない！！！)
 		FRAME_BUFFER_HEIGHT,
-		1,							//ミップマップレベル。これは1でいい。ミップマップ覚えてますか？
-		D3DFMT_A16B16G16R16F,			//レンダリングターゲットのフォーマット。今回はR8G8B8A8の32bitを指定する。
+		1,							//ミップマップレベル。これは1でいい。
+		D3DFMT_A16B16G16R16F,		//レンダリングターゲットのフォーマット。今回はR8G8B8A8の32bitを指定する。
 		D3DFMT_D24S8,				//デプスステンシルバッファのフォーマット。一般的に16bitと24bitフォーマットが使われることが多い。今回は24bitフォーマットを使う。
 		D3DMULTISAMPLE_NONE,		//マルチサンプリングの種類。今回はマルチサンプリングは行わないのでD3DMULTISAMPLE_NONEでいい。
 		0							//マルチサンプリングの品質レベル。今回はマルチサンプリングは行わないので0でいい。
@@ -50,7 +50,7 @@ void  GameScene::InitQuadPrimitive()
 	//頂点の構造体。
 	struct SVertex {
 		float pos[4];	//頂点座標。
-		float uv[2];		//UV座標。
+		float uv[2];	//UV座標。
 	};
 	//頂点バッファ。
 	SVertex vertexBuffer[] = {
@@ -120,11 +120,11 @@ void GameScene::CopyMainRTToCurrentRT()
 	shader->SetTexture("g_tex", m_mainRenderTarget->GetTexture());
 	//定数レジスタへの変更をコミットする。
 	shader->CommitChanges();
-	// インデックスバッファを設定。
+	//インデックスバッファを設定。
 	g_pd3dDevice->SetIndices(m_quadPrimitive->GetIndexBuffer()->GetBody());
-	// 頂点定義を設定する。
+	//頂点定義を設定する。
 	g_pd3dDevice->SetVertexDeclaration(m_quadPrimitive->GetVertexDecl());
-	//　準備が整ったので描画。
+	//準備が整ったので描画。
 	g_pd3dDevice->DrawIndexedPrimitive(
 		m_quadPrimitive->GetD3DPrimitiveType(),	//プリミティブの種類を指定する。
 		0,										//ベース頂点インデックス。0でいい。
@@ -191,6 +191,8 @@ GameScene::GameScene()
 	g_damageCollisionWorld = NULL;
 	m_soundEngine = NULL;
 	g_enemyManager = NULL;
+	m_quadPrimitive = NULL;
+	m_mainRenderTarget = NULL;
 }
 
 
@@ -200,6 +202,8 @@ GameScene::~GameScene()
 	GameScene::Terminate();
 	m_stopFlag = FALSE;
 	delete g_enemyManager;
+	delete m_quadPrimitive;
+	delete m_mainRenderTarget;
 }
 
 //-----------------------------------------------------------------------------
@@ -295,7 +299,7 @@ void GameScene::Initialize()
 	m_font.Init();
 
 	//ゲーム画面のBGMの初期化。
-	m_gameBgm.InitStreaming("image/UniSoulGameBGM.wav");
+	m_gameBgm.InitStreaming("image/UniSoulBGM.wav");
 	m_gameBgm.Play(TRUE);
 	m_gameBgm.SetVolume(0.25f);
 }
@@ -314,7 +318,7 @@ void GameScene::Draw()
 	g_pd3dDevice->GetRenderTarget(0, &renderTargetBackup);		//元々のレンダリングターゲットを保存。後で戻す必要があるので。
 	g_pd3dDevice->GetDepthStencilSurface(&depthBufferBackup);	//元々のデプスステンシルバッファを保存。後で戻す必要があるので。
 
-	//プレイヤーをオフスクリーンレンダリング開始。
+	//オフスクリーンレンダリング開始。
 	//テクスチャをレンダリングターゲットに設定。
 	g_pd3dDevice->SetRenderTarget(0, m_renderTarget.GetSurface());
 	g_pd3dDevice->SetDepthStencilSurface(m_renderTarget.GetDepthStencilBuffer());
@@ -323,15 +327,15 @@ void GameScene::Draw()
 	//現在設定されているレンダリングターゲットをクリア。
 	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
 
-	//影プレイヤーの描画。
+	//プレイヤーの影の描画。
 	m_unitychan.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
 		m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
 		TRUE);
 
 	//マップにあるオブジェクトの影の描画。
 	m_map.Draw(m_shadowmapcamera.GetShadowMapCameraViewMatrix(),
-	m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
-	TRUE);
+		m_shadowmapcamera.GetShadowMapCameraProjectionMatrix(),
+		TRUE);
 
 
 	//エネミーマネージャーの敵の影の描画。
@@ -347,7 +351,7 @@ void GameScene::Draw()
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	// 画面をクリア。
-	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
+	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
 	//シーンの描画開始。
 	g_pd3dDevice->BeginScene();
 
@@ -386,8 +390,7 @@ void GameScene::Draw()
 
 	//リスポーン地点の描画。
 	m_respawn.Draw(m_camera.GetViewMatrix(),
-		m_camera.GetProjectionMatrix(),
-		FALSE);
+		m_camera.GetProjectionMatrix());
 
 	//エネミーマネージャーの描画。
 	g_enemyManager->Draw(m_camera.GetViewMatrix(),
@@ -401,7 +404,6 @@ void GameScene::Draw()
 
 	//ブルームの描画。
 	m_bloom.Render();
-
 
 	if (m_camera.GetCameraFreeFlag() == FALSE)
 	{
@@ -510,6 +512,9 @@ void GameScene::Draw()
 		}
 	}
 
+	//ゲームメニュー画面の描画。
+	m_gameMenu.Draw();
+
 	//YouDiedの描画。
 	m_youDied.Render();
 
@@ -606,6 +611,28 @@ void GameScene::Update()
 		//ブラックアウトの画像の更新。
 		m_black.Update();
 
+		//レベルアップのSEが流れている時はBGMの音量を下げる。
+		if (m_unitychan.GetIsLvUpFlag()==FALSE)
+		{
+			//小さくしたBGMを元の大きさに戻している。
+			if (m_gameBgmVolume < 0.35f)
+			{
+				m_gameBgmVolume += 0.01f;
+			}
+
+			m_gameBgm.SetVolume(m_gameBgmVolume);
+		}
+		else
+		{
+			if (m_gameClearFlag == FALSE)
+			{
+				//レベルアップのSEが流れているのでBGMの音量を0にする。
+				m_gameBgmVolume = 0.0f;
+			}
+		
+			m_gameBgm.SetVolume(m_gameBgmVolume);
+		}
+
 		//ゲームのメニュー画面の初期化。
 		m_gameMenu.Update();
 
@@ -618,7 +645,7 @@ void GameScene::Update()
 			//ボス用のBGMを読み込み。
 			m_gameBgm.InitStreaming("image/UniSoulBossBGM.wav");
 			m_gameBgm.Play(TRUE);
-			m_gameBgm.SetVolume(0.25f);
+			m_gameBgm.SetVolume(m_gameBgmVolume);
 			m_changeBgmFlag = TRUE;
 
 		}

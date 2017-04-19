@@ -10,3 +10,9 @@
 	D3DXQUATERNION(0.00f, 0.00f, 0.00f, 1.00f ),    //回転
 	D3DXVECTOR3(5.00f, 5.00f, 5.00f ),            //拡大
 },
+//Cube (1)
+{
+	D3DXVECTOR3(20.63f, 4.35f, 287.00f),             //平行移動
+	D3DXQUATERNION(0.00f, 0.00f, 0.00f, 1.00f ),    //回転
+	D3DXVECTOR3(5.00f, 5.00f, 5.00f ),            //拡大
+},

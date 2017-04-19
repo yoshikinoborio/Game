@@ -15,7 +15,7 @@ CreateViewAngle::~CreateViewAngle()
 float CreateViewAngle::CreateView(const D3DXVECTOR3& TargetDir, const D3DXMATRIX& MyDir)
 {
 	//自分の向きベクトル。
-	D3DXVECTOR3 Dir = D3DXVECTOR3(MyDir.m[3][0],MyDir.m[3][1],MyDir.m[3][2]);
+	D3DXVECTOR3 Dir = D3DXVECTOR3(MyDir.m[2][0],MyDir.m[2][1],MyDir.m[2][2]);
 
 	//プレイヤーへの向きベクトル。
 	D3DXVECTOR3 PlayerDir = TargetDir;

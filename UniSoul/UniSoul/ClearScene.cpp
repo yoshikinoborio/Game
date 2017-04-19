@@ -5,6 +5,8 @@
 //コンストラクタ。
 ClearScene::ClearScene()
 {
+	m_bgmVolume = 0.1f;
+	m_soundEngine = NULL;
 }
 
 //デストラクタ。
@@ -18,25 +20,48 @@ void ClearScene::Initialize()
 {
 	//ゲームクリア画面の画像の初期化。
 	m_clear.Initialize();
+
+	m_soundEngine = new CSoundEngine;
+	//サウンドエンジンの初期化。
+	m_soundEngine->Init();
+
+	//クリアシーンのBGMの初期化。
+	m_clearSceneBgm.InitStreaming("image/UniSoulGameClearBGM.wav");
+	m_clearSceneBgm.Play(TRUE);
+	m_clearSceneBgm.SetVolume(m_bgmVolume);
 }
 
 //更新。
 void ClearScene::Update()
 {
+	//サウンドの更新。
+	m_soundEngine->Update();
+
 	//ゲームクリア画面の画像の更新。
 	m_clear.Update();
 
+	//ゲームパッドの更新。
 	g_pad.Update();
 
+	//タイトル画面に戻る。
 	if (g_pad.IsTrigger(enButtonA))
 	{
 		g_sceneManager->ChangeScene(SceneNum::SceneNumTitle);
 	}
 
+	//ゲームをやめる。
 	if (g_pad.IsTrigger(enButtonB))
 	{
 		PostQuitMessage(0);
 	}
+
+	if (m_bgmVolume < 0.25f)
+	{
+		m_bgmVolume += 0.01f;
+	}
+
+	//クリアシーンのBGMの更新。
+	m_clearSceneBgm.Update();
 }
 
 //描画。

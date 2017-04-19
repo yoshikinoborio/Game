@@ -11,7 +11,7 @@ EnemySkeleton::EnemySkeleton()
 	m_move = Vector3Zero;
 	m_posDifference = Vector3Zero;
 	m_SkeDir = Vector3Zero;
-	m_state = SkeletonState::StateSearch;
+	m_state = EnemyState::enStateSearch;
 	m_height = 0.0f;
 	m_radius = 0.0f;
 	m_walkTimer = 0.0f;
@@ -60,9 +60,9 @@ void EnemySkeleton::Initialize(const char* modelPath,const D3DXVECTOR3& pos, con
 	m_skinModel.SetFogHeightFlag(FALSE);
 
 	//アニメーションの設定。
-	m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
-	m_animation.SetAnimationLoopFlag(enAnimDamage, FALSE);
-	m_animation.SetAnimationLoopFlag(enAnimDead, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimAttack, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimDamage, FALSE);
+	m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimDead, FALSE);
 
 	//Unityで出力した情報を元に設定。
 	m_position = pos;
@@ -70,7 +70,7 @@ void EnemySkeleton::Initialize(const char* modelPath,const D3DXVECTOR3& pos, con
 	m_scale = scale;
 
 	//索敵中から開始。
-	m_state = SkeletonState::StateSearch;
+	m_state = EnemyState::enStateSearch;
 
 	//スケルトンの半径と高さ。
 	m_height = 1.0f;
@@ -98,6 +98,9 @@ void EnemySkeleton::Initialize(const char* modelPath,const D3DXVECTOR3& pos, con
 
 	m_characterController.Initialize(m_radius, m_height, m_position);
 	m_characterController.SetGravity(-20.0f);	//重力強め。
+
+	//各状態での移動スピードを設定。
+	this->SetMoveSpeed(0.0f, 0.02f*60.0f, 0.2f*60.0f);
 
 	m_lightFlag = FALSE;
 }
@@ -133,12 +136,12 @@ void EnemySkeleton::Update()
 		switch (m_state)
 		{
 			//索敵中。
-		case SkeletonState::StateSearch:
+		case EnemyState::enStateSearch:
 			//地面に着いている時。
 			if (m_characterController.IsOnGround() == TRUE)
 			{
 				//待機中のスピードを設定。
-				m_moveSpeed = SKELETONWAITSPEED;
+				m_moveSpeed = m_waitSpeed;
 
 				float selfangle;
 				//敵の視野角を作って視野角内にプレイヤーがいるかを調べる。
@@ -147,7 +150,7 @@ void EnemySkeleton::Update()
 				if (selfangle < 60.0f&&D3DXVec3LengthSq(&PosDiff) < 500.0f)
 				{
 					//発見。
-					m_state = SkeletonState::StateFind;
+					m_state = EnemyState::enStateFind;
 					break;
 				}
 				//近くにいない時は索敵中。
@@ -155,24 +158,24 @@ void EnemySkeleton::Update()
 			}
 			break;
 			//発見。
-		case SkeletonState::StateFind:
-			m_moveSpeed = SKELETONRUNSPEED;
+		case EnemyState::enStateFind:
+			m_moveSpeed = m_runSpeed;
 			FindMove();
 			//索敵範囲内にプレイヤーを発見。
 			//発見中に近くに行くと攻撃する。
 			if (D3DXVec3LengthSq(&PosDiff) < 10.0f)
 			{
-				m_state = SkeletonState::StateAttack;
+				m_state = EnemyState::enStateAttack;
 			}
 			
 			if (D3DXVec3LengthSq(&PosDiff) > 500.0f)
 			{
-				m_state = SkeletonState::StateSearch;
-				m_moveSpeed = SKELETONWAITSPEED;
+				m_state = EnemyState::enStateSearch;
+				m_moveSpeed = m_waitSpeed;
 			}
 			break;
-		case SkeletonState::StateAttack:
-			m_animation.SetAnimationLoopFlag(enAnimAttack, TRUE);
+		case EnemyState::enStateAttack:
+			m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimAttack, TRUE);
 			m_atrTime += DeltaTime;
 			//攻撃時に当たり判定を生成。
 			//スケルトンの前方向に当たり判定を発生させる。
@@ -188,23 +191,23 @@ void EnemySkeleton::Update()
 				//攻撃が終わってから移動開始。
 				if (!m_animation.IsPlay())
 				{
-					m_state = SkeletonState::StateFind;
-					m_animation.SetAnimationLoopFlag(enAnimAttack, FALSE);
-					m_moveSpeed = SKELETONRUNSPEED;
+					m_state = EnemyState::enStateFind;
+					m_animation.SetAnimationLoopFlag((int)EnemyAnimation::enAnimAttack, FALSE);
+					m_moveSpeed = m_runSpeed;
 				}
 				
 			}
 			//攻撃中は移動しない。
 			m_move = Vector3Zero;
 			break;
-		case SkeletonState::StateDamage:
+		case EnemyState::enStateDamage:
 			//ダメージを受けたらプレイヤー発見状態にする。
 			if (!m_animation.IsPlay())
 			{
-				m_state = SkeletonState::StateFind;
+				m_state = EnemyState::enStateFind;
 			}
 			break;
-		case SkeletonState::StateDead:
+		case EnemyState::enStateDead:
 			m_moveSpeed = 0.0f;
 			if (!m_animation.IsPlay()) {
 
@@ -219,45 +222,45 @@ void EnemySkeleton::Update()
 		}
 
 		//エネミーの状態を見て再生するアニメーションを設定。
-		if (m_state == SkeletonState::StateSearch)
+		if (m_state == EnemyState::enStateSearch)
 		{
 			//止まっていたら待機で動いていたら歩きモーションを設定。
-			if (m_moveSpeed > SKELETONWAITSPEED)
+			if (m_moveSpeed > m_waitSpeed)
 			{
 				//歩きを設定。
 				//歩きモーション。
-				m_currentAnimSetNo = enAnimWalk;
+				m_currentAnimSetNo = EnemyAnimation::enAnimWalk;
 			}
 			else
 			{
 				//待機を設定。
 				//待機モーション。
-				m_currentAnimSetNo = enAnimWait;
+				m_currentAnimSetNo = EnemyAnimation::enAnimWait;
 			}
 		}
 		//プレイヤーを発見。
-		else if (m_state == SkeletonState::StateFind)
+		else if (m_state == EnemyState::enStateFind)
 		{
 			//走りモーション。
-			m_currentAnimSetNo = enAnimRun;
+			m_currentAnimSetNo = EnemyAnimation::enAnimRun;
 		}
 		//攻撃を設定。
-		else if (m_state == SkeletonState::StateAttack)
+		else if (m_state == EnemyState::enStateAttack)
 		{
 			//攻撃モーション。
-			m_currentAnimSetNo = enAnimAttack;
+			m_currentAnimSetNo = EnemyAnimation::enAnimAttack;
 		}
 		//ダメージ状態を設定。
-		else if (m_state == SkeletonState::StateDamage)
+		else if (m_state == EnemyState::enStateDamage)
 		{
 			//ダメージモーション。
-			m_currentAnimSetNo = enAnimDamage;
+			m_currentAnimSetNo = EnemyAnimation::enAnimDamage;
 		}
 		//死状態を設定。
-		else if (m_state == SkeletonState::StateDead)
+		else if (m_state == EnemyState::enStateDead)
 		{
 			//死モーション。
-			m_currentAnimSetNo = enAnimDead;
+			m_currentAnimSetNo = EnemyAnimation::enAnimDead;
 		}
 
 		//キャラクタが動く速度を設定。
@@ -272,7 +275,7 @@ void EnemySkeleton::Update()
 		//計算させた回転の反映。
 		m_currentAngleY = m_turn.Update(m_isTurn, m_targetAngleY);
 
-		m_animation.PlayAnimation(m_currentAnimSetNo, 0.1f);
+		m_animation.PlayAnimation((int)m_currentAnimSetNo, 0.1f);
 
 		m_skinModel.Update(m_position, m_rotation, m_scale);
 	}
@@ -348,7 +351,7 @@ void EnemySkeleton::FindMove()
 //スケルトンが索敵中の時の回転と移動の処理。
 void EnemySkeleton::SearchMove()
 {
-	m_state = SkeletonState::StateSearch;
+	m_state = EnemyState::enStateSearch;
 
 	m_move.x = m_moveSpeed;
 	m_move.z = m_moveSpeed;
@@ -383,7 +386,7 @@ void EnemySkeleton::SearchMove()
 void EnemySkeleton::Damage()
 {
 	//死んでいたら何もしない。
-	if (m_state == SkeletonState::StateDamage || m_state == SkeletonState::StateDead)
+	if (m_state == EnemyState::enStateDamage || m_state == EnemyState::enStateDead)
 	{
 		return;
 	}
@@ -401,10 +404,10 @@ void EnemySkeleton::Damage()
 		if (m_hp <= 0.0f) {
 			//死亡
 			m_hp = 0;
-			m_state = SkeletonState::StateDead;
+			m_state = EnemyState::enStateDead;
 		}
 		else {
-			m_state = SkeletonState::StateDamage;
+			m_state = EnemyState::enStateDamage;
 		}
 	}
 }

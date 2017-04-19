@@ -16,4 +16,9 @@ public:
 
 	//更新。
 	void Update();
+
+	//描画。
+	void Draw();
+private:
+	D3DVIEWPORT9 m_viewPort;	//ビューポート。
 };

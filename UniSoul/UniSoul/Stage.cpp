@@ -20,7 +20,7 @@ Stage::~Stage()
 void Stage::Initialize()
 {
 	m_skinModelData = static_cast<GameScene*>(g_pScenes)->GetSkinModelDataResources()->Load("image\\UniSoulGround.X", &m_animation);
-	//m_skinModelData.LoadModelData("image\\Ground.X", &m_animation);
+
 	m_skinModel.Initialize(m_skinModelData);
 
 	//ライトの設定。
@@ -74,7 +74,7 @@ void Stage::Update()
 // 描画。
 void Stage::Draw(D3DXMATRIX viewMatrix,
 	D3DXMATRIX projMatrix,
-	bool isShadowReceiver){
+	bool isShadowCaster){
 
-	m_skinModel.Draw(&viewMatrix, &projMatrix,isShadowReceiver);
+	m_skinModel.Draw(&viewMatrix, &projMatrix, isShadowCaster);
 }

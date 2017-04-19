@@ -178,6 +178,7 @@ private:
 	bool					m_changeBgmFlag = FALSE;	//BGMを切り替えるフラグ。
 	bool					m_gameClearFlag = FALSE;	//ゲームをクリアしたかのフラグ。
 	float					m_clearBgmVolume = 0.25f;	//クリアBGMのボリューム。
+	float					m_gameBgmVolume = 0.35f;	//クリアBGMのボリューム。
 	GameMenu				m_gameMenu;					//ゲームのメニュー画面。
 	bool					m_gameMenuFlag = FALSE;		//メニュー画面中かのフラグ。
 };
