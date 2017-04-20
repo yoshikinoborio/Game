@@ -58,6 +58,4 @@ void GameMenu::Draw()
 		FALSE);
 
 #endif // !_DEBUG
-
-
 }

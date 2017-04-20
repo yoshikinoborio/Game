@@ -512,9 +512,6 @@ void GameScene::Draw()
 		}
 	}
 
-	//ゲームメニュー画面の描画。
-	m_gameMenu.Draw();
-
 	//YouDiedの描画。
 	m_youDied.Render();
 
@@ -532,6 +529,9 @@ void GameScene::Draw()
 	m_font.Draw(FPS.c_str(), 1650, 0);
 
 #endif // DEBUG
+
+	//ゲームメニュー画面の描画。
+	m_gameMenu.Draw();
 
 	//シーンの描画が完了したのでレンダリングターゲットをフレームバッファに戻す。
 	g_pd3dDevice->SetRenderTarget(0, frameBufferRT);

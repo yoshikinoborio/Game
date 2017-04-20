@@ -181,7 +181,7 @@ void EnemySkeleton::Update()
 			//スケルトンの前方向に当たり判定を発生させる。
 			if (m_atrTime >= 1.3f)
 			{
-				g_damageCollisionWorld->Add(2.0f, D3DXVECTOR3(SkePos.m[3][0], SkePos.m[3][1], SkePos.m[3][2]), 0.03f, 10, g_damageCollisionWorld->enDamageToPlayer, 0);
+				g_damageCollisionWorld->Add(1.0f, D3DXVECTOR3(SkePos.m[3][0], SkePos.m[3][1], SkePos.m[3][2]), 0.03f, 10, g_damageCollisionWorld->enDamageToPlayer, 0);
 				m_atrTime = 0.0f;
 				
 			}
