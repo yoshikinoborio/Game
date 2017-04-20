@@ -175,7 +175,7 @@ void EnemyBoss::Update()
 		//ボスの前方向に当たり判定を発生させる。
 		if (m_atrTime >= 0.7f)
 		{
-			//g_damageCollisionWorld->Add(1.0f, D3DXVECTOR3(BossPos.m[3][0], BossPos.m[3][1], BossPos.m[3][2]), 1.7f, 20, g_damageCollisionWorld->enDamageToPlayer, 0);
+			g_damageCollisionWorld->Add(1.0f, D3DXVECTOR3(BossPos.m[3][0], BossPos.m[3][1], BossPos.m[3][2]), 1.7f, 20, g_damageCollisionWorld->enDamageToPlayer, 0);
 			m_atrTime = 0.0f;
 
 		}

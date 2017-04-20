@@ -66,7 +66,7 @@ void Camera::Update()
 	}
 
 //DEBUG中のみ行う。
-#ifndef _DEBUG
+#ifdef _DEBUG
 	FreeCameraFlagChanger();
 	//フリーカメラモードでの処理。
 	FreeCameraMode();
