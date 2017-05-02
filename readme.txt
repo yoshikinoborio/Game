@@ -1,12 +1,21 @@
-作品のドキュメント
-　ドキュメント/UniSoulの作品のドキュメント.docx
+Sweet EngineerとUniSoulという２作品を提出します。
 
-ゲームの操作説明ドキュメント
-  ドキュメント/UniSoulの操作説明.docx
+作品のドキュメント
+　ドキュメント/Sweet Engineer/Sweet Engineerの作品ドキュメント.docx
+  ドキュメント/Sweet Engineer/Sweet Engineerの操作説明.docx
+  ドキュメント/UniSoul/UniSoulの作品のドキュメント.docx
+  ドキュメント/UniSoul/UniSoulの操作説明.docx
 
 実行ファイル
-　exe/Debug/UniSoul.exe
-　exe/Release/UniSoul.exe
+  exe/UniSoul/Debug(デバック機能、フリーカメラモードあり)/UniSoul.exe
+  exe/UniSoul/Release(デバック機能、フリーカメラモードなし)/UniSoul.exe
+
+プロジェクト
+  UniSoul/UniSoul.sln
 
 動画
-  movie/UniSoul.mp4
+  movie/Sweet Engineer/Sweet Engineerの動画.wmv
+  movie/UniSoul/UniSoulのクリア時の動画.mp4
+  movie/UniSoul/UniSoulのフリーカメラモードとデバック機能.mp4
+
+
