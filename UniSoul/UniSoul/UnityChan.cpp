@@ -160,7 +160,7 @@ void UnityChan::Initialize()
 	//SEの初期化。
 	//オンメモリ再生。
 	m_landingSe.Init("image/landing.wav");
-	m_lvUpSe.Init("image/UniSoulBGM.wav");
+	m_lvUpSe.Init("image/UniSoulLvUpSE.wav");
 
 	//ユニティちゃんを進む方向に向けるための処理。
 	m_rotation = D3DXQUATERNION(0.0f, 0.06f, 0.0f, 0.998f);
