@@ -23,7 +23,7 @@ SceneManager::~SceneManager()
 //初期化。
 void SceneManager::Initialize()
 {
-	SceneManager::ChangeScene(SceneNum::SceneNumGame);
+	SceneManager::ChangeScene(SceneNum::SceneNumTitle);
 }
 
 //更新。
