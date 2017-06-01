@@ -73,7 +73,7 @@ void EnemyBoss::Initialize(const char* modelPath,const D3DXVECTOR3& pos,const D3
 	m_height = 2.0f;
 	m_radius = 1.5f;
 
-	m_hp = 10;
+	m_hp = 50;
 	m_maxhp = m_hp;
 
 	m_state = EnemyState::enStateSearch;
